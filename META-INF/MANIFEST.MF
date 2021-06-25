@@ -12,3 +12,4 @@ Automatic-Module-Name: exercise.submitter.eclipse.singleton.true
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-ClassPath: .,
  target/dependency/exercise-submitter-lib.jar
+Bundle-ActivationPolicy: lazy
