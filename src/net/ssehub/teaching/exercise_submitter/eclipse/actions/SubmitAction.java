@@ -10,10 +10,18 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbenchWindow;
+
+import net.ssehub.teaching.exercise_submitter.eclipse.Activator;
+import net.ssehub.teaching.exercise_submitter.eclipse.log.EclipseLog;
+import net.ssehub.teaching.exercise_submitter.eclipse.marker.EclipseMarker;
+import net.ssehub.teaching.exercise_submitter.lib.Example;
 
 public class SubmitAction extends AbstractHandler {
 
@@ -41,7 +49,13 @@ public class SubmitAction extends AbstractHandler {
             }
         }
         
+        
+        
         if (projects.size() == 1) {
+        	EclipseMarker.addMarker(projects.get(0).getFile("/src/test/test.java"), "Beispiel",2);
+
+
+        	EclipseLog.add("Fehler");
             File location = projects.get(0).getLocation().toFile();
             MessageDialog.openInformation(window.getShell(), "Exercise Submitter", "Selected Project: " + location);
         } else if (projects.size() > 1) {

@@ -26,6 +26,25 @@
     </extension>
     
     <extension
+        point="org.eclipse.ui.menus">
+        
+        <menuContribution
+            locationURI="menu:org.eclipse.ui.main.menu?after=window">
+            
+            
+            <menu
+                id="net.ssehub.teaching.exercise_submitter.eclipse.mainMenue"
+                label="Exercise Submitter">
+                
+                <command
+                    commandId="net.ssehub.teaching.exercise_submitter.eclipse.submit"
+                    tooltip="Submit the selected project" />
+            </menu>
+        </menuContribution>
+    </extension>
+    
+    
+    <extension
         point="org.eclipse.ui.commands">
         
         <command
@@ -39,9 +58,12 @@
         <handler
             commandId="net.ssehub.teaching.exercise_submitter.eclipse.submit"
             class="net.ssehub.teaching.exercise_submitter.eclipse.actions.SubmitAction" />
+                
     </extension>
-    
-    <extension
+    !-- 
+    Was bedeutet dies
+    -->
+    <extension 
         point="org.eclipse.core.expressions.definitions">
         
         <definition id="net.ssehub.teaching.exercise_submitter.eclipse.isProject">
@@ -52,6 +74,35 @@
                 </iterate>
             </with>
         </definition>
+    </extension>
+    
+    <extension
+          point="org.eclipse.ui.preferencePages">
+       <page
+             class="net.ssehub.teaching.exercise_submitter.eclipse.preferences.PreferencePage"
+             id="net.ssehub.teaching.exercise_submitter.eclipse.preferences.PreferencePage"
+             name="Exercise Submitter Page">
+       </page>
+    </extension>
+    
+    <extension
+          point="org.eclipse.core.runtime.preferences">
+       <initializer
+             class="net.ssehub.teaching.exercise_submitter.eclipse.preferences.PreferenceInitializer">
+       </initializer>
+    </extension>
+    
+    <extension
+    	  id="net.ssehub.teaching.exercise_submitter.eclipse.marker"
+    	  name="Submitter Marker"
+          point="org.eclipse.core.resources.markers">
+          <super
+          	type="org.eclipse.core.resources.problemmarker">
+          	</super>
+          	<attribute name = "key"/>
+          	<attribute name = "rule"/>
+          	<persistence value = "true">
+          	</persistence>
     </extension>
 
 </plugin>
