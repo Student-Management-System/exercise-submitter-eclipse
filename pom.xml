@@ -98,6 +98,11 @@
 	</build>
 
 	<dependencies>
+		<dependency>
+			<groupId>net.ssehub.teaching.exercise_submitter</groupId>
+			<artifactId>exercise-submitter-lib</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 
 </project>

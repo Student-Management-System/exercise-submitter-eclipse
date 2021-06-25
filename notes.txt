@@ -1,0 +1,86 @@
+Context Menu for Projects "Exercise Submitter":
+	* Submit
+	* Check Submission
+	* Clear Problem Markers     (maybe only visible if problem markers are actually there?)
+
+Menubar Entry "Exercise Submitter":
+	* Download Submission
+	* Show Assignments
+	* Configure
+	* Help
+
+
+
+
+Submit:
+1) clear markers created by the exercise submitter for the selected project (see Clear Problem Markers)
+2) check if there are any errors/warnings for the selected project
+	- if there are, show a dialog "there are open errors/warnings. continue?"
+	- user can cancel here
+3) show dialog that allows to select an assignment in SUBMISSION state
+	- show info dialog if currently on assignments are in SUBMISSION state
+4) submit the selected project to the selected assignment
+5) if result contains problems: add markers
+6) display a result dialog
+	- on success:
+		- a big green check mark
+		- "Your project $PROJECT_NAME was successfully submitted to $ASSIGNMENT_NAME."
+		- if problems are found: "$NUM_PROBLEMS were found in your submission. Problem markers were added to your project"
+	- failure:
+		- a big red cross
+		- "The project was NOT submitted."
+		- if submission itself failed (e.g. exception): "The submission failed." (try to add good error messages here)
+		- if submission succeeded but was simply rejected: "$NUM_PROBLEMS were found in your submission. Problem markers were added to your project"
+
+
+Check Submission:
+1) show dialog that allows to select an assignment in SUBMISSION state
+2) Show an info dialog:
+	- date of the last submission to the assignment
+	- whether the contents of the submission are the same as the selected project
+		- TBD
+	- list of timestamps of all submissions
+3) show user the following options:
+	- close dialog without further action
+	- if project and submission differ: submit the selected project to the selected assignment
+	- if project and submission differ: download the last submission of the selected assignment (see Download Submission)
+
+
+Clear Problem Markers:
+- clears all markers created by the exercise submitter for the selected project
+
+
+Show Assignments:
+- shows an info dialog with all assignments, grouped by their current state
+	- state SUBMISSION first
+
+
+Download Submission:
+1) show a dialog that allows to select an assignment in SUBMISSION or REVIEWED state
+2) show a dialog that allows to select which revision to download
+	- "download last submitted version"
+	- "download a different version"
+		- list of timestamp and author of all submissions
+		- allows to select one
+3) create a new project with the contents of the selected submission version
+	- Project name: AssignmentName_2021-05-28_17-32
+		- alternatively: let user enter a project name, maybe with this pre-filled
+	- show a warning dialog if project already exists; clear contents if approved, abort otherwise
+	- show an info dialog:
+		"Submission is stored in project $PROJECT_NAME. You can delete the project after you are done via right-click -> Delete."
+
+
+Configure:
+- open the configuration dialog in the preferences
+
+
+Help:
+- show an info dialog with:
+	- the version
+	- a manual? maybe just a link to an online manual?
+
+
+
+
+Future ideas:
+- allow tutors to submit even if not in SUBMISSION state
