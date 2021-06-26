@@ -15,6 +15,9 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbenchWindow;
 
+import net.ssehub.teaching.exercise_submitter.eclipse.problemmarkers.EclipseMarker;
+import net.ssehub.teaching.exercise_submitter.submission.Submission;
+
 public class SubmitAction extends AbstractHandler {
 
     @Override
@@ -43,7 +46,10 @@ public class SubmitAction extends AbstractHandler {
         
         if (projects.size() == 1) {
             File location = projects.get(0).getLocation().toFile();
+           // EclipseMarker.addMarker(projects.get(0).getFile("/src/test/test.java"), "Du hast versagt", 1);
             MessageDialog.openInformation(window.getShell(), "Exercise Submitter", "Selected Project: " + location);
+            Submission submission = new Submission(projects.get(0));
+            submission.submit();
         } else if (projects.size() > 1) {
             MessageDialog.openError(window.getShell(), "Exercise Submitter", "Too many projects selected.");
         } else {
