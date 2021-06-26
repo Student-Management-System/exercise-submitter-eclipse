@@ -5,6 +5,7 @@ import java.io.File;
 import org.eclipse.core.resources.IProject;
 
 import net.ssehub.teaching.exercise_submitter.eclipse.Activator;
+import net.ssehub.teaching.exercise_submitter.eclipse.log.Errorlog;
 import net.ssehub.teaching.exercise_submitter.eclipse.problemmarkers.EclipseMarker;
 import net.ssehub.teaching.exercise_submitter.lib.Assignment;
 import net.ssehub.teaching.exercise_submitter.lib.Assignment.State;
@@ -50,6 +51,7 @@ public class Submission {
 		} catch(Exception e) {
 			System.out.println("Fehler");
 		}
+		
 		
 	}
 }
