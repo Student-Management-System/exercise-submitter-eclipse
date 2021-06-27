@@ -3,8 +3,10 @@ package net.ssehub.teaching.exercise_submitter.submission;
 import java.io.File;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.swt.widgets.Shell;
 
 import net.ssehub.teaching.exercise_submitter.eclipse.Activator;
+import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AssignmentDialog;
 import net.ssehub.teaching.exercise_submitter.eclipse.log.Errorlog;
 import net.ssehub.teaching.exercise_submitter.eclipse.problemmarkers.EclipseMarker;
 import net.ssehub.teaching.exercise_submitter.lib.Assignment;
@@ -26,7 +28,24 @@ public class Submission {
 		try {
 			Manager manager = Activator.getEclipseManager().getManager();
 			EclipseMarker.clearMarkerFromProjekt(this.project);
-			Assignment assignment = manager.getAssignments(State.SUBMISSION).get(0);
+			AssignmentDialog dialog = new AssignmentDialog(new Shell(),manager.getAssignments(State.SUBMISSION));
+			int Result = dialog.open();
+			
+			
+			Assignment assignment = null;
+			
+			if(Result == 0) {
+				if(dialog.getSelectedAssignment() != null) {
+					assignment = dialog.getSelectedAssignment();
+				} else {
+					//nichts ausgewählt
+					//throw something
+				}
+				
+			} else {
+				//cancel
+			}
+			
 			Submitter submitter = manager.getSubmitter(assignment);// verschiedene Hausaufgaben noch hinzufügen
 			SubmissionResult sresult = submitter.submit(this.project.getLocation().toFile());
 			
