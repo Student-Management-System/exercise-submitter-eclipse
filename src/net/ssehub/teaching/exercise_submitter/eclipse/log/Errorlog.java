@@ -8,8 +8,8 @@ import net.ssehub.teaching.exercise_submitter.eclipse.Activator;
 
 public class Errorlog {
 	private static ILog ilog = Activator.getDefault().getLog();
-	
+
 	public static void add(String exception) {
-		Errorlog.ilog.log(new Status(IStatus.ERROR,Activator.PLUGIN_ID, exception));
+		Errorlog.ilog.log(new Status(IStatus.ERROR, Activator.PLUGIN_ID, exception));
 	}
 }
