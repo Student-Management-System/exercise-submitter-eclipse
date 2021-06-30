@@ -53,5 +53,17 @@ public class EclipseMarker {
 		} catch (CoreException e) {
 		}
 	}
+	
+	public static Boolean areMarkersInProjekt(IProject project) {
+		boolean available = false;
+		IMarker[] markers = null;
+	       try{
+	    	   markers = project.findMarkers(null, true, IResource.DEPTH_INFINITE );
+	    	   if(markers.length > 0) {
+	    		   available = true;
+	    	   }
+	        }catch(CoreException e){}	
+	       return available;
+	}
 
 }

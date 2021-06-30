@@ -1,6 +1,7 @@
 package net.ssehub.teaching.exercise_submitter.submission;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 
 import net.ssehub.teaching.exercise_submitter.eclipse.Activator;
@@ -28,14 +29,25 @@ public class Submission {
 		try {
 			Manager manager = Activator.getEclipseManager().getManager();
 			EclipseMarker.clearMarkerFromProjekt(this.project);
-			AssignmentDialog dialog = new AssignmentDialog(new Shell(), manager.getAssignments(State.SUBMISSION));
-			int Result = dialog.open();
+			
+			if(EclipseMarker.areMarkersInProjekt(project)) {
+				boolean bResult =
+						MessageDialog.openConfirm(new Shell(), "Exercise Submitter", "There are open errors/warnings. Continue?");
+
+					if (!bResult) {
+						return;
+					}
+					
+			}	
+			
+			AssignmentDialog assDialog = new AssignmentDialog(new Shell(), manager.getAssignments(State.SUBMISSION));
+			int iResult = assDialog.open();
 
 			Assignment assignment = null;
 
-			if (Result == 0) {
-				if (dialog.getSelectedAssignment() != null) {
-					assignment = dialog.getSelectedAssignment();
+			if (iResult == 0) {
+				if (assDialog.getSelectedAssignment() != null) {
+					assignment = assDialog.getSelectedAssignment();
 				} else {
 					// nichts ausgewählt
 					// throw something
@@ -44,6 +56,7 @@ public class Submission {
 
 			} else {
 				// cancel
+				return;
 			}
 
 			Submitter submitter = manager.getSubmitter(assignment);// verschiedene Hausaufgaben noch hinzufügen
