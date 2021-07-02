@@ -94,7 +94,7 @@ public class Submission {
 		} else {
 			// fehler wurden gefunden
 			MessageDialog.openError(new Shell(), "Exercise Submitter", Integer.toString(sresult.getProblems().size())
-					+ " Problems were found in your submission.\\r\\nProblem markers were added to your project");
+					+ " Problems were found in your submission.\r\nProblem markers were added to your project");
 		}
 	}
 }

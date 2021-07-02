@@ -28,15 +28,55 @@
         </menuContribution>
     </extension>
     
+     <extension
+        point="org.eclipse.ui.menus">
+        
+        <menuContribution
+            locationURI="menu:org.eclipse.ui.main.menu?after=window">
+            
+            
+            <menu
+                id="net.ssehub.teaching.exercise_submitter.eclipse.mainMenue"
+                label="Exercise Submitter">
+                
+                <command
+                    commandId="net.ssehub.teaching.exercise_submitter.eclipse.downloadSubmission"
+                    tooltip="Download Submission" />
+                 <command
+                    commandId="net.ssehub.teaching.exercise_submitter.eclipse.showAssignments"
+                    tooltip="Show all Assignments" />
+                 <command
+                    commandId="net.ssehub.teaching.exercise_submitter.eclipse.configure"
+                    tooltip="Open Configure Tab" />
+                 <command
+                    commandId="net.ssehub.teaching.exercise_submitter.eclipse.help"
+                    tooltip="Help" />
+            </menu>
+        </menuContribution>
+    </extension>
+    
     <extension
         point="org.eclipse.ui.commands">
         
         <command
             id="net.ssehub.teaching.exercise_submitter.eclipse.submit"
             name="Submit" />
-            <command
+       	<command
             id="net.ssehub.teaching.exercise_submitter.eclipse.clearMarker"
             name="Clear Marker" />
+        <command
+            id="net.ssehub.teaching.exercise_submitter.eclipse.downloadSubmission"
+            name="Download Submission" />
+        <command
+            id="net.ssehub.teaching.exercise_submitter.eclipse.showAssignments"
+            name="Show Assignments" />
+        <command
+            id="net.ssehub.teaching.exercise_submitter.eclipse.configure"
+            name="Configure" />
+        <command
+            id="net.ssehub.teaching.exercise_submitter.eclipse.help"
+            name="Help" />
+        
     </extension>
     
     <extension
@@ -45,9 +85,21 @@
         <handler
             commandId="net.ssehub.teaching.exercise_submitter.eclipse.submit"
             class="net.ssehub.teaching.exercise_submitter.eclipse.actions.SubmitAction" />
-            <handler
+        <handler
             commandId="net.ssehub.teaching.exercise_submitter.eclipse.clearMarker"
             class="net.ssehub.teaching.exercise_submitter.eclipse.actions.clearMarkerAction" />
+         <handler
+            commandId="net.ssehub.teaching.exercise_submitter.eclipse.downloadSubmission"
+            class="net.ssehub.teaching.exercise_submitter.eclipse.actions.DownloadSubmissionAction" />
+         <handler
+            commandId="net.ssehub.teaching.exercise_submitter.eclipse.showAssignments"
+            class="net.ssehub.teaching.exercise_submitter.eclipse.actions.ShowAssignmentsAction" />
+         <handler
+            commandId="net.ssehub.teaching.exercise_submitter.eclipse.configure"
+            class="net.ssehub.teaching.exercise_submitter.eclipse.actions.ConfigureAction" />
+         <handler
+            commandId="net.ssehub.teaching.exercise_submitter.eclipse.help"
+            class="net.ssehub.teaching.exercise_submitter.eclipse.actions.HelpAction" />
     </extension>
     
     <extension
