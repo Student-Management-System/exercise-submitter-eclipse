@@ -6,10 +6,16 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 
+import net.ssehub.teaching.exercise_submitter.eclipse.Activator;
+import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AssignmentDialog;
+
 public class ShowAssignmentsAction extends AbstractHandler{
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		MessageDialog.openInformation(new Shell(), "Exercise Submitter", "Show Assignments");
+		AssignmentDialog assDialog = new  AssignmentDialog(new Shell(),
+				Activator.getEclipseManager().getManager().getAllAssignments(),
+				AssignmentDialog.Sorted.GROUPED);
+		int result = assDialog.open();
 		return null;
 	}
 }

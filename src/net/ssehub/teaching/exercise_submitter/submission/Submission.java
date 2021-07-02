@@ -40,7 +40,8 @@ public class Submission {
 
 			}
 
-			AssignmentDialog assDialog = new AssignmentDialog(new Shell(), manager.getAssignments(State.SUBMISSION));
+			AssignmentDialog assDialog = new AssignmentDialog(new Shell(), manager.getAssignments(State.SUBMISSION), 
+					AssignmentDialog.Sorted.NONE);
 			int iResult = assDialog.open();
 
 			Assignment assignment = null;

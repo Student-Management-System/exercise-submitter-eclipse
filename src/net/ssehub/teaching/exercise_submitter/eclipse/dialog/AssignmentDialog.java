@@ -10,17 +10,25 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
+import net.ssehub.teaching.exercise_submitter.helper.Converter;
+import net.ssehub.teaching.exercise_submitter.helper.Sort;
 import net.ssehub.teaching.exercise_submitter.lib.Assignment;
 
 public class AssignmentDialog extends Dialog {
 
 	private java.util.List<Assignment> assignments;
 	private Assignment selectedAssignment;
+	private Sorted sort;
+	
+	public enum Sorted {
+		GROUPED,NONE
+	}
 
-	public AssignmentDialog(Shell parentShell, java.util.List<Assignment> assignments) {
+	public AssignmentDialog(Shell parentShell, java.util.List<Assignment> assignments, Sorted sort) {
 		super(parentShell);
 		this.assignments = assignments;
 		this.selectedAssignment = null;
+		this.sort = sort;
 	}
 
 	public Assignment getSelectedAssignment() {
@@ -34,9 +42,17 @@ public class AssignmentDialog extends Dialog {
 		final org.eclipse.swt.widgets.List list = new org.eclipse.swt.widgets.List(container,
 				SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL);
 		list.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
-
+		
+		if(this.sort == Sorted.GROUPED) {
+			this.assignments = Sort.groupByState(assignments);
+		}
 		for (Assignment as : this.assignments) {
-			list.add(as.getName());
+			if(this.sort == Sorted.GROUPED) {			
+					list.add("[" + Converter.assignmentStateToString(as.getState())
+					+ "] " + as.getName());
+			}else {
+				list.add(as.getName());
+			}
 		}
 
 		list.addSelectionListener(new SelectionAdapter() {
