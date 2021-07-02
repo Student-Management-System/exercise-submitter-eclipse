@@ -56,6 +56,15 @@
     </extension>
     
     <extension
+          point="org.eclipse.ui.preferencePages">
+       <page
+             class="net.ssehub.teaching.exercise_submitter.eclipse.preferences.PreferencePage"
+             id="net.ssehub.teaching.exercise_submitter.eclipse.preferences.PreferencePage"
+             name="Exercise Submitter Page">
+       </page>
+    </extension>
+    
+    <extension
         point="org.eclipse.ui.commands">
         
         <command
