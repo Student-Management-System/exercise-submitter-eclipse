@@ -5,11 +5,15 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.Version;
 
-public class HelpAction extends AbstractHandler{
+public class HelpAction extends AbstractHandler {
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		MessageDialog.openInformation(new Shell(), "Exercise Submitter", "Help");
+		Version version = FrameworkUtil.getBundle(this.getClass()).getVersion();
+		MessageDialog.openInformation(new Shell(), "Exercise Submitter",
+				"Current Version: " + version.toString() + "\r\n");
 		return null;
 	}
 
