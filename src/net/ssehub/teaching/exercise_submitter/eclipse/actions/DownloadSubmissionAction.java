@@ -6,12 +6,12 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 
-public class DownloadSubmissionAction extends AbstractHandler{
+public class DownloadSubmissionAction extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		MessageDialog.openInformation(new Shell(), "Exercise Submitter", "Download Submission");
 		return null;
 	}
-	
+
 }

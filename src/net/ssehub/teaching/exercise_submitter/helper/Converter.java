@@ -24,18 +24,19 @@ public class Converter {
 
 		return null; // exception
 	}
+
 	public static String assignmentStateToString(Assignment.State state) {
 		String sState = null;
-		switch(state) {
-			case SUBMISSION:
-				sState = "SUBMISSION";
-				break;
-			case REVIEWED:
-				sState = "REVIEWED";
-				break;
-			case IN_REVIEW:
-				sState = "IN_REVIEW";
-				break;
+		switch (state) {
+		case SUBMISSION:
+			sState = "SUBMISSION";
+			break;
+		case REVIEWED:
+			sState = "REVIEWED";
+			break;
+		case IN_REVIEW:
+			sState = "IN_REVIEW";
+			break;
 		default:
 			break;
 		}

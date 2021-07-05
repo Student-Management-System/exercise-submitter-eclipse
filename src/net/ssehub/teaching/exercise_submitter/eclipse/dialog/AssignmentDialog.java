@@ -19,9 +19,9 @@ public class AssignmentDialog extends Dialog {
 	private java.util.List<Assignment> assignments;
 	private Assignment selectedAssignment;
 	private Sorted sort;
-	
+
 	public enum Sorted {
-		GROUPED,NONE
+		GROUPED, NONE
 	}
 
 	public AssignmentDialog(Shell parentShell, java.util.List<Assignment> assignments, Sorted sort) {
@@ -42,15 +42,14 @@ public class AssignmentDialog extends Dialog {
 		final org.eclipse.swt.widgets.List list = new org.eclipse.swt.widgets.List(container,
 				SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL);
 		list.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
-		
-		if(this.sort == Sorted.GROUPED) {
-			this.assignments = Sort.groupByState(assignments);
+
+		if (this.sort == Sorted.GROUPED) {
+			this.assignments = Sort.groupByState(this.assignments);
 		}
 		for (Assignment as : this.assignments) {
-			if(this.sort == Sorted.GROUPED) {			
-					list.add("[" + Converter.assignmentStateToString(as.getState())
-					+ "] " + as.getName());
-			}else {
+			if (this.sort == Sorted.GROUPED) {
+				list.add("[" + Converter.assignmentStateToString(as.getState()) + "] " + as.getName());
+			} else {
 				list.add(as.getName());
 			}
 		}

@@ -5,15 +5,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import net.ssehub.teaching.exercise_submitter.lib.Assignment;
-import net.ssehub.teaching.exercise_submitter.lib.Submitter;
 
 public class Sort {
 	public static List<Assignment> groupByState(List<Assignment> list) {
 		List<Assignment> sorted = new ArrayList<Assignment>();
-		
-		for(int i = 0; i < 3; i++) {
+
+		for (int i = 0; i < 3; i++) {
 			Assignment.State currentState = null;
-			switch(i) {
+			switch (i) {
 			case 0:
 				currentState = Assignment.State.SUBMISSION;
 				break;
@@ -23,15 +22,14 @@ public class Sort {
 			case 2:
 				currentState = Assignment.State.REVIEWED;
 				break;
-				
+
 			}
-			for(Assignment ass : getAssignmentsFromState(list, currentState)) {
-				sorted.add(ass);
-			}
+			sorted.addAll(getAssignmentsFromState(list, currentState));
 		}
 		return sorted;
 	}
-	public static List<Assignment> getAssignmentsFromState(List<Assignment> list, Assignment.State state)  {
+
+	public static List<Assignment> getAssignmentsFromState(List<Assignment> list, Assignment.State state) {
 		return list.stream().filter(ass -> ass.getState() == state).collect(Collectors.toList());
 	}
 }
