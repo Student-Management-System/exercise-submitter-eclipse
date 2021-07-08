@@ -1,4 +1,4 @@
-package net.ssehub.teaching.exercise_submitter.exception;
+package net.ssehub.teaching.exercise_submitter.eclipse.exception;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;

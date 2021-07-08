@@ -10,7 +10,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 
-import net.ssehub.teaching.exercise_submitter.helper.Converter;
+import net.ssehub.teaching.exercise_submitter.eclipse.helper.Converter;
 import net.ssehub.teaching.exercise_submitter.lib.Problem.Severity;
 
 public class EclipseMarker {

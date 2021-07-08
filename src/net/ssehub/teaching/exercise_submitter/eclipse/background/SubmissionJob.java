@@ -9,11 +9,11 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Display;
 
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AdvancedExceptionDialog;
+import net.ssehub.teaching.exercise_submitter.eclipse.submission.Submission;
 import net.ssehub.teaching.exercise_submitter.lib.Assignment;
 import net.ssehub.teaching.exercise_submitter.lib.SubmissionException;
 import net.ssehub.teaching.exercise_submitter.lib.SubmissionResult;
 import net.ssehub.teaching.exercise_submitter.lib.Submitter;
-import net.ssehub.teaching.exercise_submitter.submission.Submission;
 
 public class SubmissionJob extends Job {
 

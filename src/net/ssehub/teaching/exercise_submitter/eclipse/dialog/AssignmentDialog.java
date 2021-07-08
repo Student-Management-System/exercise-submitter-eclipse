@@ -10,8 +10,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
-import net.ssehub.teaching.exercise_submitter.helper.Converter;
-import net.ssehub.teaching.exercise_submitter.helper.Sort;
+import net.ssehub.teaching.exercise_submitter.eclipse.helper.Converter;
+import net.ssehub.teaching.exercise_submitter.eclipse.helper.Sort;
 import net.ssehub.teaching.exercise_submitter.lib.Assignment;
 
 public class AssignmentDialog extends Dialog {

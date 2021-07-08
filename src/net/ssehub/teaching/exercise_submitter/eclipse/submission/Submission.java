@@ -1,4 +1,4 @@
-package net.ssehub.teaching.exercise_submitter.submission;
+package net.ssehub.teaching.exercise_submitter.eclipse.submission;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -8,8 +8,8 @@ import net.ssehub.teaching.exercise_submitter.eclipse.Activator;
 import net.ssehub.teaching.exercise_submitter.eclipse.background.SubmissionJob;
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AdvancedExceptionDialog;
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AssignmentDialog;
+import net.ssehub.teaching.exercise_submitter.eclipse.exception.UserException;
 import net.ssehub.teaching.exercise_submitter.eclipse.problemmarkers.EclipseMarker;
-import net.ssehub.teaching.exercise_submitter.exception.UserException;
 import net.ssehub.teaching.exercise_submitter.lib.Assignment;
 import net.ssehub.teaching.exercise_submitter.lib.Assignment.State;
 import net.ssehub.teaching.exercise_submitter.lib.Manager;

@@ -15,7 +15,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbenchWindow;
 
-import net.ssehub.teaching.exercise_submitter.submission.Submission;
+import net.ssehub.teaching.exercise_submitter.eclipse.submission.Submission;
 
 public class SubmitAction extends AbstractHandler {
 

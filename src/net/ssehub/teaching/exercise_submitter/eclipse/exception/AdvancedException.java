@@ -1,4 +1,4 @@
-package net.ssehub.teaching.exercise_submitter.exception;
+package net.ssehub.teaching.exercise_submitter.eclipse.exception;
 
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AdvancedExceptionDialog;
 import net.ssehub.teaching.exercise_submitter.eclipse.log.Errorlog;

@@ -1,4 +1,4 @@
-package net.ssehub.teaching.exercise_submitter.helper;
+package net.ssehub.teaching.exercise_submitter.eclipse.helper;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
