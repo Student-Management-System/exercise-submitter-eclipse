@@ -48,7 +48,7 @@ public class AssignmentDialog extends Dialog {
         }
         for (Assignment as : this.assignments) {
             if (this.sort == Sorted.GROUPED) {
-                list.add("[" + Converter.assignmentStateToString(as.getState()) + "] " + as.getName());
+                list.add("[" + as.getState().name() + "] " + as.getName());
             } else {
                 list.add(as.getName());
             }
