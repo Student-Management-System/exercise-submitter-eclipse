@@ -14,15 +14,15 @@ import net.ssehub.teaching.exercise_submitter.eclipse.Activator;
 public class AdvancedExceptionDialog {
 
     private String message;
-    private Throwable t;
+    private Throwable exc;
 
-    public AdvancedExceptionDialog(String message, Throwable t) {
+    public AdvancedExceptionDialog(String message, Throwable exc) {
         this.message = message;
-        this.t = t;
+        this.exc = exc;
     }
 
     public void open() {
-        MultiStatus status = createMultiStatus(this.t);
+        MultiStatus status = createMultiStatus(this.exc);
         ErrorDialog.openError(new Shell(), "Error", this.message, status);
     }
 

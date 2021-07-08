@@ -10,18 +10,19 @@ import org.eclipse.swt.widgets.Display;
 
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AdvancedExceptionDialog;
 import net.ssehub.teaching.exercise_submitter.lib.Assignment;
+import net.ssehub.teaching.exercise_submitter.lib.SubmissionException;
 import net.ssehub.teaching.exercise_submitter.lib.SubmissionResult;
 import net.ssehub.teaching.exercise_submitter.lib.Submitter;
 import net.ssehub.teaching.exercise_submitter.submission.Submission;
 
 public class SubmissionJob extends Job {
 
+    private static ILock lock = Job.getJobManager().newLock();
+    
     private SubmissionResult result;
     private Submitter submitter;
     private IProject project;
     private Assignment assigment;
-
-    private static ILock lock = Job.getJobManager().newLock();
 
     public SubmissionJob(Submitter submitter, IProject project, Assignment assignment) {
         super("Submission Job");
@@ -42,7 +43,7 @@ public class SubmissionJob extends Job {
             Display.getDefault().asyncExec(() -> {
                 Submission.jobIsDone(this.result, this.project, this.assigment);
             });
-        } catch (Exception ex) {
+        } catch (SubmissionException | IllegalArgumentException ex) {
             Display.getDefault().asyncExec(() -> {
                 new AdvancedExceptionDialog("Submitting failed", ex).open(); // noch verbessern
             });

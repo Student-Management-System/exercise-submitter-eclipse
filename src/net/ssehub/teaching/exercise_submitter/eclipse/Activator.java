@@ -6,7 +6,7 @@ import org.osgi.framework.BundleContext;
 import net.ssehub.teaching.exercise_submitter.eclipse.eclipsemanager.EclipseManager;
 
 /**
- * The activator class controls the plug-in life cycle
+ * The activator class controls the plug-in life cycle.
  */
 public class Activator extends AbstractUIPlugin {
 
@@ -14,7 +14,7 @@ public class Activator extends AbstractUIPlugin {
 
     private static Activator plugin;
 
-    private static EclipseManager EManager = new EclipseManager();
+    private static EclipseManager eclipseManager = new EclipseManager();
 
     public Activator() {
     }
@@ -33,7 +33,7 @@ public class Activator extends AbstractUIPlugin {
     }
 
     /**
-     * Returns the shared instance
+     * Returns the shared instance.
      *
      * @return the shared instance
      */
@@ -42,7 +42,7 @@ public class Activator extends AbstractUIPlugin {
     }
 
     public static EclipseManager getEclipseManager() {
-        return EManager;
+        return eclipseManager;
     }
 
 }

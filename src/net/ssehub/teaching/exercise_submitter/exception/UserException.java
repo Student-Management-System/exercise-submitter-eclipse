@@ -5,12 +5,9 @@ import org.eclipse.swt.widgets.Shell;
 
 public class UserException extends Exception {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -4648322879145949773L;
-
     public static final String EXCEPTION_LIST_NOTSELECTED = "You need to select something";
+    
+    private static final long serialVersionUID = -4648322879145949773L;
 
     public UserException(String message) {
         super(message);

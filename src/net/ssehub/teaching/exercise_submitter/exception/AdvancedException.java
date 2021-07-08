@@ -5,9 +5,6 @@ import net.ssehub.teaching.exercise_submitter.eclipse.log.Errorlog;
 
 public class AdvancedException extends Exception {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 3393868964229934351L;
 
     public AdvancedException(String message) {

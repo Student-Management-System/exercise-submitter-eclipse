@@ -60,7 +60,7 @@ public class Submission {
                 return;
             }
 
-            Submitter submitter = manager.getSubmitter(assignment);// verschiedene Hausaufgaben noch hinzufügen
+            Submitter submitter = manager.getSubmitter(assignment); // verschiedene Hausaufgaben noch hinzufügen
 
             SubmissionJob sj = new SubmissionJob(submitter, this.project, assignment);
             sj.setUser(true);

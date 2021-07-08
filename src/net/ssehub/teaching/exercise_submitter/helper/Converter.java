@@ -7,6 +7,7 @@ import net.ssehub.teaching.exercise_submitter.lib.Assignment;
 import net.ssehub.teaching.exercise_submitter.lib.Problem.Severity;
 
 public class Converter {
+
     public static IMarker getIMarkerSeverity(Severity sev, IMarker im) {
         try {
             switch (sev) {
@@ -14,9 +15,9 @@ public class Converter {
                 im.setAttribute(IMarker.SEVERITY, IMarker.PRIORITY_NORMAL);
                 break;
             case ERROR:
+            default:
                 im.setAttribute(IMarker.SEVERITY, IMarker.PRIORITY_HIGH);
                 break;
-
             }
         } catch (CoreException e) {
 
@@ -42,4 +43,5 @@ public class Converter {
         }
         return sState;
     }
+
 }

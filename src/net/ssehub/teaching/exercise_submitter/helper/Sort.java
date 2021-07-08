@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import net.ssehub.teaching.exercise_submitter.lib.Assignment;
 
 public class Sort {
+
     public static List<Assignment> groupByState(List<Assignment> list) {
         List<Assignment> sorted = new ArrayList<Assignment>();
 
@@ -32,4 +33,5 @@ public class Sort {
     public static List<Assignment> getAssignmentsFromState(List<Assignment> list, Assignment.State state) {
         return list.stream().filter(ass -> ass.getState() == state).collect(Collectors.toList());
     }
+
 }

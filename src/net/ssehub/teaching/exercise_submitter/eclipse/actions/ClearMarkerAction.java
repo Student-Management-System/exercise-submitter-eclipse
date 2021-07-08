@@ -18,7 +18,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 
 import net.ssehub.teaching.exercise_submitter.eclipse.problemmarkers.EclipseMarker;
 
-public class clearMarkerAction extends AbstractHandler {
+public class ClearMarkerAction extends AbstractHandler {
 
     @Override
     public Object execute(ExecutionEvent event) throws ExecutionException {
