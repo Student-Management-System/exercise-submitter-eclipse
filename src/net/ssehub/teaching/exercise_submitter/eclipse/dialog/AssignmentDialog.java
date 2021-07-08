@@ -1,5 +1,7 @@
 package net.ssehub.teaching.exercise_submitter.eclipse.dialog;
 
+import java.util.Comparator;
+
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -10,7 +12,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
-import net.ssehub.teaching.exercise_submitter.eclipse.helper.Sort;
 import net.ssehub.teaching.exercise_submitter.lib.Assignment;
 
 public class AssignmentDialog extends Dialog {
@@ -43,7 +44,9 @@ public class AssignmentDialog extends Dialog {
         list.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
 
         if (this.sort == Sorted.GROUPED) {
-            this.assignments = Sort.groupByState(this.assignments);
+            this.assignments.sort(
+                    Comparator.comparing((Assignment a) -> a.getState().ordinal())
+                    .thenComparing(Comparator.comparing(a -> a.getName()))); // TODO: maybe better sorting?
         }
         for (Assignment as : this.assignments) {
             if (this.sort == Sorted.GROUPED) {
