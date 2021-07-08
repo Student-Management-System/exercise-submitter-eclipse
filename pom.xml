@@ -105,7 +105,9 @@
 					<includeResources>false</includeResources>
 					<includeTestResources>false</includeTestResources>
 					<includeTestSourceDirectory>false</includeTestSourceDirectory>
-					<sourceDirectory>src</sourceDirectory>
+					<sourceDirectories>
+						<sourceDirectory>src</sourceDirectory>
+					</sourceDirectories>
 				</configuration>
 				<executions>
 					<execution>
