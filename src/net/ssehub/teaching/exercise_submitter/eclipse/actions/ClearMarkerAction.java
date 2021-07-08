@@ -5,6 +5,11 @@ import org.eclipse.ui.IWorkbenchWindow;
 
 import net.ssehub.teaching.exercise_submitter.eclipse.problemmarkers.EclipseMarker;
 
+/**
+ * Clears our markers from the selected project.
+ * 
+ * @author Lukas
+ */
 public class ClearMarkerAction extends AbstractSingleProjectAction {
 
     @Override

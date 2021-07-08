@@ -14,6 +14,7 @@ public class CheckSubmission extends AbstractSingleProjectAction {
     @Override
     protected void execute(IProject project, IWorkbenchWindow window) {
         MessageDialog.openWarning(window.getShell(), "Exercise Submitter", "Not yet implemented");
+        // TODO: implement
     }
 
 }

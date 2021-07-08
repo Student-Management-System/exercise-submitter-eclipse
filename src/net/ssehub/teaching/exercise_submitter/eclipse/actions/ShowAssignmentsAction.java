@@ -8,6 +8,11 @@ import org.eclipse.swt.widgets.Shell;
 import net.ssehub.teaching.exercise_submitter.eclipse.Activator;
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AssignmentDialog;
 
+/**
+ * Shows all assignments and their current status to the user.
+ * 
+ * @author Lukas
+ */
 public class ShowAssignmentsAction extends AbstractHandler {
 
     @Override

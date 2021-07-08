@@ -6,6 +6,11 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 
+/**
+ * Opens the configuration window.
+ * 
+ * @author Lukas
+ */
 public class ConfigureAction extends AbstractHandler {
     
     @Override

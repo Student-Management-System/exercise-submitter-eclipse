@@ -16,6 +16,12 @@ import net.ssehub.teaching.exercise_submitter.lib.SubmissionException;
 import net.ssehub.teaching.exercise_submitter.lib.SubmissionResult;
 import net.ssehub.teaching.exercise_submitter.lib.Submitter;
 
+/**
+ * A background job that executes the submission.
+ * 
+ * @author Lukas
+ * @author Adam
+ */
 public class SubmissionJob extends Job {
 
     private static ILock lock = Job.getJobManager().newLock();
@@ -27,6 +33,14 @@ public class SubmissionJob extends Job {
     private IProject project;
     private Assignment assigment;
 
+    /**
+     * Creates an instance.
+     * 
+     * @param submitter The submitter to use.
+     * @param project The project to submit.
+     * @param assignment The assignment to submit to.
+     * @param callback The callback to call once we are finished.
+     */
     public SubmissionJob(Submitter submitter, IProject project, Assignment assignment,
             Consumer<SubmissionJob> callback) {
         super("Submission Job");
@@ -37,16 +51,29 @@ public class SubmissionJob extends Job {
         this.callback = callback;
     }
     
-    
+    /**
+     * Returns the project that is submitted.
+     * 
+     * @return The project.
+     */
     public IProject getProject() {
         return project;
     }
     
-    
+    /**
+     * Returns the assignment that is submitted to.
+     *  
+     * @return The assignment.
+     */
     public Assignment getAssigment() {
         return assigment;
     }
     
+    /**
+     * Returns the {@link SubmissionResult} of the submission.
+     * 
+     * @return The {@link SubmissionResult} (<code>null</code> until submission is finished).
+     */
     public SubmissionResult getSubmissionResult() {
         return result;
     }
@@ -64,7 +91,7 @@ public class SubmissionJob extends Job {
             });
         } catch (SubmissionException | IllegalArgumentException ex) {
             Display.getDefault().asyncExec(() -> {
-                new AdvancedExceptionDialog("Submitting failed", ex).open(); // noch verbessern
+                new AdvancedExceptionDialog("Submitting failed", ex).open(); // TODO: noch verbessern
             });
 
         } finally {

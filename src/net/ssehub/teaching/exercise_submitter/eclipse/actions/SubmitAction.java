@@ -44,7 +44,8 @@ public class SubmitAction extends AbstractSingleProjectAction {
         Optional<Assignment> assignment = chooseAssignment(window, manager);
         
         if (assignment.isPresent()) {
-            Submitter submitter = manager.getSubmitter(assignment.get()); // verschiedene Hausaufgaben noch hinzufügen
+            Submitter submitter = manager.getSubmitter(assignment.get());
+            // TODO: verschiedene Hausaufgaben noch hinzufügen?
 
             SubmissionJob sj = new SubmissionJob(submitter, project, assignment.get(), this::onSubmissionFinished);
             sj.setUser(true);
@@ -115,7 +116,7 @@ public class SubmitAction extends AbstractSingleProjectAction {
             }
             EclipseMarker.addMarker(problem.getFile().orElse(new File(".project")), problem.getMessage(),
                     problem.getLine().orElse(-1),
-                    problem.getSeverity(), job.getProject()); // noch nicht fertig dialogbox
+                    problem.getSeverity(), job.getProject()); // TODO: noch nicht fertig dialogbox
         }
         
         String problemsMessage = "";

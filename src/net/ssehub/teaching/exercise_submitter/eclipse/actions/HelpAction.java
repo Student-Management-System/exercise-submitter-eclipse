@@ -8,13 +8,19 @@ import org.eclipse.swt.widgets.Shell;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.Version;
 
+/**
+ * Shows a help dialog to the user.
+ * 
+ * @author Lukas
+ */
 public class HelpAction extends AbstractHandler {
 
     @Override
     public Object execute(ExecutionEvent event) throws ExecutionException {
         Version version = FrameworkUtil.getBundle(this.getClass()).getVersion();
         MessageDialog.openInformation(new Shell(), "Exercise Submitter",
-                "Current Version: " + version.toString() + "\n");
+                "Current Version: " + version.toString());
+        // TODO: more content
         return null;
     }
 
