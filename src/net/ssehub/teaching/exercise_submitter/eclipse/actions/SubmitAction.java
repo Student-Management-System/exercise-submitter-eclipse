@@ -5,7 +5,6 @@ import java.util.Optional;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 
 import net.ssehub.teaching.exercise_submitter.eclipse.Activator;
