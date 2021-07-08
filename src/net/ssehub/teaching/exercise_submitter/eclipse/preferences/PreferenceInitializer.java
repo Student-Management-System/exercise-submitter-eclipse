@@ -5,6 +5,11 @@ import org.eclipse.jface.preference.IPreferenceStore;
 
 import net.ssehub.teaching.exercise_submitter.eclipse.Activator;
 
+/**
+ * TODO: how is this used?
+ * 
+ * @author Lukas
+ */
 public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
     @Override

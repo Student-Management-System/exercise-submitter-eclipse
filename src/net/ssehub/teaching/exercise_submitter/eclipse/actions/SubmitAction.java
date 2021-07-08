@@ -39,7 +39,7 @@ public class SubmitAction extends AbstractSingleProjectAction {
             }
         }
         
-        Manager manager = Activator.getEclipseManager().getManager();
+        Manager manager = Activator.getDefault().getManager();
         
         Optional<Assignment> assignment = chooseAssignment(window, manager);
         

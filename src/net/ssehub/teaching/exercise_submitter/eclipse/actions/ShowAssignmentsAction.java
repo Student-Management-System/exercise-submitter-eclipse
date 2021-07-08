@@ -18,7 +18,7 @@ public class ShowAssignmentsAction extends AbstractHandler {
     @Override
     public Object execute(ExecutionEvent event) throws ExecutionException {
         AssignmentDialog assDialog = new AssignmentDialog(new Shell(),
-                Activator.getEclipseManager().getManager().getAllAssignments(), AssignmentDialog.Sorted.GROUPED);
+                Activator.getDefault().getManager().getAllAssignments(), AssignmentDialog.Sorted.GROUPED);
         assDialog.open();
         return null;
     }

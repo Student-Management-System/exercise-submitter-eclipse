@@ -3,7 +3,8 @@ package net.ssehub.teaching.exercise_submitter.eclipse;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-import net.ssehub.teaching.exercise_submitter.eclipse.eclipsemanager.EclipseManager;
+import net.ssehub.teaching.exercise_submitter.eclipse.preferences.PreferencePage;
+import net.ssehub.teaching.exercise_submitter.lib.Manager;
 
 /**
  * The activator class controls the plug-in life cycle.
@@ -14,7 +15,7 @@ public class Activator extends AbstractUIPlugin {
 
     private static Activator plugin;
 
-    private static EclipseManager eclipseManager = new EclipseManager();
+    private Manager manager;
 
     @Override
     public void start(BundleContext context) throws Exception {
@@ -37,9 +38,29 @@ public class Activator extends AbstractUIPlugin {
     public static Activator getDefault() {
         return plugin;
     }
-
-    public static EclipseManager getEclipseManager() {
-        return eclipseManager;
+    
+    /**
+     * Initializes the {@link Manager} with the username and password from the preference store.
+     * <p>
+     * May be called multiple times, if the username or password in the preference store change.
+     */
+    public synchronized void initManager() {
+        String username = getPreferenceStore().getString(PreferencePage.KEY_USERNAME);
+        String password = getPreferenceStore().getString(PreferencePage.KEY_PASSWORD);
+        
+        manager = new Manager(username, password.toCharArray());
+    }
+    
+    /**
+     * Returns the {@link Manager}. Manager is lazily initialized.
+     * 
+     * @return The {@link Manager}.
+     */
+    public synchronized Manager getManager() {
+        if (manager == null) {
+            initManager();
+        }
+        return manager;
     }
 
 }
