@@ -16,42 +16,42 @@ import net.ssehub.teaching.exercise_submitter.submission.Submission;
 
 public class SubmissionJob extends Job {
 
-	private SubmissionResult result;
-	private Submitter submitter;
-	private IProject project;
-	private Assignment assigment;
+    private SubmissionResult result;
+    private Submitter submitter;
+    private IProject project;
+    private Assignment assigment;
 
-	private static ILock lock = Job.getJobManager().newLock();
+    private static ILock lock = Job.getJobManager().newLock();
 
-	public SubmissionJob(Submitter submitter, IProject project, Assignment assignment) {
-		super("Submission Job");
-		this.submitter = submitter;
-		this.result = null;
-		this.project = project;
-		this.assigment = assignment;
-	}
+    public SubmissionJob(Submitter submitter, IProject project, Assignment assignment) {
+        super("Submission Job");
+        this.submitter = submitter;
+        this.result = null;
+        this.project = project;
+        this.assigment = assignment;
+    }
 
-	@Override
-	protected IStatus run(IProgressMonitor monitor) {
+    @Override
+    protected IStatus run(IProgressMonitor monitor) {
 
-		monitor.beginTask("Transferring Files", BUILD);
+        monitor.beginTask("Transferring Files", BUILD);
 
-		try {
-			lock.acquire();
-			this.result = this.submitter.submit(this.project.getLocation().toFile());
-			Display.getDefault().asyncExec(() -> {
-				Submission.jobIsDone(this.result, this.project, this.assigment);
-			});
-		} catch (Exception ex) {
-			Display.getDefault().asyncExec(() -> {
-				new AdvancedExceptionDialog("Submitting failed", ex).open(); // noch verbessern
-			});
+        try {
+            lock.acquire();
+            this.result = this.submitter.submit(this.project.getLocation().toFile());
+            Display.getDefault().asyncExec(() -> {
+                Submission.jobIsDone(this.result, this.project, this.assigment);
+            });
+        } catch (Exception ex) {
+            Display.getDefault().asyncExec(() -> {
+                new AdvancedExceptionDialog("Submitting failed", ex).open(); // noch verbessern
+            });
 
-		} finally {
-			lock.release();
+        } finally {
+            lock.release();
 
-		}
-		return Status.OK_STATUS;
-	}
+        }
+        return Status.OK_STATUS;
+    }
 
 }

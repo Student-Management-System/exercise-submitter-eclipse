@@ -10,39 +10,39 @@ import net.ssehub.teaching.exercise_submitter.eclipse.eclipsemanager.EclipseMana
  */
 public class Activator extends AbstractUIPlugin {
 
-	public static final String PLUGIN_ID = "exercise-submitter-eclipse";
+    public static final String PLUGIN_ID = "exercise-submitter-eclipse";
 
-	private static Activator plugin;
+    private static Activator plugin;
 
-	private static EclipseManager EManager = new EclipseManager();
+    private static EclipseManager EManager = new EclipseManager();
 
-	public Activator() {
-	}
+    public Activator() {
+    }
 
-	@Override
-	public void start(BundleContext context) throws Exception {
-		super.start(context);
-		plugin = this;
+    @Override
+    public void start(BundleContext context) throws Exception {
+        super.start(context);
+        plugin = this;
 
-	}
+    }
 
-	@Override
-	public void stop(BundleContext context) throws Exception {
-		plugin = null;
-		super.stop(context);
-	}
+    @Override
+    public void stop(BundleContext context) throws Exception {
+        plugin = null;
+        super.stop(context);
+    }
 
-	/**
-	 * Returns the shared instance
-	 *
-	 * @return the shared instance
-	 */
-	public static Activator getDefault() {
-		return plugin;
-	}
+    /**
+     * Returns the shared instance
+     *
+     * @return the shared instance
+     */
+    public static Activator getDefault() {
+        return plugin;
+    }
 
-	public static EclipseManager getEclipseManager() {
-		return EManager;
-	}
+    public static EclipseManager getEclipseManager() {
+        return EManager;
+    }
 
 }

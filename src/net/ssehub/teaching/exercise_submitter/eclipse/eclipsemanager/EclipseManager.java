@@ -5,22 +5,22 @@ import net.ssehub.teaching.exercise_submitter.lib.Manager;
 
 public class EclipseManager {
 
-	private Manager manager;
+    private Manager manager;
 
-	public EclipseManager() {
-		this.checkUserdata();
-	}
+    public EclipseManager() {
+        this.checkUserdata();
+    }
 
-	private void checkUserdata() {
-		if (UserHandler.getUsername() != null && UserHandler.getPassword() != null) {
-			this.manager = new Manager(UserHandler.getUsername(), UserHandler.getPassword().toCharArray());
-		}
-	}
+    private void checkUserdata() {
+        if (UserHandler.getUsername() != null && UserHandler.getPassword() != null) {
+            this.manager = new Manager(UserHandler.getUsername(), UserHandler.getPassword().toCharArray());
+        }
+    }
 
-	public Manager getManager() {
-		if (this.manager == null) {
-			// throw exception
-		}
-		return this.manager;
-	}
+    public Manager getManager() {
+        if (this.manager == null) {
+            // throw exception
+        }
+        return this.manager;
+    }
 }

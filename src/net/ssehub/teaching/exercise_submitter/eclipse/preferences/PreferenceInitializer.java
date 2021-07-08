@@ -7,10 +7,10 @@ import net.ssehub.teaching.exercise_submitter.eclipse.Activator;
 
 public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
-	@Override
-	public void initializeDefaultPreferences() {
-		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
+    @Override
+    public void initializeDefaultPreferences() {
+        IPreferenceStore store = Activator.getDefault().getPreferenceStore();
 
-	}
+    }
 
 }
