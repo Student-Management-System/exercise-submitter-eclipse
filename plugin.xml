@@ -96,7 +96,7 @@
             class="net.ssehub.teaching.exercise_submitter.eclipse.actions.SubmitAction" />
         <handler
             commandId="net.ssehub.teaching.exercise_submitter.eclipse.clearMarker"
-            class="net.ssehub.teaching.exercise_submitter.eclipse.actions.clearMarkerAction" />
+            class="net.ssehub.teaching.exercise_submitter.eclipse.actions.ClearMarkerAction" />
          <handler
             commandId="net.ssehub.teaching.exercise_submitter.eclipse.downloadSubmission"
             class="net.ssehub.teaching.exercise_submitter.eclipse.actions.DownloadSubmissionAction" />
