@@ -18,10 +18,7 @@ public class EclipseMarker {
 
     public static void addMarker(File file, String message, int lineNumber, Severity sev, IProject project) {
         try {
-            Pattern patt = Pattern.compile(project.getName());
-            Matcher m = patt.matcher(file.getPath());
-            m.find();
-            IFile ifile = project.getFile(file.getPath().substring(m.end()));
+            IFile ifile = project.getFile(file.getPath());
             IMarker marker = ifile.createMarker(MARKER_TYPE);
             marker.setAttribute(IMarker.MESSAGE, message);
             Converter.getIMarkerSeverity(sev, marker);
