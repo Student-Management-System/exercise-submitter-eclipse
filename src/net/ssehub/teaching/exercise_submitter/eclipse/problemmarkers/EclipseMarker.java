@@ -1,8 +1,6 @@
 package net.ssehub.teaching.exercise_submitter.eclipse.problemmarkers;
 
 import java.io.File;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
