@@ -16,9 +16,6 @@ public class Activator extends AbstractUIPlugin {
 
     private static EclipseManager eclipseManager = new EclipseManager();
 
-    public Activator() {
-    }
-
     @Override
     public void start(BundleContext context) throws Exception {
         super.start(context);

@@ -21,8 +21,8 @@ import net.ssehub.teaching.exercise_submitter.lib.Submitter;
 /**
  * Submits the selected project. Lets the user choose which assignment the project should be submitted to.
  * 
- * @author Lukas
  * @author Adam
+ * @author Lukas
  */
 public class SubmitAction extends AbstractSingleProjectAction {
 
@@ -32,7 +32,7 @@ public class SubmitAction extends AbstractSingleProjectAction {
         
         if (EclipseMarker.areMarkersInProjekt(project)) {
             boolean bResult = MessageDialog.openConfirm(window.getShell(), "Exercise Submitter",
-                    "There are open errors/warnings in the selected project.\nContinue?");
+                    "There are open errors/warnings in the selected project.\n\nContinue?");
 
             if (!bResult) {
                 return;
@@ -52,6 +52,14 @@ public class SubmitAction extends AbstractSingleProjectAction {
         }
     }
     
+    /**
+     * Lets the user choose an assignment.
+     * 
+     * @param window The window to show the dialog for.
+     * @param manager The {@link Manager} to get {@link Assignment}s from.
+     * 
+     * @return The assignment selected by the user. Empty if the user canceled.
+     */
     private Optional<Assignment> chooseAssignment(IWorkbenchWindow window, Manager manager) {
         AssignmentDialog assDialog = new AssignmentDialog(window.getShell(), manager.getAssignments(State.SUBMISSION),
                 AssignmentDialog.Sorted.NONE);
@@ -68,7 +76,15 @@ public class SubmitAction extends AbstractSingleProjectAction {
         return selected;
     }
     
-    public void onSubmissionFinished(SubmissionJob job) {
+    /**
+     * Callback that is called when the {@link SubmissionJob} has finished. This is always called, even when the
+     * submission failed.
+     * <p>
+     * Displays the submission result to the user.
+     * 
+     * @param job The {@link SubmissionJob} that finished.
+     */
+    private void onSubmissionFinished(SubmissionJob job) {
         
         String mainMessage;
         int dialogType;
