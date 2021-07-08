@@ -1,5 +1,7 @@
 package net.ssehub.teaching.exercise_submitter.eclipse.submission;
 
+import java.io.File;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
@@ -77,25 +79,54 @@ public class Submission {
     }
 
     public static void jobIsDone(SubmissionResult sresult, IProject project, Assignment assignment) {
-
+        
+        String mainMessage;
+        int dialogType;
+        
         if (sresult.isAccepted()) {
-            for (Problem problem : sresult.getProblems()) {
-                EclipseMarker.addMarker(problem.getFile().get(), problem.getMessage(), problem.getLine().get(),
-                        problem.getSeverity(), project); // noch nicht fertig dialogbox
-                // NoSuchElementException.
-            }
-            String message = "Your Project " + project.getName() + " was successfully submitted to "
-                    + assignment.getName() + "\n\n";
-            message += sresult.getProblems().size() > 0
-                    ? Integer.toString(sresult.getProblems().size())
-                            + " Problems were found in your submission.\nProblem markers were added to your project"
-                    : " ";
-            MessageDialog.openInformation(new Shell(), "Exercise Submitter", message); // green checkmark
-            // keine fehler
+            mainMessage = "Your project " + project.getName() + " was successfully submitted to assignment "
+                    + assignment.getName() + ".";
+            dialogType = MessageDialog.INFORMATION;
         } else {
-            // fehler wurden gefunden
-            MessageDialog.openError(new Shell(), "Exercise Submitter", Integer.toString(sresult.getProblems().size())
-                    + " Problems were found in your submission.\nProblem markers were added to your project");
+            mainMessage = "Your submission of project " + project.getName() + " to assignment " + assignment.getName()
+                + " was NOT accepted.";
+            dialogType = MessageDialog.ERROR;
         }
+
+        
+        int numErrors = 0;
+        int numWarnings = 0;
+        for (Problem problem : sresult.getProblems()) {
+            switch (problem.getSeverity()) {
+            case ERROR:
+                numErrors++;
+                break;
+            case WARNING:
+                numWarnings++;
+                break;
+            default:
+                break;
+            }
+            EclipseMarker.addMarker(problem.getFile().orElse(new File(".project")), problem.getMessage(),
+                    problem.getLine().orElse(-1),
+                    problem.getSeverity(), project); // noch nicht fertig dialogbox
+        }
+        
+        String problemsMessage = "";
+        if (numErrors > 0 && numWarnings > 0) {
+            problemsMessage = numErrors + " errors and " + numWarnings + " warnings were found in your submission.\n"
+                    + "Problem markers have been added to your project.";
+            
+        } else if (numErrors > 0) {
+            problemsMessage = numErrors + " errors were found in your submission.\n"
+                    + "Problem markers have been added to your project.";
+            
+        } else if (numWarnings > 0) {
+            problemsMessage = numWarnings + " warnings were found in your submission.\n"
+                    + "Problem markers have been added to your project.";
+        }
+        
+        MessageDialog.open(dialogType, new Shell(), "Exercise Submitter", mainMessage + "\n\n" + problemsMessage,
+                dialogType);
     }
 }
