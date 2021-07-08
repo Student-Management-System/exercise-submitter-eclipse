@@ -85,17 +85,17 @@ public class Submission {
                 // NoSuchElementException.
             }
             String message = "Your Project " + project.getName() + " was successfully submitted to "
-                    + assignment.getName() + "\r\n\r\n";
+                    + assignment.getName() + "\n\n";
             message += sresult.getProblems().size() > 0
                     ? Integer.toString(sresult.getProblems().size())
-                            + " Problems were found in your submission.\r\nProblem markers were added to your project"
+                            + " Problems were found in your submission.\nProblem markers were added to your project"
                     : " ";
             MessageDialog.openInformation(new Shell(), "Exercise Submitter", message); // green checkmark
             // keine fehler
         } else {
             // fehler wurden gefunden
             MessageDialog.openError(new Shell(), "Exercise Submitter", Integer.toString(sresult.getProblems().size())
-                    + " Problems were found in your submission.\r\nProblem markers were added to your project");
+                    + " Problems were found in your submission.\nProblem markers were added to your project");
         }
     }
 }
