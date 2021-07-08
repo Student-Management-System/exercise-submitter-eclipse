@@ -10,7 +10,7 @@ public class DownloadSubmissionAction extends AbstractHandler {
 
     @Override
     public Object execute(ExecutionEvent event) throws ExecutionException {
-        MessageDialog.openInformation(new Shell(), "Exercise Submitter", "Download Submission");
+        MessageDialog.openWarning(new Shell(), "Exercise Submitter", "Not yet implemented");
         return null;
     }
 
