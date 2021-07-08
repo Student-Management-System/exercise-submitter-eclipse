@@ -1,5 +1,7 @@
 package net.ssehub.teaching.exercise_submitter.eclipse.exception;
 
+import org.eclipse.swt.widgets.Shell;
+
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AdvancedExceptionDialog;
 import net.ssehub.teaching.exercise_submitter.eclipse.log.Errorlog;
 
@@ -12,9 +14,9 @@ public class AdvancedException extends Exception {
         this.log();
     }
 
-    public void show() {
+    public void show(Shell shell) {
         AdvancedExceptionDialog ae = new AdvancedExceptionDialog(this.getMessage(), this);
-        ae.open();
+        ae.open(shell);
     }
 
     private void log() {

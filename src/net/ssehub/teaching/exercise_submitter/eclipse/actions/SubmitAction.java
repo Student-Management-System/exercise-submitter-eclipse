@@ -47,7 +47,8 @@ public class SubmitAction extends AbstractSingleProjectAction {
             Submitter submitter = manager.getSubmitter(assignment.get());
             // TODO: verschiedene Hausaufgaben noch hinzufügen?
 
-            SubmissionJob sj = new SubmissionJob(submitter, project, assignment.get(), this::onSubmissionFinished);
+            SubmissionJob sj = new SubmissionJob(submitter, project, assignment.get(), window.getShell(),
+                    this::onSubmissionFinished);
             sj.setUser(true);
             sj.schedule();
         }
@@ -133,7 +134,7 @@ public class SubmitAction extends AbstractSingleProjectAction {
                     + "Problem markers have been added to your project.";
         }
         
-        MessageDialog.open(dialogType, new Shell(), "Exercise Submitter", mainMessage + "\n\n" + problemsMessage,
+        MessageDialog.open(dialogType, job.getShell(), "Exercise Submitter", mainMessage + "\n\n" + problemsMessage,
                 dialogType);
     }
 

@@ -9,6 +9,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ILock;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AdvancedExceptionDialog;
 import net.ssehub.teaching.exercise_submitter.lib.Assignment;
@@ -32,6 +33,7 @@ public class SubmissionJob extends Job {
     private Submitter submitter;
     private IProject project;
     private Assignment assigment;
+    private Shell shell;
 
     /**
      * Creates an instance.
@@ -39,16 +41,19 @@ public class SubmissionJob extends Job {
      * @param submitter The submitter to use.
      * @param project The project to submit.
      * @param assignment The assignment to submit to.
+     * @param shell The shell that the event originated from.
      * @param callback The callback to call once we are finished.
      */
-    public SubmissionJob(Submitter submitter, IProject project, Assignment assignment,
+    public SubmissionJob(Submitter submitter, IProject project, Assignment assignment, Shell shell,
             Consumer<SubmissionJob> callback) {
         super("Submission Job");
+        this.callback = callback;
+        
         this.submitter = submitter;
         this.result = null;
         this.project = project;
         this.assigment = assignment;
-        this.callback = callback;
+        this.shell = shell;
     }
     
     /**
@@ -77,6 +82,15 @@ public class SubmissionJob extends Job {
     public SubmissionResult getSubmissionResult() {
         return result;
     }
+    
+    /**
+     * Returns the shell that the starting event originated from.
+     * 
+     * @return The shell.
+     */
+    public Shell getShell() {
+        return shell;
+    }
 
     @Override
     protected IStatus run(IProgressMonitor monitor) {
@@ -91,7 +105,7 @@ public class SubmissionJob extends Job {
             });
         } catch (SubmissionException | IllegalArgumentException ex) {
             Display.getDefault().asyncExec(() -> {
-                new AdvancedExceptionDialog("Submitting failed", ex).open(); // TODO: noch verbessern
+                new AdvancedExceptionDialog("Submitting failed", ex).open(shell); // TODO: noch verbessern
             });
 
         } finally {

@@ -13,8 +13,8 @@ public class UserException extends Exception {
         super(message);
     }
 
-    public void show() {
-        MessageDialog.openError(new Shell(), "Error", this.getMessage());
+    public void show(Shell shell) {
+        MessageDialog.openError(shell, "Error", this.getMessage());
     }
 
 }

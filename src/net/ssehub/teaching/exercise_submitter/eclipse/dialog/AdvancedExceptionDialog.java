@@ -21,9 +21,9 @@ public class AdvancedExceptionDialog {
         this.exc = exc;
     }
 
-    public void open() {
+    public void open(Shell shell) {
         MultiStatus status = createMultiStatus(this.exc);
-        ErrorDialog.openError(new Shell(), "Error", this.message, status);
+        ErrorDialog.openError(shell, "Error", this.message, status);
     }
 
     private static MultiStatus createMultiStatus(Throwable t) {
