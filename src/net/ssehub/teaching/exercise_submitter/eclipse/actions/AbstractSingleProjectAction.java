@@ -19,7 +19,7 @@ import org.eclipse.ui.IWorkbenchWindow;
  * 
  * @author Adam
  */
-public abstract class AbstractSingleProjectAction extends AbstractHandler {
+abstract class AbstractSingleProjectAction extends AbstractHandler {
 
     @Override
     public Object execute(ExecutionEvent event) throws ExecutionException {

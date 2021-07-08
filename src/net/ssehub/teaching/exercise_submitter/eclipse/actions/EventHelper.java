@@ -11,7 +11,7 @@ import org.eclipse.ui.IWorkbenchWindow;
  * 
  * @author Adam
  */
-public class EventHelper {
+class EventHelper {
 
     /**
      * No instances.
