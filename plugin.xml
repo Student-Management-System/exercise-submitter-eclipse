@@ -16,11 +16,14 @@
             
             <menu
                 id="net.ssehub.teaching.exercise_submitter.eclipse"
-                label="Exercise Submitter (New)">
+                label="Exercise Submitter">
                 
                 <command
                     commandId="net.ssehub.teaching.exercise_submitter.eclipse.submit"
                     tooltip="Submit the selected project" />
+                <command 
+                	commandId="net.ssehub.teaching.exercise_submitter.eclipse.checkSubmission"
+                	tooltip="Check if submission on server matches local project"/>   
                 <command 
                 	commandId="net.ssehub.teaching.exercise_submitter.eclipse.clearMarker"
                 	tooltip="Clear all Submitter Marker from Selected Projekt"/>   
@@ -32,11 +35,10 @@
         point="org.eclipse.ui.menus">
         
         <menuContribution
-            locationURI="menu:org.eclipse.ui.main.menu?after=window">
-            
+            locationURI="menu:org.eclipse.ui.main.menu?before=window">
             
             <menu
-                id="net.ssehub.teaching.exercise_submitter.eclipse.mainMenue"
+                id="net.ssehub.teaching.exercise_submitter.eclipse.mainMenu"
                 label="Exercise Submitter">
                 
                 <command
@@ -44,10 +46,10 @@
                     tooltip="Download Submission" />
                  <command
                     commandId="net.ssehub.teaching.exercise_submitter.eclipse.showAssignments"
-                    tooltip="Show all Assignments" />
+                    tooltip="Show Assignments" />
                  <command
                     commandId="net.ssehub.teaching.exercise_submitter.eclipse.configure"
-                    tooltip="Open Configure Tab" />
+                    tooltip="Configure" />
                  <command
                     commandId="net.ssehub.teaching.exercise_submitter.eclipse.help"
                     tooltip="Help" />
@@ -60,7 +62,7 @@
        <page
              class="net.ssehub.teaching.exercise_submitter.eclipse.preferences.PreferencePage"
              id="net.ssehub.teaching.exercise_submitter.eclipse.preferences.PreferencePage"
-             name="Exercise Submitter Page">
+             name="Exercise Submitter">
        </page>
     </extension>
     
@@ -70,9 +72,12 @@
         <command
             id="net.ssehub.teaching.exercise_submitter.eclipse.submit"
             name="Submit" />
+        <command
+            id="net.ssehub.teaching.exercise_submitter.eclipse.checkSubmission"
+            name="Check Submission" />
        	<command
             id="net.ssehub.teaching.exercise_submitter.eclipse.clearMarker"
-            name="Clear Marker" />
+            name="Clear Problem Markers" />
         <command
             id="net.ssehub.teaching.exercise_submitter.eclipse.downloadSubmission"
             name="Download Submission" />
@@ -85,7 +90,6 @@
         <command
             id="net.ssehub.teaching.exercise_submitter.eclipse.help"
             name="Help" />
-        
     </extension>
     
     <extension
@@ -94,6 +98,9 @@
         <handler
             commandId="net.ssehub.teaching.exercise_submitter.eclipse.submit"
             class="net.ssehub.teaching.exercise_submitter.eclipse.actions.SubmitAction" />
+        <handler
+            commandId="net.ssehub.teaching.exercise_submitter.eclipse.checkSubmission"
+            class="net.ssehub.teaching.exercise_submitter.eclipse.actions.CheckSubmission" />
         <handler
             commandId="net.ssehub.teaching.exercise_submitter.eclipse.clearMarker"
             class="net.ssehub.teaching.exercise_submitter.eclipse.actions.ClearMarkerAction" />
