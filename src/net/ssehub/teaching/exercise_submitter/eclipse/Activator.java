@@ -1,8 +1,13 @@
 package net.ssehub.teaching.exercise_submitter.eclipse;
 
+import org.eclipse.equinox.security.storage.ISecurePreferences;
+import org.eclipse.equinox.security.storage.SecurePreferencesFactory;
+import org.eclipse.equinox.security.storage.StorageException;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
+import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AdvancedExceptionDialog;
 import net.ssehub.teaching.exercise_submitter.eclipse.preferences.PreferencePage;
 import net.ssehub.teaching.exercise_submitter.lib.Manager;
 
@@ -45,10 +50,16 @@ public class Activator extends AbstractUIPlugin {
      * May be called multiple times, if the username or password in the preference store change.
      */
     public synchronized void initManager() {
-        String username = getPreferenceStore().getString(PreferencePage.KEY_USERNAME);
-        String password = getPreferenceStore().getString(PreferencePage.KEY_PASSWORD);
-        
-        manager = new Manager(username, password.toCharArray());
+        ISecurePreferences securePreferences = SecurePreferencesFactory.getDefault();
+        try {
+            String username = securePreferences.get(PreferencePage.KEY_USERNAME, ""); // 1.05 1.17
+            String password = securePreferences.get(PreferencePage.KEY_PASSWORD, "");
+            manager = new Manager(username, password.toCharArray());
+        }
+            catch( StorageException ex) {
+                AdvancedExceptionDialog ae = new AdvancedExceptionDialog("Unexpected Error occured", ex);
+                ae.open(Display.getCurrent().getActiveShell());
+            }
     }
     
     /**
