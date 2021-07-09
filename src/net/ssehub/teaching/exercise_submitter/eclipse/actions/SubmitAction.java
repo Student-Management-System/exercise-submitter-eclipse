@@ -119,6 +119,13 @@ public class SubmitAction extends AbstractSingleProjectAction {
                     problem.getSeverity(), job.getProject()); // TODO: noch nicht fertig dialogbox
         }
         
+        String problemsMessage = createProblemMessage(numErrors, numWarnings);
+        
+        MessageDialog.open(dialogType, job.getShell(), "Exercise Submitter", mainMessage + "\n\n" + problemsMessage,
+                dialogType);
+    }
+    
+    private String createProblemMessage(int numErrors, int numWarnings) {
         String problemsMessage = "";
         if (numErrors > 0 && numWarnings > 0) {
             problemsMessage = numErrors + " errors and " + numWarnings + " warnings were found in your submission.\n"
@@ -132,9 +139,7 @@ public class SubmitAction extends AbstractSingleProjectAction {
             problemsMessage = numWarnings + " warnings were found in your submission.\n"
                     + "Problem markers have been added to your project.";
         }
-        
-        MessageDialog.open(dialogType, job.getShell(), "Exercise Submitter", mainMessage + "\n\n" + problemsMessage,
-                dialogType);
+        return problemsMessage;
     }
 
 }
