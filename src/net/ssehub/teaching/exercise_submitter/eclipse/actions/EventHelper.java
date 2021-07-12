@@ -2,6 +2,7 @@ package net.ssehub.teaching.exercise_submitter.eclipse.actions;
 
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -39,7 +40,7 @@ class EventHelper {
         if (window != null) {
             shell = window.getShell();
         } else {
-            shell = new Shell();
+            shell = Display.getCurrent().getActiveShell();
         }
         
         return shell;
