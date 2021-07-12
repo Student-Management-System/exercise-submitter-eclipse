@@ -105,13 +105,12 @@ public class SubmitAction extends AbstractSingleProjectAction {
         int numWarnings = 0;
         for (Problem problem : job.getSubmissionResult().getProblems()) {
             switch (problem.getSeverity()) {
-            case ERROR:
-                numErrors++;
-                break;
             case WARNING:
                 numWarnings++;
                 break;
+            case ERROR:
             default:
+                numErrors++;
                 break;
             }
             EclipseMarker.addMarker(problem.getFile().orElse(new File(".project")), problem.getMessage(),
@@ -125,6 +124,14 @@ public class SubmitAction extends AbstractSingleProjectAction {
                 dialogType);
     }
     
+    /**
+     * Creates a message describing the number of problems. Empty if on problems are present.
+     * 
+     * @param numErrors The number of problems of type error.
+     * @param numWarnings The number of problems of type warning.
+     * 
+     * @return A message describing the number of errors and warnings.
+     */
     private String createProblemMessage(int numErrors, int numWarnings) {
         String problemsMessage = "";
         if (numErrors > 0 && numWarnings > 0) {
