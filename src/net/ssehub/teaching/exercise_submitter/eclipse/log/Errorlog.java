@@ -9,19 +9,44 @@ import net.ssehub.teaching.exercise_submitter.eclipse.Activator;
 /**
  * Utility methods for error logging.
  * 
+ * @author Adam
  * @author Lukas
  */
 public class Errorlog {
     
-    private static ILog ilog = Activator.getDefault().getLog();
+    private static final ILog LOG = Activator.getDefault().getLog();
 
     /**
-     * Logs an exception text.
-     * 
-     * @param exception The exception text.
+     * No instances.
      */
-    public static void add(String exception) {
-        Errorlog.ilog.log(new Status(IStatus.ERROR, Activator.PLUGIN_ID, exception));
+    private Errorlog() {
+    }
+    
+    /**
+     * Logs an error message.
+     * 
+     * @param message The error text.
+     */
+    public static void error(String message) {
+        LOG.log(new Status(IStatus.ERROR, Activator.PLUGIN_ID, message));
+    }
+    
+    /**
+     * Logs a warning message.
+     * 
+     * @param message The warning text.
+     */
+    public static void warning(String message) {
+        LOG.log(new Status(IStatus.WARNING, Activator.PLUGIN_ID, message));
+    }
+    
+    /**
+     * Logs an info message.
+     * 
+     * @param message The info text.
+     */
+    public static void info(String message) {
+        LOG.log(new Status(IStatus.INFO, Activator.PLUGIN_ID, message));
     }
 
 }
