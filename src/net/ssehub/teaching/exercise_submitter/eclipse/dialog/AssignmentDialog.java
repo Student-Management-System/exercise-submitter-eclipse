@@ -65,7 +65,7 @@ public class AssignmentDialog extends Dialog {
                     AssignmentDialog.this.selectedAssignment = AssignmentDialog.this.assignments.get(selections[0]);
 
                 } else {
-                    // exception
+                    // TODO: exception
                 }
             }
         });
