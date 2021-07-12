@@ -14,16 +14,31 @@ import org.eclipse.swt.widgets.Shell;
 
 import net.ssehub.teaching.exercise_submitter.lib.Assignment;
 
+/**
+ * A dialog for showing a list of {@link Assignment}s. Also allows the user to select one.
+ *  
+ * @author Lukas
+ */
 public class AssignmentDialog extends Dialog {
 
     private java.util.List<Assignment> assignments;
     private Assignment selectedAssignment;
     private Sorted sort;
 
+    /**
+     * Sorting options for assignments.
+     */
     public enum Sorted {
         GROUPED, NONE
     }
 
+    /**
+     * Creates a dialog with the given assignments.
+     * 
+     * @param parentShell The parent shell to open this dialog for.
+     * @param assignments The assignments to display.
+     * @param sort The sorting of the assignments.
+     */
     public AssignmentDialog(Shell parentShell, java.util.List<Assignment> assignments, Sorted sort) {
         super(parentShell);
         this.assignments = assignments;
@@ -31,6 +46,11 @@ public class AssignmentDialog extends Dialog {
         this.sort = sort;
     }
 
+    /**
+     * Returns the assignment selected by the user.
+     * 
+     * @return The assignment that was selected by the user.
+     */
     public Assignment getSelectedAssignment() {
         return this.selectedAssignment;
     }
