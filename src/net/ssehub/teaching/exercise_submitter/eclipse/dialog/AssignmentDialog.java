@@ -1,6 +1,7 @@
 package net.ssehub.teaching.exercise_submitter.eclipse.dialog;
 
 import java.util.Comparator;
+import java.util.Optional;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
@@ -22,7 +23,7 @@ import net.ssehub.teaching.exercise_submitter.lib.Assignment;
 public class AssignmentDialog extends Dialog {
 
     private java.util.List<Assignment> assignments;
-    private Assignment selectedAssignment;
+    private Optional<Assignment> selectedAssignment;
     private Sorted sort;
 
     /**
@@ -42,7 +43,7 @@ public class AssignmentDialog extends Dialog {
     public AssignmentDialog(Shell parentShell, java.util.List<Assignment> assignments, Sorted sort) {
         super(parentShell);
         this.assignments = assignments;
-        this.selectedAssignment = null;
+        this.selectedAssignment = Optional.empty();
         this.sort = sort;
     }
 
@@ -51,7 +52,7 @@ public class AssignmentDialog extends Dialog {
      * 
      * @return The assignment that was selected by the user.
      */
-    public Assignment getSelectedAssignment() {
+    public Optional<Assignment> getSelectedAssignment() {
         return this.selectedAssignment;
     }
 
@@ -80,12 +81,8 @@ public class AssignmentDialog extends Dialog {
             @Override
             public void widgetSelected(SelectionEvent event) {
                 int[] selections = list.getSelectionIndices();
-                if (selections.length > 0) {
-
-                    AssignmentDialog.this.selectedAssignment = AssignmentDialog.this.assignments.get(selections[0]);
-
-                } else {
-                    // TODO: exception
+                if (selections.length == 1) {
+                    selectedAssignment = Optional.of(assignments.get(selections[0]));
                 }
             }
         });
