@@ -7,7 +7,6 @@ import org.eclipse.equinox.security.storage.SecurePreferencesFactory;
 import org.eclipse.equinox.security.storage.StorageException;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.StringFieldEditor;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
@@ -52,9 +51,9 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
         try {
             this.username.setStringValue(SECURE_PREFERENCES.get(KEY_USERNAME, ""));
             this.password.setStringValue(SECURE_PREFERENCES.get(KEY_PASSWORD, ""));
+            
         } catch (StorageException ex) {
-            AdvancedExceptionDialog ae = new AdvancedExceptionDialog("Unexpected Error occured", ex);
-            ae.open(Display.getCurrent().getActiveShell());
+            AdvancedExceptionDialog.showUnexpectedExceptionDialog(ex, "Failed to load preferences");
         }
     }
 
@@ -66,10 +65,9 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
             SECURE_PREFERENCES.flush();
             
             Activator.getDefault().initManager();
+            
         } catch (StorageException | IOException ex) {
-            AdvancedExceptionDialog ae
-                    = new AdvancedExceptionDialog("Unexpected error occured while saving preferences", ex);
-            ae.open(Display.getCurrent().getActiveShell());
+            AdvancedExceptionDialog.showUnexpectedExceptionDialog(ex, "Failed to store preferences");
         }
         
         return true;

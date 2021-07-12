@@ -9,6 +9,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 
+import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AdvancedExceptionDialog;
 import net.ssehub.teaching.exercise_submitter.lib.Problem.Severity;
 
 /**
@@ -52,8 +53,9 @@ public class EclipseMarker {
                 lineNumber = 1;
             }
             marker.setAttribute(IMarker.LINE_NUMBER, lineNumber);
+            
         } catch (CoreException e) {
-            System.out.println(e.getMessage());
+            AdvancedExceptionDialog.showUnexpectedExceptionDialog(e, "Failed to add problem marker to project");
         }
     }
 
@@ -66,6 +68,7 @@ public class EclipseMarker {
         try {
             project.deleteMarkers(MARKER_TYPE, false, IResource.DEPTH_INFINITE);
         } catch (CoreException e) {
+            AdvancedExceptionDialog.showUnexpectedExceptionDialog(e, "Failed to delete problem markers from project");
         }
     }
 
@@ -85,6 +88,7 @@ public class EclipseMarker {
                         || marker.getAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR) == IMarker.SEVERITY_ERROR)
                 .count() > 0;
         } catch (CoreException e) {
+            AdvancedExceptionDialog.showUnexpectedExceptionDialog(e, "Failed to search problem markers in project");
         }
         return available;
     }

@@ -1,7 +1,6 @@
 package net.ssehub.teaching.exercise_submitter.eclipse;
 
 import org.eclipse.equinox.security.storage.StorageException;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -53,9 +52,9 @@ public class Activator extends AbstractUIPlugin {
             String password = PreferencePage.SECURE_PREFERENCES.get(PreferencePage.KEY_PASSWORD, "");
             
             manager = new Manager(username, password.toCharArray());
+            
         } catch (StorageException ex) {
-            AdvancedExceptionDialog ae = new AdvancedExceptionDialog("Unexpected Error occured", ex);
-            ae.open(Display.getCurrent().getActiveShell());
+            AdvancedExceptionDialog.showUnexpectedExceptionDialog(ex, "Failed to load login data from preferences");
         }
     }
     

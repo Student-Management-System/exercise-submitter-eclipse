@@ -105,7 +105,7 @@ public class SubmissionJob extends Job {
             });
         } catch (SubmissionException | IllegalArgumentException ex) {
             Display.getDefault().asyncExec(() -> {
-                new AdvancedExceptionDialog("Submitting failed", ex).open(shell); // TODO: noch verbessern
+                AdvancedExceptionDialog.showUnexpectedExceptionDialog(ex, "Failed to submit");
             });
 
         } finally {
