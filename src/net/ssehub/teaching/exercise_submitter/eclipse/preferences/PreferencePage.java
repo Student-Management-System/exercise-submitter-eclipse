@@ -12,6 +12,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import net.ssehub.teaching.exercise_submitter.eclipse.Activator;
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AdvancedExceptionDialog;
+import net.ssehub.teaching.exercise_submitter.eclipse.log.EclipseLog;
 
 /**
  * Handler for the preference page.
@@ -41,6 +42,8 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 
     @Override
     public void createFieldEditors() {
+        EclipseLog.info("Creating preference page");
+        
         this.username = new StringFieldEditor(KEY_USERNAME, "Username:", this.getFieldEditorParent());
         this.addField(username);
        
@@ -59,6 +62,8 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 
     @Override
     public boolean performOk() {
+        EclipseLog.info("Saving preferences");
+        
         try {
             SECURE_PREFERENCES.put(KEY_USERNAME, this.username.getStringValue(), false);
             SECURE_PREFERENCES.put(KEY_PASSWORD, this.password.getStringValue(), true);

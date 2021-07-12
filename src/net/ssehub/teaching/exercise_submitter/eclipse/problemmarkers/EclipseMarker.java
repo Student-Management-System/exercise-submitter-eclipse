@@ -10,6 +10,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AdvancedExceptionDialog;
+import net.ssehub.teaching.exercise_submitter.eclipse.log.EclipseLog;
 import net.ssehub.teaching.exercise_submitter.lib.Problem.Severity;
 
 /**
@@ -65,6 +66,7 @@ public class EclipseMarker {
      * @param project The project to clear all our markers from.
      */
     public static void clearMarkerFromProjekt(IProject project) {
+        EclipseLog.info("Clearing markers from project " + project.getName());
         try {
             project.deleteMarkers(MARKER_TYPE, false, IResource.DEPTH_INFINITE);
         } catch (CoreException e) {

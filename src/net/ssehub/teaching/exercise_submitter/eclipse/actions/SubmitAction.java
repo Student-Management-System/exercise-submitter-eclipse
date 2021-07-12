@@ -10,6 +10,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import net.ssehub.teaching.exercise_submitter.eclipse.Activator;
 import net.ssehub.teaching.exercise_submitter.eclipse.background.SubmissionJob;
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AssignmentDialog;
+import net.ssehub.teaching.exercise_submitter.eclipse.log.EclipseLog;
 import net.ssehub.teaching.exercise_submitter.eclipse.problemmarkers.EclipseMarker;
 import net.ssehub.teaching.exercise_submitter.lib.Assignment;
 import net.ssehub.teaching.exercise_submitter.lib.Assignment.State;
@@ -27,6 +28,8 @@ public class SubmitAction extends AbstractSingleProjectAction {
 
     @Override
     protected void execute(IProject project, IWorkbenchWindow window) {
+        EclipseLog.info("Starting submision of project " + project.getName());
+        
         EclipseMarker.clearMarkerFromProjekt(project);
         
         if (EclipseMarker.areMarkersInProjekt(project)) {
@@ -34,22 +37,30 @@ public class SubmitAction extends AbstractSingleProjectAction {
                     "There are open errors/warnings in the selected project.\n\nContinue?");
 
             if (!bResult) {
+                EclipseLog.info("Submission aborted by user due to errors/warnings in project");
                 return;
             }
         }
         
         Manager manager = Activator.getDefault().getManager();
         
+        EclipseLog.info("Showing assignment selector to user");
         Optional<Assignment> assignment = chooseAssignment(window, manager);
         
         if (assignment.isPresent()) {
+            EclipseLog.info("User selected assignment " + assignment.get().getName());
+            
             Submitter submitter = manager.getSubmitter(assignment.get());
             // TODO: verschiedene Hausaufgaben noch hinzufügen?
 
+            EclipseLog.info("Starting submission job");
             SubmissionJob sj = new SubmissionJob(submitter, project, assignment.get(), window.getShell(),
                     this::onSubmissionFinished);
             sj.setUser(true);
             sj.schedule();
+            
+        } else {
+            EclipseLog.info("User canceled at assignment selection");
         }
     }
     
@@ -86,21 +97,25 @@ public class SubmitAction extends AbstractSingleProjectAction {
      * @param job The {@link SubmissionJob} that finished.
      */
     private void onSubmissionFinished(SubmissionJob job) {
+        EclipseLog.info("Submission job finished (project " + job.getProject().getName() + ")");
         
         String mainMessage;
         int dialogType;
         
         if (job.getSubmissionResult().isAccepted()) {
+            EclipseLog.info("Submission was accepted");
             mainMessage = "Your project " + job.getProject().getName() + " was successfully submitted to assignment "
                     + job.getAssigment().getName() + ".";
             dialogType = MessageDialog.INFORMATION;
+            
         } else {
+            EclipseLog.info("Submission was not accepted");
             mainMessage = "Your submission of project " + job.getProject().getName() + " to assignment "
                     + job.getAssigment().getName() + " was NOT accepted.";
             dialogType = MessageDialog.ERROR;
         }
 
-        
+        EclipseLog.info("Adding " + job.getSubmissionResult().getProblems().size() + " problem markers");
         int numErrors = 0;
         int numWarnings = 0;
         for (Problem problem : job.getSubmissionResult().getProblems()) {

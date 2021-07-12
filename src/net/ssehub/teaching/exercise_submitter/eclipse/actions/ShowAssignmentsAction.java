@@ -6,6 +6,7 @@ import org.eclipse.core.commands.ExecutionException;
 
 import net.ssehub.teaching.exercise_submitter.eclipse.Activator;
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AssignmentDialog;
+import net.ssehub.teaching.exercise_submitter.eclipse.log.EclipseLog;
 
 /**
  * Shows all assignments and their current status to the user.
@@ -16,6 +17,7 @@ public class ShowAssignmentsAction extends AbstractHandler {
 
     @Override
     public Object execute(ExecutionEvent event) throws ExecutionException {
+        EclipseLog.info("Showing overview of all assignments");
         AssignmentDialog assDialog = new AssignmentDialog(EventHelper.getShell(event),
                 Activator.getDefault().getManager().getAllAssignments(), AssignmentDialog.Sorted.GROUPED);
         assDialog.open();

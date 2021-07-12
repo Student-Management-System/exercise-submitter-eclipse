@@ -10,6 +10,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.swt.widgets.Display;
 
 import net.ssehub.teaching.exercise_submitter.eclipse.Activator;
+import net.ssehub.teaching.exercise_submitter.eclipse.log.EclipseLog;
 
 /**
  * Utility class for showing error dialogs for exceptions.
@@ -35,6 +36,8 @@ public class AdvancedExceptionDialog {
     public static void showUnexpectedExceptionDialog(Throwable exc, String reason) {
         StringWriter stacktrace = new StringWriter();
         exc.printStackTrace(new PrintWriter(stacktrace));
+        
+        EclipseLog.error("Unexpected exception: " + reason + "\n\n" + stacktrace.toString());
         
         IStatus inner = Status.error(stacktrace.toString());
         MultiStatus status = new MultiStatus(Activator.PLUGIN_ID, IStatus.ERROR, new IStatus[] {inner}, reason, null);

@@ -7,19 +7,19 @@ import org.eclipse.core.runtime.Status;
 import net.ssehub.teaching.exercise_submitter.eclipse.Activator;
 
 /**
- * Utility methods for error logging.
+ * Utility methods for logging to the eclipse log.
  * 
  * @author Adam
  * @author Lukas
  */
-public class Errorlog {
+public class EclipseLog {
     
     private static final ILog LOG = Activator.getDefault().getLog();
 
     /**
      * No instances.
      */
-    private Errorlog() {
+    private EclipseLog() {
     }
     
     /**
