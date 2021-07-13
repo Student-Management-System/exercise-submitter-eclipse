@@ -38,8 +38,8 @@ public class AdvancedExceptionDialog {
         exc.printStackTrace(new PrintWriter(stacktrace));
         
         EclipseLog.error("Unexpected exception: " + reason + "\n\n" + stacktrace.toString());
-        
-        IStatus inner = Status.error(stacktrace.toString());
+       
+        IStatus inner = new Status(IStatus.ERROR, Activator.PLUGIN_ID,stacktrace.toString());
         MultiStatus status = new MultiStatus(Activator.PLUGIN_ID, IStatus.ERROR, new IStatus[] {inner}, reason, null);
         // TODO: the stack trace cannot be easily copied in this dialog... maybe use a different method?
         
