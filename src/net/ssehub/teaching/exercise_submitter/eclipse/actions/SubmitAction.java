@@ -88,7 +88,7 @@ public class SubmitAction extends AbstractSingleProjectAction {
                 selected = assDialog.getSelectedAssignment();
                 
                 if(dialogResult == 1)  {
-                    return null;
+                    return Optional.empty();
                 }
                 
             } while (dialogResult == 0 && selected.isEmpty());
