@@ -1,5 +1,7 @@
 package net.ssehub.teaching.exercise_submitter.eclipse;
 
+import java.util.NoSuchElementException;
+
 import org.eclipse.equinox.security.storage.StorageException;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -7,7 +9,9 @@ import org.osgi.framework.BundleContext;
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AdvancedExceptionDialog;
 import net.ssehub.teaching.exercise_submitter.eclipse.log.EclipseLog;
 import net.ssehub.teaching.exercise_submitter.eclipse.preferences.PreferencePage;
-import net.ssehub.teaching.exercise_submitter.lib.Manager;
+import net.ssehub.teaching.exercise_submitter.lib.ExerciseSubmitterManager;
+import net.ssehub.teaching.exercise_submitter.lib.student_management_system.AuthenticationException;
+import net.ssehub.teaching.exercise_submitter.lib.student_management_system.NetworkException;
 
 /**
  * The activator class controls the plug-in life cycle.
@@ -18,7 +22,7 @@ public class Activator extends AbstractUIPlugin {
 
     private static Activator plugin;
 
-    private Manager manager;
+    private ExerciseSubmitterManager manager;
 
     @Override
     public void start(BundleContext context) throws Exception {
@@ -44,7 +48,7 @@ public class Activator extends AbstractUIPlugin {
     }
     
     /**
-     * Initializes the {@link Manager} with the username and password from the preference store.
+     * Initializes the {@link ExerciseSubmitterManager} with the username and password from the preference store.
      * <p>
      * May be called multiple times, if the username or password in the preference store change.
      */
@@ -54,19 +58,29 @@ public class Activator extends AbstractUIPlugin {
             String password = PreferencePage.SECURE_PREFERENCES.get(PreferencePage.KEY_PASSWORD, "");
             
             EclipseLog.info("Creating manager with username " + username);
-            manager = new Manager(username, password.toCharArray());
+            manager = new ExerciseSubmitterManager(username, password, "java", "wise2021");
+            // TODO: get course name and semester from config
             
         } catch (StorageException ex) {
             AdvancedExceptionDialog.showUnexpectedExceptionDialog(ex, "Failed to load login data from preferences");
+        } catch (NetworkException e) {
+            AdvancedExceptionDialog.showUnexpectedExceptionDialog(e, "Failed to connect to student management system");
+            // TODO: more user-friendly dialog?
+        } catch (AuthenticationException e) {
+            AdvancedExceptionDialog.showUnexpectedExceptionDialog(e, "Failed to log into student management system");
+            // TODO: more user-friendly dialog
+        } catch (NoSuchElementException e) {
+            AdvancedExceptionDialog.showUnexpectedExceptionDialog(e,
+                    "Could not find course in student mangement system");
         }
     }
     
     /**
-     * Returns the {@link Manager}. Manager is lazily initialized.
+     * Returns the {@link ExerciseSubmitterManager}. Manager is lazily initialized.
      * 
-     * @return The {@link Manager}.
+     * @return The {@link ExerciseSubmitterManager}.
      */
-    public synchronized Manager getManager() {
+    public synchronized ExerciseSubmitterManager getManager() {
         if (manager == null) {
             initManager();
         }

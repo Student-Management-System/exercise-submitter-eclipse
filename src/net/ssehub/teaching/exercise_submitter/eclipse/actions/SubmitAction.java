@@ -9,14 +9,16 @@ import org.eclipse.ui.IWorkbenchWindow;
 
 import net.ssehub.teaching.exercise_submitter.eclipse.Activator;
 import net.ssehub.teaching.exercise_submitter.eclipse.background.SubmissionJob;
+import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AdvancedExceptionDialog;
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AssignmentDialog;
 import net.ssehub.teaching.exercise_submitter.eclipse.log.EclipseLog;
 import net.ssehub.teaching.exercise_submitter.eclipse.problemmarkers.EclipseMarker;
-import net.ssehub.teaching.exercise_submitter.lib.Assignment;
-import net.ssehub.teaching.exercise_submitter.lib.Assignment.State;
-import net.ssehub.teaching.exercise_submitter.lib.Manager;
-import net.ssehub.teaching.exercise_submitter.lib.Problem;
-import net.ssehub.teaching.exercise_submitter.lib.Submitter;
+import net.ssehub.teaching.exercise_submitter.lib.ExerciseSubmitterManager;
+import net.ssehub.teaching.exercise_submitter.lib.data.Assignment;
+import net.ssehub.teaching.exercise_submitter.lib.student_management_system.AuthenticationException;
+import net.ssehub.teaching.exercise_submitter.lib.student_management_system.NetworkException;
+import net.ssehub.teaching.exercise_submitter.lib.submission.Problem;
+import net.ssehub.teaching.exercise_submitter.lib.submission.Submitter;
 
 /**
  * Submits the selected project. Lets the user choose which assignment the project should be submitted to.
@@ -42,7 +44,7 @@ public class SubmitAction extends AbstractSingleProjectAction {
             }
         }
         
-        Manager manager = Activator.getDefault().getManager();
+        ExerciseSubmitterManager manager = Activator.getDefault().getManager();
         
         EclipseLog.info("Showing assignment selector to user");
         Optional<Assignment> assignment = chooseAssignment(window, manager);
@@ -68,23 +70,32 @@ public class SubmitAction extends AbstractSingleProjectAction {
      * Lets the user choose an assignment.
      * 
      * @param window The window to show the dialog for.
-     * @param manager The {@link Manager} to get {@link Assignment}s from.
+     * @param manager The {@link ExerciseSubmitterManager} to get {@link Assignment}s from.
      * 
      * @return The assignment selected by the user. Empty if the user canceled.
      */
-    private Optional<Assignment> chooseAssignment(IWorkbenchWindow window, Manager manager) {
-        AssignmentDialog assDialog = new AssignmentDialog(window.getShell(), manager.getAssignments(State.SUBMISSION),
-                AssignmentDialog.Sorted.NONE);
-        
-        int dialogResult;
+    private Optional<Assignment> chooseAssignment(IWorkbenchWindow window, ExerciseSubmitterManager manager) {
         Optional<Assignment> selected = Optional.empty();
         
-        do {
-            dialogResult = assDialog.open();
-            selected = assDialog.getSelectedAssignment();
+        try {
+            AssignmentDialog assDialog = new AssignmentDialog(window.getShell(), manager.getAllSubmittableAssignments(),
+                    AssignmentDialog.Sorted.NONE);
             
-        } while (dialogResult == 0 && selected.isEmpty());
-
+            int dialogResult;
+            
+            do {
+                dialogResult = assDialog.open();
+                selected = assDialog.getSelectedAssignment();
+                
+            } while (dialogResult == 0 && selected.isEmpty());
+            
+        } catch (NetworkException e) {
+            AdvancedExceptionDialog.showUnexpectedExceptionDialog(e, "Failed to connect to student management system");
+        } catch (AuthenticationException e) {
+            AdvancedExceptionDialog.showUnexpectedExceptionDialog(e,
+                    "Failed to authenticate to student management system");
+        }
+        
         return selected;
     }
     

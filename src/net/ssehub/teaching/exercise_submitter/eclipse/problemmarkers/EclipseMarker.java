@@ -11,7 +11,7 @@ import org.eclipse.core.runtime.CoreException;
 
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AdvancedExceptionDialog;
 import net.ssehub.teaching.exercise_submitter.eclipse.log.EclipseLog;
-import net.ssehub.teaching.exercise_submitter.lib.Problem.Severity;
+import net.ssehub.teaching.exercise_submitter.lib.submission.Problem.Severity;
 
 /**
  * Utility methods for working with markers in projects.

@@ -13,7 +13,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
-import net.ssehub.teaching.exercise_submitter.lib.Assignment;
+import net.ssehub.teaching.exercise_submitter.lib.data.Assignment;
 
 /**
  * A dialog for showing a list of {@link Assignment}s. Also allows the user to select one.
