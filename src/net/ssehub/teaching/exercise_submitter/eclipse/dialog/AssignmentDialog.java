@@ -1,5 +1,6 @@
 package net.ssehub.teaching.exercise_submitter.eclipse.dialog;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Optional;
 
@@ -65,6 +66,7 @@ public class AssignmentDialog extends Dialog {
         list.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
 
         if (this.sort == Sorted.GROUPED) {
+            this.assignments = new ArrayList<>(this.assignments); // create copy so that it can be sorted
             this.assignments.sort(
                     Comparator.comparing((Assignment a) -> a.getState().ordinal())
                     .thenComparing(Comparator.comparing(a -> a.getName()))); // TODO: maybe better sorting?
