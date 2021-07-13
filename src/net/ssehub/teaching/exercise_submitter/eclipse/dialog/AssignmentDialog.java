@@ -1,5 +1,6 @@
 package net.ssehub.teaching.exercise_submitter.eclipse.dialog;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Optional;
 
@@ -13,7 +14,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
-import net.ssehub.teaching.exercise_submitter.lib.Assignment;
+import net.ssehub.teaching.exercise_submitter.lib.data.Assignment;
 
 /**
  * A dialog for showing a list of {@link Assignment}s. Also allows the user to select one.
@@ -65,6 +66,7 @@ public class AssignmentDialog extends Dialog {
         list.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
 
         if (this.sort == Sorted.GROUPED) {
+            this.assignments = new ArrayList<>(this.assignments); // create copy so that it can be sorted
             this.assignments.sort(
                     Comparator.comparing((Assignment a) -> a.getState().ordinal())
                     .thenComparing(Comparator.comparing(a -> a.getName()))); // TODO: maybe better sorting?

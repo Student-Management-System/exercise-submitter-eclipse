@@ -12,10 +12,10 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AdvancedExceptionDialog;
-import net.ssehub.teaching.exercise_submitter.lib.Assignment;
-import net.ssehub.teaching.exercise_submitter.lib.SubmissionException;
-import net.ssehub.teaching.exercise_submitter.lib.SubmissionResult;
-import net.ssehub.teaching.exercise_submitter.lib.Submitter;
+import net.ssehub.teaching.exercise_submitter.lib.data.Assignment;
+import net.ssehub.teaching.exercise_submitter.lib.submission.SubmissionException;
+import net.ssehub.teaching.exercise_submitter.lib.submission.SubmissionResult;
+import net.ssehub.teaching.exercise_submitter.lib.submission.Submitter;
 
 /**
  * A background job that executes the submission.
