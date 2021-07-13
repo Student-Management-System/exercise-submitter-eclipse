@@ -87,6 +87,10 @@ public class SubmitAction extends AbstractSingleProjectAction {
                 dialogResult = assDialog.open();
                 selected = assDialog.getSelectedAssignment();
                 
+                if(dialogResult == 1)  {
+                    return null;
+                }
+                
             } while (dialogResult == 0 && selected.isEmpty());
             
         } catch (NetworkException e) {
