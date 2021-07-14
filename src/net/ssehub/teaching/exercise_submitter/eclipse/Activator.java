@@ -18,7 +18,7 @@ import net.ssehub.teaching.exercise_submitter.lib.student_management_system.Netw
  */
 public class Activator extends AbstractUIPlugin {
 
-    public static final String PLUGIN_ID = "exercise-submitter-eclipse";
+    public static final String PLUGIN_ID = "net.ssehub.teaching.exercise-submitter-eclipse";
 
     private static Activator plugin;
 

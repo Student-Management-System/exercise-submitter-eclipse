@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Exercise Submitter Eclipse
-Bundle-SymbolicName: exercise-submitter-eclipse;singleton:=true
+Bundle-SymbolicName: net.ssehub.teaching.exercise-submitter-eclipse;singleton:=true
 Bundle-Version: 0.0.1.qualifier
 Bundle-Activator: net.ssehub.teaching.exercise_submitter.eclipse.Activator
 Require-Bundle: org.eclipse.ui,
