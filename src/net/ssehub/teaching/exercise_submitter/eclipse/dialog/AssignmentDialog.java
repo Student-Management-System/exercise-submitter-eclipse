@@ -74,7 +74,7 @@ public class AssignmentDialog extends Dialog {
         table.setLayout(rw);
         container.setLayout(rw);
 
-        String[] colNames = { "Name", "State", "Group Work" };
+        String[] colNames = {"Name", "State", "Group Work"};
 
         for (String s : colNames) {
             TableColumn tc = new TableColumn(table, SWT.NONE);

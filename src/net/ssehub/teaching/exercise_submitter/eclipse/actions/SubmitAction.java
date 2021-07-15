@@ -84,14 +84,15 @@ public class SubmitAction extends AbstractSingleProjectAction {
             int dialogResult;
             
             do {
-                dialogResult = assDialog.open();
-                selected = assDialog.getSelectedAssignment();
                 
-                if(dialogResult == 1)  {
-                    return Optional.empty();
+                dialogResult = assDialog.open();
+                //only use selected Assignment if user press ok
+                if (dialogResult == AssignmentDialog.OK) {
+                    selected = assDialog.getSelectedAssignment();
                 }
                 
-            } while (dialogResult == 0 && selected.isEmpty());
+            //user press ok without selecting anything. -> Retry
+            } while (dialogResult == AssignmentDialog.OK && selected.isEmpty());
             
         } catch (NetworkException e) {
             AdvancedExceptionDialog.showUnexpectedExceptionDialog(e, "Failed to connect to student management system");
