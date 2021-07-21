@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>net.ssehub.teaching.exercise_submitter</groupId>
-	<artifactId>exercise-submitter-eclipse</artifactId>
+	<artifactId>net.ssehub.teaching.exercise-submitter-eclipse</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>eclipse-plugin</packaging>
 
