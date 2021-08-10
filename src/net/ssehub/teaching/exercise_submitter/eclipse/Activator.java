@@ -1,7 +1,5 @@
 package net.ssehub.teaching.exercise_submitter.eclipse;
 
-import java.util.NoSuchElementException;
-
 import org.eclipse.equinox.security.storage.StorageException;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -12,6 +10,7 @@ import net.ssehub.teaching.exercise_submitter.eclipse.preferences.PreferencePage
 import net.ssehub.teaching.exercise_submitter.lib.ExerciseSubmitterManager;
 import net.ssehub.teaching.exercise_submitter.lib.student_management_system.AuthenticationException;
 import net.ssehub.teaching.exercise_submitter.lib.student_management_system.NetworkException;
+import net.ssehub.teaching.exercise_submitter.lib.student_management_system.UserNotInCourseException;
 
 /**
  * The activator class controls the plug-in life cycle.
@@ -66,12 +65,13 @@ public class Activator extends AbstractUIPlugin {
         } catch (NetworkException e) {
             AdvancedExceptionDialog.showUnexpectedExceptionDialog(e, "Failed to connect to student management system");
             // TODO: more user-friendly dialog?
+        } catch (UserNotInCourseException e) {
+            AdvancedExceptionDialog.showUnexpectedExceptionDialog(e,
+                    "User not enrolled in course or course does not exist");
+            // TODO: more user-friendly dialog?
         } catch (AuthenticationException e) {
             AdvancedExceptionDialog.showUnexpectedExceptionDialog(e, "Failed to log into student management system");
             // TODO: more user-friendly dialog
-        } catch (NoSuchElementException e) {
-            AdvancedExceptionDialog.showUnexpectedExceptionDialog(e,
-                    "Could not find course in student mangement system");
         }
     }
     
