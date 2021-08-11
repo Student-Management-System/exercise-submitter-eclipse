@@ -95,6 +95,7 @@ public class Activator extends AbstractUIPlugin {
         if (manager == null) {
             initManager();
         }
+        // TODO: this returns null if init failed and thus causes NullPointerExceptions all over the place
         return manager;
     }
 
