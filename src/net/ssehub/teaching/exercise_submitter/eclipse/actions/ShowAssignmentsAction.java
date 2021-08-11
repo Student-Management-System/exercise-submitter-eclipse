@@ -11,6 +11,7 @@ import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AdvancedExceptionDi
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AssignmentDialog;
 import net.ssehub.teaching.exercise_submitter.eclipse.log.EclipseLog;
 import net.ssehub.teaching.exercise_submitter.lib.data.Assignment;
+import net.ssehub.teaching.exercise_submitter.lib.student_management_system.ApiException;
 import net.ssehub.teaching.exercise_submitter.lib.student_management_system.AuthenticationException;
 import net.ssehub.teaching.exercise_submitter.lib.student_management_system.NetworkException;
 
@@ -34,6 +35,8 @@ public class ShowAssignmentsAction extends AbstractHandler {
         } catch (AuthenticationException e) {
             AdvancedExceptionDialog.showUnexpectedExceptionDialog(e,
                     "Failed to authenticate to student management system");
+        } catch (ApiException e) {
+            AdvancedExceptionDialog.showUnexpectedExceptionDialog(e, "Generic API exception");
         }
         return null;
     }

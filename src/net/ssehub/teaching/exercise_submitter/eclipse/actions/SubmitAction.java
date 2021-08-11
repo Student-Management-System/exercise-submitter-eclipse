@@ -15,8 +15,11 @@ import net.ssehub.teaching.exercise_submitter.eclipse.log.EclipseLog;
 import net.ssehub.teaching.exercise_submitter.eclipse.problemmarkers.EclipseMarker;
 import net.ssehub.teaching.exercise_submitter.lib.ExerciseSubmitterManager;
 import net.ssehub.teaching.exercise_submitter.lib.data.Assignment;
+import net.ssehub.teaching.exercise_submitter.lib.student_management_system.ApiException;
 import net.ssehub.teaching.exercise_submitter.lib.student_management_system.AuthenticationException;
+import net.ssehub.teaching.exercise_submitter.lib.student_management_system.GroupNotFoundException;
 import net.ssehub.teaching.exercise_submitter.lib.student_management_system.NetworkException;
+import net.ssehub.teaching.exercise_submitter.lib.student_management_system.UserNotInCourseException;
 import net.ssehub.teaching.exercise_submitter.lib.submission.Problem;
 import net.ssehub.teaching.exercise_submitter.lib.submission.Submitter;
 
@@ -52,14 +55,30 @@ public class SubmitAction extends AbstractSingleProjectAction {
         if (assignment.isPresent()) {
             EclipseLog.info("User selected assignment " + assignment.get().getName());
             
-            Submitter submitter = manager.getSubmitter(assignment.get());
+            try {
+                Submitter submitter = manager.getSubmitter(assignment.get());
+                
+                EclipseLog.info("Starting submission job");
+                SubmissionJob sj = new SubmissionJob(submitter, project, assignment.get(), window.getShell(),
+                        this::onSubmissionFinished);
+                sj.setUser(true);
+                sj.schedule();
+                
+            } catch (UserNotInCourseException e) {
+                AdvancedExceptionDialog.showUnexpectedExceptionDialog(e, "User is not in course");
+            } catch (NetworkException e) {
+                AdvancedExceptionDialog.showUnexpectedExceptionDialog(e,
+                        "Failed to connect to student management system");
+            } catch (AuthenticationException e) {
+                AdvancedExceptionDialog.showUnexpectedExceptionDialog(e,
+                        "Failed to authenticate to student management system");
+            } catch (GroupNotFoundException e) {
+                AdvancedExceptionDialog.showUnexpectedExceptionDialog(e, "Group for assignment not found");
+            } catch (ApiException e) {
+                AdvancedExceptionDialog.showUnexpectedExceptionDialog(e, "Generic API exception");
+            }
             // TODO: verschiedene Hausaufgaben noch hinzufügen?
 
-            EclipseLog.info("Starting submission job");
-            SubmissionJob sj = new SubmissionJob(submitter, project, assignment.get(), window.getShell(),
-                    this::onSubmissionFinished);
-            sj.setUser(true);
-            sj.schedule();
             
         } else {
             EclipseLog.info("User canceled at assignment selection");
@@ -99,6 +118,8 @@ public class SubmitAction extends AbstractSingleProjectAction {
         } catch (AuthenticationException e) {
             AdvancedExceptionDialog.showUnexpectedExceptionDialog(e,
                     "Failed to authenticate to student management system");
+        } catch (ApiException e) {
+            AdvancedExceptionDialog.showUnexpectedExceptionDialog(e, "Generic API exception");
         }
         
         return selected;

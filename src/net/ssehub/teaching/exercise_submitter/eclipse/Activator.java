@@ -8,6 +8,7 @@ import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AdvancedExceptionDi
 import net.ssehub.teaching.exercise_submitter.eclipse.log.EclipseLog;
 import net.ssehub.teaching.exercise_submitter.eclipse.preferences.PreferencePage;
 import net.ssehub.teaching.exercise_submitter.lib.ExerciseSubmitterManager;
+import net.ssehub.teaching.exercise_submitter.lib.student_management_system.ApiException;
 import net.ssehub.teaching.exercise_submitter.lib.student_management_system.AuthenticationException;
 import net.ssehub.teaching.exercise_submitter.lib.student_management_system.NetworkException;
 import net.ssehub.teaching.exercise_submitter.lib.student_management_system.UserNotInCourseException;
@@ -72,6 +73,8 @@ public class Activator extends AbstractUIPlugin {
         } catch (AuthenticationException e) {
             AdvancedExceptionDialog.showUnexpectedExceptionDialog(e, "Failed to log into student management system");
             // TODO: more user-friendly dialog
+        } catch (ApiException e) {
+            AdvancedExceptionDialog.showUnexpectedExceptionDialog(e, "Generic API exception");
         }
     }
     
