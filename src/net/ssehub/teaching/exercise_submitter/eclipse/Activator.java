@@ -7,6 +7,7 @@ import org.osgi.framework.BundleContext;
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AdvancedExceptionDialog;
 import net.ssehub.teaching.exercise_submitter.eclipse.log.EclipseLog;
 import net.ssehub.teaching.exercise_submitter.eclipse.preferences.PreferencePage;
+import net.ssehub.teaching.exercise_submitter.lib.ExerciseSubmitterFactory;
 import net.ssehub.teaching.exercise_submitter.lib.ExerciseSubmitterManager;
 import net.ssehub.teaching.exercise_submitter.lib.student_management_system.ApiException;
 import net.ssehub.teaching.exercise_submitter.lib.student_management_system.AuthenticationException;
@@ -58,8 +59,15 @@ public class Activator extends AbstractUIPlugin {
             String password = PreferencePage.SECURE_PREFERENCES.get(PreferencePage.KEY_PASSWORD, "");
             
             EclipseLog.info("Creating manager with username " + username);
-            manager = new ExerciseSubmitterManager(username, password, "java", "wise2021");
-            // TODO: get course name and semester from config
+            ExerciseSubmitterFactory factory = new ExerciseSubmitterFactory();
+            factory
+                    .withUsername(username)
+                    .withPassword(password)
+                    .withCourse("java-wise2021") // TODO: get course from config
+//                    .withAuthUrl("")
+//                    .withMgmtUrl("")
+                    .withDummyApiConnection(); // TODO: get URLs from config
+            manager = factory.build();
             
         } catch (StorageException ex) {
             AdvancedExceptionDialog.showUnexpectedExceptionDialog(ex, "Failed to load login data from preferences");
