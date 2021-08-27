@@ -13,6 +13,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AdvancedExceptionDialog;
 import net.ssehub.teaching.exercise_submitter.lib.data.Assignment;
+import net.ssehub.teaching.exercise_submitter.lib.student_management_system.AuthenticationException;
 import net.ssehub.teaching.exercise_submitter.lib.submission.SubmissionException;
 import net.ssehub.teaching.exercise_submitter.lib.submission.SubmissionResult;
 import net.ssehub.teaching.exercise_submitter.lib.submission.Submitter;
@@ -103,7 +104,7 @@ public class SubmissionJob extends Job {
             Display.getDefault().asyncExec(() -> {
                 this.callback.accept(this);
             });
-        } catch (SubmissionException | IllegalArgumentException ex) {
+        } catch (SubmissionException | IllegalArgumentException | AuthenticationException ex) {
             Display.getDefault().asyncExec(() -> {
                 AdvancedExceptionDialog.showUnexpectedExceptionDialog(ex, "Failed to submit");
             });
