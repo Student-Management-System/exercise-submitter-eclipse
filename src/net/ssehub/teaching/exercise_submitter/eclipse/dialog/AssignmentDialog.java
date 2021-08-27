@@ -65,7 +65,7 @@ public class AssignmentDialog extends Dialog {
     protected Control createDialogArea(Composite parent) {
         Composite container = (Composite) super.createDialogArea(parent);
 
-        Table table = new Table(container, SWT.BORDER | SWT.MULTI);
+        Table table = new Table(container, SWT.BORDER | SWT.SINGLE);
         table.setLinesVisible(true);
         table.setHeaderVisible(true);
         FillLayout rw = new FillLayout();

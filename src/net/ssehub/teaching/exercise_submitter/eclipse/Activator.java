@@ -60,14 +60,14 @@ public class Activator extends AbstractUIPlugin {
             
             EclipseLog.info("Creating manager with username " + username);
             ExerciseSubmitterFactory factory = new ExerciseSubmitterFactory();
-            factory.withAuthUrl("");
-            factory.withMgmtUrl("");
-            factory.withSvnUrl("");
-            factory.withUsername(username);
-            factory.withPassword(password);
-            factory.withCourse("java-wise2021");
+            factory
+                    .withUsername(username)
+                    .withPassword(password)
+                    .withCourse("java-wise2021") // TODO: get course from config
+//                    .withAuthUrl("")
+//                    .withMgmtUrl("")
+                    .withDummyApiConnection(); // TODO: get URLs from config
             manager = factory.build();
-            // TODO: get course name and semester and urls from config
             
         } catch (StorageException ex) {
             AdvancedExceptionDialog.showUnexpectedExceptionDialog(ex, "Failed to load login data from preferences");
@@ -95,6 +95,7 @@ public class Activator extends AbstractUIPlugin {
         if (manager == null) {
             initManager();
         }
+        // TODO: this returns null if init failed and thus causes NullPointerExceptions all over the place
         return manager;
     }
 

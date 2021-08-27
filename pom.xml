@@ -88,7 +88,8 @@
 							<goal>copy-dependencies</goal>
 						</goals>
 						<configuration>
-							<includeScope>runtime</includeScope>
+							<includeArtifactIds>exercise-submitter-lib</includeArtifactIds>
+							<classifier>jar-with-dependencies</classifier>
 							<stripVersion>true</stripVersion>
 						</configuration>
 					</execution>
