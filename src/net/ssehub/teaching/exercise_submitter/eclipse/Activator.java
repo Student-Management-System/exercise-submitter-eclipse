@@ -1,5 +1,8 @@
 package net.ssehub.teaching.exercise_submitter.eclipse;
 
+import java.io.IOException;
+import java.util.Properties;
+
 import org.eclipse.equinox.security.storage.StorageException;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -22,7 +25,7 @@ public class Activator extends AbstractUIPlugin {
     public static final String PLUGIN_ID = "net.ssehub.teaching.exercise-submitter-eclipse";
 
     private static Activator plugin;
-
+    
     private ExerciseSubmitterManager manager;
 
     @Override
@@ -55,6 +58,10 @@ public class Activator extends AbstractUIPlugin {
      */
     public synchronized void initManager() {
         try {
+            
+            Properties prop = new Properties();
+            prop.load(Activator.class.getClassLoader().getResourceAsStream("/config/config.properties"));
+            
             String username = PreferencePage.SECURE_PREFERENCES.get(PreferencePage.KEY_USERNAME, "");
             String password = PreferencePage.SECURE_PREFERENCES.get(PreferencePage.KEY_PASSWORD, "");
             
@@ -64,9 +71,10 @@ public class Activator extends AbstractUIPlugin {
                     .withUsername(username)
                     .withPassword(password)
                     .withCourse("java-wise2021") // TODO: get course from config
-//                    .withAuthUrl("")
-//                    .withMgmtUrl("")
-                    .withDummyApiConnection(); // TODO: get URLs from config
+                    .withAuthUrl(prop.getProperty("authurl"))
+                    .withMgmtUrl(prop.getProperty("mgmturl"))
+                    .withSvnUrl(prop.getProperty("svnurl"));
+                   // .withDummyApiConnection(); // TODO: get URLs from config
             manager = factory.build();
             
         } catch (StorageException ex) {
@@ -83,6 +91,8 @@ public class Activator extends AbstractUIPlugin {
             // TODO: more user-friendly dialog
         } catch (ApiException e) {
             AdvancedExceptionDialog.showUnexpectedExceptionDialog(e, "Generic API exception");
+        } catch (IOException e) {
+            AdvancedExceptionDialog.showUnexpectedExceptionDialog(e, "Cant read config file");
         }
     }
     

@@ -38,7 +38,8 @@ public class EclipseMarker {
      * @param sev The severity of the marker.
      * @param project The project to add the marker in.
      */
-    public static void addMarker(File file, String message, int lineNumber, Severity sev, IProject project) {
+    public static void addMarker(File file, String message, int lineNumber,
+            Severity sev, IProject project) {
         try {
             IFile ifile = project.getFile(file.getPath());
             IMarker marker = ifile.createMarker(MARKER_TYPE);
@@ -53,7 +54,9 @@ public class EclipseMarker {
             if (lineNumber == -1) {
                 lineNumber = 1;
             }
+            
             marker.setAttribute(IMarker.LINE_NUMBER, lineNumber);
+            
             
         } catch (CoreException e) {
             AdvancedExceptionDialog.showUnexpectedExceptionDialog(e, "Failed to add problem marker to project");
