@@ -18,7 +18,7 @@ import net.ssehub.teaching.exercise_submitter.eclipse.log.EclipseLog;
  * @author Adam
  * @author Lukas
  */
-public class AdvancedExceptionDialog {
+public class AdvancedExceptionDialog  {
 
     /**
      * No instances.
