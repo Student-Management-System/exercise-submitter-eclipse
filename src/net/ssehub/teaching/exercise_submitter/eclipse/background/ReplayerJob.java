@@ -2,7 +2,10 @@ package net.ssehub.teaching.exercise_submitter.eclipse.background;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -88,6 +91,9 @@ public class ReplayerJob extends Job {
             }
 
             File tempdir = this.replayer.replay(this.version.get());
+            
+            this.copyProject(tempdir.toPath(), this.location.get().toPath());
+            
 
             monitor.worked(50);
 
@@ -161,8 +167,17 @@ public class ReplayerJob extends Job {
      * @throws IOException
      */
     private void copyProject(Path firstdir, Path seconddir) throws IOException {
-
-        //TODO: Add copy func
+        Files.walk(firstdir).forEach(sourceFile -> {
+            Path destination = seconddir.resolve(firstdir.relativize(sourceFile));
+            if (!destination.equals(seconddir)) {
+                try {
+                    Files.copy(sourceFile, destination, StandardCopyOption.REPLACE_EXISTING);
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
+                }   
+            }
+            
+        });
     }
-
+   
 }
