@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.ILock;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -70,17 +71,26 @@ public class ReplayerJob extends Job {
             lock.acquire();
 
             List<Version> version = this.replayer.getVersions();
-
+            
+            
             monitor.worked(50);
             monitor.setTaskName("Downloading Files");
 
             Display.getDefault().syncExec(() -> {
-                this.createVersionDialog(version);
+                if (version.size() == 0) {
+                    MessageDialog.openInformation(shell, "Exercise Submitter", "No Version available");
+                } else {
+                    this.createVersionDialog(version);
+                }
             });
 
             SubMonitor subMonitorReplay = SubMonitor.convert(monitor, 65);
             subMonitorReplay.beginTask("Downloading Files", 100);
 
+            if (version.size() == 0) {
+                return Status.CANCEL_STATUS;
+            }
+            
             if (this.version.isPresent()) {
                 this.callbackVersionlist.accept(this);
             } else {

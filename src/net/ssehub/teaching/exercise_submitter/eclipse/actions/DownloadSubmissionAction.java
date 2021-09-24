@@ -9,12 +9,14 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.IWorkbenchWindow;
 
 import net.ssehub.teaching.exercise_submitter.eclipse.Activator;
 import net.ssehub.teaching.exercise_submitter.eclipse.background.ReplayerJob;
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AssignmentDialog;
+import net.ssehub.teaching.exercise_submitter.eclipse.log.EclipseLog;
 import net.ssehub.teaching.exercise_submitter.lib.ExerciseSubmitterManager;
 import net.ssehub.teaching.exercise_submitter.lib.data.Assignment;
 import net.ssehub.teaching.exercise_submitter.lib.replay.Replayer;
@@ -33,20 +35,28 @@ public class DownloadSubmissionAction extends AbstractSingleProjectAction {
 
         ExerciseSubmitterManager manager = Activator.getDefault().getManager();
         Optional<Assignment> selectedAssigment = this.createAssignmentDialog(window, manager);
-
-        Replayer replayer = null;
-        try {
-            replayer = manager.getReplayer(selectedAssigment.get());
-        } catch (IllegalArgumentException | ApiException | IOException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
+        
+        if (selectedAssigment.isPresent()) {
+            
+            Replayer replayer = null;
+            try {
+                replayer = manager.getReplayer(selectedAssigment.get());
+            } catch (IllegalArgumentException | ApiException | IOException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            }
+            
+            EclipseLog.info("Starting download from Assignment: " + selectedAssigment.get());
+    
+            ReplayerJob job = new ReplayerJob(window.getShell(), replayer, selectedAssigment.get(),
+                    this::onVersionListFinished, this::onReplayFinished);
+            job.setUser(true);
+            job.schedule();
+            
+        } else {
+            MessageDialog.openInformation(window.getShell(), "Exercise Submitter", "No Assignment selected");
         }
-
-        ReplayerJob job = new ReplayerJob(window.getShell(), replayer, selectedAssigment.get(),
-                this::onVersionListFinished, this::onReplayFinished);
-        job.setUser(true);
-        job.schedule();
-
+      
     }
     /**
      * Creates the assignmentdialog.
