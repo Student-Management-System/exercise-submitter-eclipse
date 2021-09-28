@@ -29,7 +29,7 @@ import net.ssehub.teaching.exercise_submitter.lib.student_management_system.ApiE
  * @author Lukas
  */
 public class DownloadSubmissionAction extends AbstractSingleProjectAction {
-
+    //TODO: remove selected dir 
     @Override
     public void execute(IProject project, IWorkbenchWindow window) {
 
