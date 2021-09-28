@@ -65,7 +65,7 @@ public class CheckSubmission extends AbstractSingleProjectAction {
     private Assignment displayAssignmentDialog(IWorkbenchWindow window)
             throws NetworkException, AuthenticationException, ApiException, ReplayException {
         
-        List<Assignment> assignments = Activator.getDefault().getManager().getAllAssignments();
+        List<Assignment> assignments = Activator.getDefault().getManager().getAllSubmittableAssignments();
         AssignmentDialog assDialog = new AssignmentDialog(window.getShell(),
                 assignments, AssignmentDialog.Sorted.NONE);
         assDialog.open();
