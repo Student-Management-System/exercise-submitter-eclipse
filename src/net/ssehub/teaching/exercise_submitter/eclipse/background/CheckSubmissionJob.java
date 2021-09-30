@@ -103,5 +103,19 @@ public class CheckSubmissionJob extends Job {
     public Optional<Boolean> getCheckResult() {
         return this.result;
     }
+    /**
+     * Get the current shell.
+     * @return shell
+     */
+    public Shell getShell() {
+        return shell;
+    }
+    /**
+     * Gets the current replayer.
+     * @return Replayer
+     */
+    public Replayer getReplayer() {
+        return replayer;
+    }
 
 }
