@@ -11,6 +11,7 @@ import net.ssehub.teaching.exercise_submitter.eclipse.Activator;
 import net.ssehub.teaching.exercise_submitter.eclipse.background.CheckSubmissionJob;
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AdvancedExceptionDialog;
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AssignmentDialog;
+import net.ssehub.teaching.exercise_submitter.eclipse.dialog.CheckSubmissionDialog;
 import net.ssehub.teaching.exercise_submitter.eclipse.log.EclipseLog;
 import net.ssehub.teaching.exercise_submitter.lib.data.Assignment;
 import net.ssehub.teaching.exercise_submitter.lib.replay.ReplayException;
@@ -85,8 +86,10 @@ public class CheckSubmission extends AbstractSingleProjectAction {
      */
     private void onCheckSubmissionFinished(CheckSubmissionJob job) {
         //TODO: build dialog
-        System.out.println("Version: " + job.getVersion().get());
-        System.out.println("Result: " + job.getCheckResult().get());
+        CheckSubmissionDialog dialog = new CheckSubmissionDialog(job.getShell(),
+                    job.getVersionlist(), job.getCheckResult().get());
+        dialog.open();
+       
 
     }
 

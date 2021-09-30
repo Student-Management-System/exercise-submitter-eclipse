@@ -35,6 +35,7 @@ public class CheckSubmissionJob extends Job {
     private Assignment assignment;
     private Consumer<CheckSubmissionJob> callbackCheckSubmission;
     private File dir;
+    private List<Version> versionlist;
     private Optional<Version> version = Optional.empty();
     private Optional<Boolean> result = Optional.empty();
 
@@ -62,7 +63,7 @@ public class CheckSubmissionJob extends Job {
         try {
             lock.acquire();
 
-            List<Version> versionlist = this.replayer.getVersions();
+            versionlist = this.replayer.getVersions();
 
             if (versionlist.size() == 0) {
                 throw new ReplayException("No version is uploaded");
@@ -116,6 +117,13 @@ public class CheckSubmissionJob extends Job {
      */
     public Replayer getReplayer() {
         return replayer;
+    }
+    /**
+     * Gets the current versionlist.
+     * @return List<Version>
+     */
+    public List<Version> getVersionlist() {
+        return versionlist;
     }
 
 }
