@@ -4,13 +4,19 @@ import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
+import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbenchWindow;
 
 import net.ssehub.teaching.exercise_submitter.eclipse.Activator;
@@ -28,10 +34,19 @@ import net.ssehub.teaching.exercise_submitter.lib.student_management_system.ApiE
  *
  * @author Lukas
  */
-public class DownloadSubmissionAction extends AbstractSingleProjectAction {
+public class DownloadSubmissionAction extends AbstractHandler {
     //TODO: remove selected dir 
     @Override
-    public void execute(IProject project, IWorkbenchWindow window) {
+    public Object execute(ExecutionEvent event) throws ExecutionException {
+        
+        IWorkbenchWindow window = null;
+        
+        if (event.getApplicationContext() instanceof IEvaluationContext) {
+            IEvaluationContext context = (IEvaluationContext) event.getApplicationContext();
+
+            window = (IWorkbenchWindow) context.getVariable(ISources.ACTIVE_WORKBENCH_WINDOW_NAME);
+           
+        }
 
         ExerciseSubmitterManager manager = Activator.getDefault().getManager();
         Optional<Assignment> selectedAssigment = this.createAssignmentDialog(window, manager);
@@ -56,6 +71,7 @@ public class DownloadSubmissionAction extends AbstractSingleProjectAction {
         } else {
             MessageDialog.openInformation(window.getShell(), "Exercise Submitter", "No Assignment selected");
         }
+        return null;
       
     }
     /**
