@@ -20,26 +20,34 @@ import net.ssehub.teaching.exercise_submitter.lib.student_management_system.Auth
 import net.ssehub.teaching.exercise_submitter.lib.student_management_system.NetworkException;
 
 /**
- * Checks if the selected project matches the submitted version. Shows differences of the two.
- * 
+ * Checks if the selected project matches the submitted version. Shows
+ * differences of the two.
+ *
  * @author Lukas
  * @author Adam
  */
 public class CheckSubmission extends AbstractSingleProjectAction {
 
+    private IWorkbenchWindow window;
+    private IProject project;
+
     @Override
     protected void execute(IProject project, IWorkbenchWindow window) {
+
+        this.window = window;
+        this.project = project;
+
         try {
-            Assignment selectedAssignment = displayAssignmentDialog(window);
-            
+            Assignment selectedAssignment = this.displayAssignmentDialog(window);
+
             EclipseLog.info("Starting download newest Version ");
-            
+
             CheckSubmissionJob job = new CheckSubmissionJob(window.getShell(),
                     Activator.getDefault().getManager().getReplayer(selectedAssignment), selectedAssignment,
                     project.getLocation().toFile(), this::onCheckSubmissionFinished);
             job.setUser(true);
             job.schedule();
-            
+
         } catch (NetworkException e) {
             AdvancedExceptionDialog.showUnexpectedExceptionDialog(e, "Failed to connect to student management system");
         } catch (AuthenticationException e) {
@@ -51,11 +59,12 @@ public class CheckSubmission extends AbstractSingleProjectAction {
             MessageDialog.openError(window.getShell(), "Check Submission", e.getMessage());
         } catch (IllegalArgumentException | IOException e) {
             AdvancedExceptionDialog.showUnexpectedExceptionDialog(e, "IO Exception");
-        } 
+        }
     }
-    
+
     /**
      * Crates the assignmentdialog.
+     *
      * @param window , the current window
      * @return Assignment ,the selected assignment
      * @throws NetworkException
@@ -65,14 +74,13 @@ public class CheckSubmission extends AbstractSingleProjectAction {
      */
     private Assignment displayAssignmentDialog(IWorkbenchWindow window)
             throws NetworkException, AuthenticationException, ApiException, ReplayException {
-        
+
         List<Assignment> assignments = Activator.getDefault().getManager().getAllSubmittableAssignments();
-        AssignmentDialog assDialog = new AssignmentDialog(window.getShell(),
-                assignments, AssignmentDialog.Sorted.NONE);
+        AssignmentDialog assDialog = new AssignmentDialog(window.getShell(), assignments, AssignmentDialog.Sorted.NONE);
         assDialog.open();
-        
+
         Assignment selectedassignment = null;
-        
+
         if (assDialog.getSelectedAssignment().isPresent()) {
             selectedassignment = assDialog.getSelectedAssignment().get();
         } else {
@@ -80,16 +88,18 @@ public class CheckSubmission extends AbstractSingleProjectAction {
         }
         return selectedassignment;
     }
+
     /**
      * Called when check submission is finished.
+     *
      * @param job
      */
     private void onCheckSubmissionFinished(CheckSubmissionJob job) {
-        //TODO: build dialog
-        CheckSubmissionDialog dialog = new CheckSubmissionDialog(job.getShell(),
-                    job.getVersionlist(), job.getCheckResult().get());
+        // TODO: build dialog
+
+        CheckSubmissionDialog dialog = new CheckSubmissionDialog(job.getShell(), job.getVersionlist(),
+                Activator.getDefault().getManager(), this.project, job.getCheckResult());
         dialog.open();
-       
 
     }
 

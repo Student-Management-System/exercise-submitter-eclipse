@@ -134,6 +134,13 @@ public class SubmitAction extends AbstractSingleProjectAction {
      * @param job The {@link SubmissionJob} that finished.
      */
     private void onSubmissionFinished(SubmissionJob job) {
+        createSubmissionFinishedDialog(job);
+    }
+    /**
+     * Creates submissionFinishedDialog.
+     * @param job , finishedjob
+     */
+    public static void createSubmissionFinishedDialog(SubmissionJob job) {
         EclipseLog.info("Submission job finished (project " + job.getProject().getName() + ")");
         
         String mainMessage;
@@ -184,7 +191,7 @@ public class SubmitAction extends AbstractSingleProjectAction {
      * 
      * @return A message describing the number of errors and warnings.
      */
-    private String createProblemMessage(int numErrors, int numWarnings) {
+    public static String createProblemMessage(int numErrors, int numWarnings) {
         String problemsMessage = "";
         if (numErrors > 0 && numWarnings > 0) {
             problemsMessage = numErrors + " errors and " + numWarnings + " warnings were found in your submission.\n"

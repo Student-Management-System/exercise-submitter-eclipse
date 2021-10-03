@@ -38,7 +38,8 @@ public class CheckSubmissionJob extends Job {
     private List<Version> versionlist;
     private Optional<Version> version = Optional.empty();
     private Optional<Boolean> result = Optional.empty();
-
+    
+    
     /**
      * Creats an instance of CheckSubmissionJob.
      * @param shell , the current window shell
@@ -55,6 +56,38 @@ public class CheckSubmissionJob extends Job {
         this.assignment = assignment;
         this.dir = toCheck;
         this.callbackCheckSubmission = callbackCheckSubmission;
+    }
+    /**
+     * Class for managing the checkresult.
+     * @author lukas
+     *
+     */
+    public static class CheckResult {
+        private boolean result;
+        private Assignment assignment;
+        /**
+         * Instantiates a new CheckResult class.
+         * @param result , is the content the same
+         * @param assignment , the compared assignment
+         */
+        public CheckResult(boolean result, Assignment assignment) {
+            this.result = result;
+            this.assignment = assignment;
+        }
+        /**
+         * Gets the result.
+         * @return boolean , is the same ?
+         */
+        public boolean getResult() {
+            return result;
+        }
+        /**
+         * Gets the compared assignment.
+         * @return assignment
+         */
+        public Assignment getAssignment() {
+            return assignment;
+        }
     }
 
     @Override
@@ -101,8 +134,8 @@ public class CheckSubmissionJob extends Job {
      * Get the result of the comparison.
      * @return Optional of Boolean
      */
-    public Optional<Boolean> getCheckResult() {
-        return this.result;
+    public CheckResult getCheckResult() {
+        return new CheckResult(this.result.get(), this.assignment);
     }
     /**
      * Get the current shell.
@@ -125,5 +158,7 @@ public class CheckSubmissionJob extends Job {
     public List<Version> getVersionlist() {
         return versionlist;
     }
+    
+   
 
 }

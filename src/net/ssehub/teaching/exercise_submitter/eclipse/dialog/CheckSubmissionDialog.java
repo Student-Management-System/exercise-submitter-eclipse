@@ -2,6 +2,7 @@ package net.ssehub.teaching.exercise_submitter.eclipse.dialog;
 
 import java.time.format.DateTimeFormatter;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -15,28 +16,42 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
+import net.ssehub.teaching.exercise_submitter.eclipse.actions.SubmitAction;
+import net.ssehub.teaching.exercise_submitter.eclipse.background.CheckSubmissionJob.CheckResult;
+import net.ssehub.teaching.exercise_submitter.eclipse.background.SubmissionJob;
+import net.ssehub.teaching.exercise_submitter.lib.ExerciseSubmitterManager;
 import net.ssehub.teaching.exercise_submitter.lib.replay.Replayer.Version;
+import net.ssehub.teaching.exercise_submitter.lib.student_management_system.ApiException;
 
 /**
  * This creates the CheckSubmissionDialog.
- * 
+ *
  * @author lukas
  *
  */
 public class CheckSubmissionDialog extends Dialog {
 
     private java.util.List<Version> versionlist;
-    private boolean checkResult;
+    private ExerciseSubmitterManager manager;
+    private CheckResult checkresult;
+    private IProject project;
+
     /**
      * Creates an instance of CheckSubmissionDialog.
-     * @param parentShell
-     * @param versionlist
-     * @param checkResult
+     *
+     * @param parentShell the parent shell
+     * @param versionlist the versionlist
+     * @param manager the manager
+     * @param project the project
+     * @param result the result
      */
-    public CheckSubmissionDialog(Shell parentShell, java.util.List<Version> versionlist, boolean checkResult) {
+    public CheckSubmissionDialog(Shell parentShell, java.util.List<Version> versionlist,
+            ExerciseSubmitterManager manager, IProject project, CheckResult result) {
         super(parentShell);
         this.versionlist = versionlist;
-        this.checkResult = checkResult;
+        this.manager = manager;
+        this.project = project;
+        this.checkresult = result;
 
     }
 
@@ -54,7 +69,7 @@ public class CheckSubmissionDialog extends Dialog {
         Label resultLabel = new Label(container, SWT.RIGHT);
         GridData gridData = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
         resultLabel.setLayoutData(gridData);
-        String resultString = this.checkResult ? "The content is the same" : "The content is NOT the same";
+        String resultString = this.checkresult.getResult() ? "The content is the same" : "The content is NOT the same";
         resultLabel.setText(resultString);
 
         new Label(container, SWT.NULL).setText("Version TimeStamp: ");
@@ -77,7 +92,7 @@ public class CheckSubmissionDialog extends Dialog {
             }
         });
 
-        if (!this.checkResult) {
+        if (!this.checkresult.getResult()) {
 
             new Label(container, SWT.NULL).setText("Submit current Version: ");
 
@@ -88,8 +103,9 @@ public class CheckSubmissionDialog extends Dialog {
 
                 @Override
                 public void widgetSelected(SelectionEvent event) {
-                    System.out.println("Submit current Version");
+                    CheckSubmissionDialog.this.createSubmissionJob();
                 }
+
             });
 
             new Label(container, SWT.NULL).setText("Download latest Version: ");
@@ -107,6 +123,36 @@ public class CheckSubmissionDialog extends Dialog {
         }
 
         return container;
+    }
+
+    /**
+     * Callback that is called when the {@link SubmissionJob} has finished. This is always called, even when the
+     * submission failed.
+     * <p>
+     * Displays the submission result to the user.
+     * 
+     * @param job The {@link SubmissionJob} that finished.
+     */
+    private void onSubmissionFinished(SubmissionJob job) {
+        SubmitAction.createSubmissionFinishedDialog(job);
+
+    }
+    /**
+     * Create a SubmissionJob.
+     */
+    private void createSubmissionJob() {
+        SubmissionJob job;
+        try {
+
+            job = new SubmissionJob(this.manager.getSubmitter(this.checkresult.getAssignment()), this.project,
+                    this.checkresult.getAssignment(), this.getShell(), this::onSubmissionFinished);
+            job.setUser(true);
+            job.schedule();
+        } catch (IllegalArgumentException | ApiException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
     }
 
     @Override
