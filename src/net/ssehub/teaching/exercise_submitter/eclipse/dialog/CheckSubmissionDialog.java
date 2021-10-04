@@ -1,5 +1,6 @@
 package net.ssehub.teaching.exercise_submitter.eclipse.dialog;
 
+import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 
 import org.eclipse.core.resources.IProject;
@@ -16,8 +17,10 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
+import net.ssehub.teaching.exercise_submitter.eclipse.actions.DownloadSubmissionAction;
 import net.ssehub.teaching.exercise_submitter.eclipse.actions.SubmitAction;
 import net.ssehub.teaching.exercise_submitter.eclipse.background.CheckSubmissionJob.CheckResult;
+import net.ssehub.teaching.exercise_submitter.eclipse.background.ReplayerJob;
 import net.ssehub.teaching.exercise_submitter.eclipse.background.SubmissionJob;
 import net.ssehub.teaching.exercise_submitter.lib.ExerciseSubmitterManager;
 import net.ssehub.teaching.exercise_submitter.lib.replay.Replayer.Version;
@@ -104,6 +107,7 @@ public class CheckSubmissionDialog extends Dialog {
                 @Override
                 public void widgetSelected(SelectionEvent event) {
                     CheckSubmissionDialog.this.createSubmissionJob();
+                    close();
                 }
 
             });
@@ -117,7 +121,8 @@ public class CheckSubmissionDialog extends Dialog {
 
                 @Override
                 public void widgetSelected(SelectionEvent event) {
-                    System.out.println("Download latest Version");
+                    createReplayerJob();
+                    close();
                 }
             });
         }
@@ -153,6 +158,37 @@ public class CheckSubmissionDialog extends Dialog {
             e.printStackTrace();
         }
 
+    }
+    /**
+     * Called when VersionList is downloaded.
+     * @param job
+     */
+    private void onVersionlistFinished(ReplayerJob job) {
+        DownloadSubmissionAction.createIProject(job);
+    }
+    /**
+     * Called when replay is finished.
+     * @param job
+     */
+    private void onReplayFinished(ReplayerJob job) {
+        System.out.println("Replay success");
+    }
+    /**
+     * Creates an ReplayJob.
+     */
+    private void createReplayerJob() {
+        ReplayerJob job;
+        try {
+
+            job = new ReplayerJob(getShell(), this.manager.getReplayer(this.checkresult.getAssignment()),
+                    this.checkresult.getAssignment(), this::onVersionlistFinished, this::onReplayFinished);
+            job.setUser(true);
+            job.schedule();
+        } catch (IllegalArgumentException | ApiException | IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
     }
 
     @Override

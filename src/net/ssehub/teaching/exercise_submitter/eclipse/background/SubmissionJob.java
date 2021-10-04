@@ -55,6 +55,7 @@ public class SubmissionJob extends Job {
         this.project = project;
         this.assigment = assignment;
         this.shell = shell;
+        
     }
     
     /**

@@ -118,6 +118,13 @@ public class DownloadSubmissionAction extends AbstractHandler {
      * @param job
      */
     private void onVersionListFinished(ReplayerJob job) {
+        createIProject(job);
+    }
+    /**
+     * Creates a IProject.
+     * @param job
+     */
+    public static void createIProject(ReplayerJob job) {
         IWorkspace workspace = ResourcesPlugin.getWorkspace();
         IWorkspaceRoot root = workspace.getRoot();
         IProject newProject = root.getProject(job.getAssignment().getName() + "-"
