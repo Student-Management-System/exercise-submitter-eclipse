@@ -17,7 +17,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
-import net.ssehub.teaching.exercise_submitter.eclipse.actions.DownloadSubmissionAction;
 import net.ssehub.teaching.exercise_submitter.eclipse.actions.SubmitAction;
 import net.ssehub.teaching.exercise_submitter.eclipse.background.CheckSubmissionJob.CheckResult;
 import net.ssehub.teaching.exercise_submitter.eclipse.background.ReplayerJob;
@@ -44,9 +43,9 @@ public class CheckSubmissionDialog extends Dialog {
      *
      * @param parentShell the parent shell
      * @param versionlist the versionlist
-     * @param manager the manager
-     * @param project the project
-     * @param result the result
+     * @param manager     the manager
+     * @param project     the project
+     * @param result      the result
      */
     public CheckSubmissionDialog(Shell parentShell, java.util.List<Version> versionlist,
             ExerciseSubmitterManager manager, IProject project, CheckResult result) {
@@ -107,7 +106,7 @@ public class CheckSubmissionDialog extends Dialog {
                 @Override
                 public void widgetSelected(SelectionEvent event) {
                     CheckSubmissionDialog.this.createSubmissionJob();
-                    close();
+                    CheckSubmissionDialog.this.close();
                 }
 
             });
@@ -121,8 +120,8 @@ public class CheckSubmissionDialog extends Dialog {
 
                 @Override
                 public void widgetSelected(SelectionEvent event) {
-                    createReplayerJob();
-                    close();
+                    CheckSubmissionDialog.this.createReplayerJob();
+                    CheckSubmissionDialog.this.close();
                 }
             });
         }
@@ -131,17 +130,18 @@ public class CheckSubmissionDialog extends Dialog {
     }
 
     /**
-     * Callback that is called when the {@link SubmissionJob} has finished. This is always called, even when the
-     * submission failed.
+     * Callback that is called when the {@link SubmissionJob} has finished. This is
+     * always called, even when the submission failed.
      * <p>
      * Displays the submission result to the user.
-     * 
+     *
      * @param job The {@link SubmissionJob} that finished.
      */
     private void onSubmissionFinished(SubmissionJob job) {
         SubmitAction.createSubmissionFinishedDialog(job);
 
     }
+
     /**
      * Create a SubmissionJob.
      */
@@ -159,20 +159,16 @@ public class CheckSubmissionDialog extends Dialog {
         }
 
     }
-    /**
-     * Called when VersionList is downloaded.
-     * @param job
-     */
-    private void onVersionlistFinished(ReplayerJob job) {
-        DownloadSubmissionAction.createIProject(job);
-    }
+
     /**
      * Called when replay is finished.
+     *
      * @param job
      */
     private void onReplayFinished(ReplayerJob job) {
         System.out.println("Replay success");
     }
+
     /**
      * Creates an ReplayJob.
      */
@@ -180,15 +176,15 @@ public class CheckSubmissionDialog extends Dialog {
         ReplayerJob job;
         try {
 
-            job = new ReplayerJob(getShell(), this.manager.getReplayer(this.checkresult.getAssignment()),
-                    this.checkresult.getAssignment(), this::onVersionlistFinished, this::onReplayFinished);
+            job = new ReplayerJob(this.getShell(), this.manager.getReplayer(this.checkresult.getAssignment()),
+                    this.checkresult.getAssignment(), this::onReplayFinished);
             job.setUser(true);
             job.schedule();
         } catch (IllegalArgumentException | ApiException | IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
+
     }
 
     @Override

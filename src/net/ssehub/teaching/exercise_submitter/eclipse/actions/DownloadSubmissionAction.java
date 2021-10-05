@@ -62,8 +62,8 @@ public class DownloadSubmissionAction extends AbstractHandler {
             
             EclipseLog.info("Starting download from Assignment: " + selectedAssigment.get());
     
-            ReplayerJob job = new ReplayerJob(window.getShell(), replayer, selectedAssigment.get(),
-                    this::onVersionListFinished, this::onReplayFinished);
+            ReplayerJob job = new ReplayerJob(window.getShell(), replayer, selectedAssigment.get(), 
+                    this::onReplayFinished);
             job.setUser(true);
             job.schedule();
             
@@ -112,13 +112,6 @@ public class DownloadSubmissionAction extends AbstractHandler {
     private void onReplayFinished(ReplayerJob job) {
         System.out.println("Replay success");
 
-    }
-    /**
-     * Called when VersionList is downloaded.
-     * @param job
-     */
-    private void onVersionListFinished(ReplayerJob job) {
-        createIProject(job);
     }
     /**
      * Creates a IProject.
