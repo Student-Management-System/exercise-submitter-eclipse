@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import net.ssehub.teaching.exercise_submitter.eclipse.actions.SubmitAction;
 import net.ssehub.teaching.exercise_submitter.eclipse.background.CheckSubmissionJob.CheckResult;
+import net.ssehub.teaching.exercise_submitter.eclipse.background.ListVersionsJob;
 import net.ssehub.teaching.exercise_submitter.eclipse.background.ReplayerJob;
 import net.ssehub.teaching.exercise_submitter.eclipse.background.SubmissionJob;
 import net.ssehub.teaching.exercise_submitter.lib.ExerciseSubmitterManager;
@@ -89,8 +90,9 @@ public class CheckSubmissionDialog extends Dialog {
         listVersionsButton.addSelectionListener(new SelectionAdapter() {
 
             @Override
-            public void widgetSelected(SelectionEvent event) {
-                System.out.println("list versions");
+            public void widgetSelected(SelectionEvent event)  {
+                CheckSubmissionDialog.this.createListVersionList();
+                CheckSubmissionDialog.this.close();
             }
         });
 
@@ -125,7 +127,6 @@ public class CheckSubmissionDialog extends Dialog {
                 }
             });
         }
-
         return container;
     }
 
@@ -178,6 +179,31 @@ public class CheckSubmissionDialog extends Dialog {
 
             job = new ReplayerJob(this.getShell(), this.manager.getReplayer(this.checkresult.getAssignment()),
                     this.checkresult.getAssignment(), this::onReplayFinished);
+            job.setUser(true);
+            job.schedule();
+        } catch (IllegalArgumentException | ApiException | IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+    }
+    /**
+     * Called when list versions is finished.
+     *
+     * @param job
+     */
+    private void onListVersionFinished(ListVersionsJob job) {
+        System.out.println("List version success");
+    }
+    /**
+     * Creates an ListVerionJob.
+     */
+    private void createListVersionList() {
+        ListVersionsJob job;
+        try {
+
+            job = new ListVersionsJob(this.getShell(), this.manager.getReplayer(this.checkresult.getAssignment()),
+                    this.checkresult.getAssignment(), this::onListVersionFinished);
             job.setUser(true);
             job.schedule();
         } catch (IllegalArgumentException | ApiException | IOException e) {
