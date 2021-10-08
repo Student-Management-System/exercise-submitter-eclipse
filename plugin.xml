@@ -25,6 +25,9 @@
                 	commandId="net.ssehub.teaching.exercise_submitter.eclipse.checkSubmission"
                 	tooltip="Check if submission on server matches local project"/>   
                 <command 
+                    commandId="net.ssehub.teaching.exercise_submitter.eclipse.ViewVersionHistory"
+                    tooltip="List the version history of the selected project"/>   
+                <command 
                 	commandId="net.ssehub.teaching.exercise_submitter.eclipse.clearMarker"
                 	tooltip="Clear all Submitter Marker from Selected Projekt"/>   
             </menu>
@@ -79,6 +82,9 @@
             id="net.ssehub.teaching.exercise_submitter.eclipse.clearMarker"
             name="Clear Problem Markers" />
         <command
+            id="net.ssehub.teaching.exercise_submitter.eclipse.ViewVersionHistory"
+            name="View version history" />
+        <command
             id="net.ssehub.teaching.exercise_submitter.eclipse.downloadSubmission"
             name="Download Submission" />
         <command
@@ -110,6 +116,9 @@
          <handler
             commandId="net.ssehub.teaching.exercise_submitter.eclipse.showAssignments"
             class="net.ssehub.teaching.exercise_submitter.eclipse.actions.ShowAssignmentsAction" />
+            <handler
+            commandId="net.ssehub.teaching.exercise_submitter.eclipse.ViewVersionHistory"
+            class="net.ssehub.teaching.exercise_submitter.eclipse.actions.ViewVersionHistoryAction" />
          <handler
             commandId="net.ssehub.teaching.exercise_submitter.eclipse.configure"
             class="net.ssehub.teaching.exercise_submitter.eclipse.actions.ConfigureAction" />
