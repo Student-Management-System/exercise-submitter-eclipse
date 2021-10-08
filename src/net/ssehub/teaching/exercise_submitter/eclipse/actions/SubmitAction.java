@@ -4,8 +4,10 @@ import java.io.File;
 import java.util.Optional;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.osgi.service.prefs.Preferences;
 
 import net.ssehub.teaching.exercise_submitter.eclipse.Activator;
 import net.ssehub.teaching.exercise_submitter.eclipse.background.SubmissionJob;
@@ -134,6 +136,11 @@ public class SubmitAction extends AbstractSingleProjectAction {
      * @param job The {@link SubmissionJob} that finished.
      */
     private void onSubmissionFinished(SubmissionJob job) {
+        if (job.getSubmissionResult().isAccepted()) {
+            Preferences preferences = InstanceScope.INSTANCE.getNode(Activator.PLUGIN_ID);
+            preferences.put(job.getProject().getLocation().toString(), job.getAssigment().getManagementId());
+            preferences.put(job.getAssigment().getManagementId(), job.getAssigment().getName());
+        }
         createSubmissionFinishedDialog(job);
     }
     /**
