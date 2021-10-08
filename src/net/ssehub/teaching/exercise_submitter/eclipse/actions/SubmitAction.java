@@ -6,7 +6,9 @@ import java.util.Optional;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
 import net.ssehub.teaching.exercise_submitter.eclipse.Activator;
@@ -140,6 +142,13 @@ public class SubmitAction extends AbstractSingleProjectAction {
             Preferences preferences = InstanceScope.INSTANCE.getNode(Activator.PLUGIN_ID);
             preferences.put(job.getProject().getLocation().toString(), job.getAssigment().getManagementId());
             preferences.put(job.getAssigment().getManagementId(), job.getAssigment().getName());
+            try {
+                preferences.flush();
+            } catch (BackingStoreException e) {
+                Display.getDefault().syncExec(() -> {
+                    AdvancedExceptionDialog.showUnexpectedExceptionDialog(e, "Cant save settings");
+                });
+            }
         }
         createSubmissionFinishedDialog(job);
     }

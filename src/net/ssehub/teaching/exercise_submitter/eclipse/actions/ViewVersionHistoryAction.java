@@ -30,7 +30,7 @@ public class ViewVersionHistoryAction extends AbstractSingleProjectAction {
         Preferences preferences = InstanceScope.INSTANCE.getNode(Activator.PLUGIN_ID);
         String assignmentid = preferences.get(project.getLocation().toString(), null);
         String assignmentname = preferences.get(assignmentid, null);
-        if (assignmentid != null) {
+        if (assignmentid != null && assignmentname != null) {
             Assignment assignment = new Assignment(assignmentid, assignmentname, State.SUBMISSION, true);
             ListVersionsJob job;
             try {
