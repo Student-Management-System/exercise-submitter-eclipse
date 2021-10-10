@@ -3,28 +3,35 @@ package net.ssehub.teaching.exercise_submitter.eclipse.background;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.ILock;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
+
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AdvancedExceptionDialog;
+import net.ssehub.teaching.exercise_submitter.eclipse.utils.FileUtils;
 import net.ssehub.teaching.exercise_submitter.lib.data.Assignment;
 import net.ssehub.teaching.exercise_submitter.lib.replay.ReplayException;
 import net.ssehub.teaching.exercise_submitter.lib.replay.Replayer;
@@ -46,6 +53,7 @@ public class ReplayerJob extends Job {
     private Optional<File> location = Optional.empty();
     private Assignment assignment;
     private IProgressMonitor progress;
+    private Optional<IProject> project;
 
     /**
      * Creates an instance.
@@ -74,7 +82,7 @@ public class ReplayerJob extends Job {
 
             this.createVersionDialog();
 
-            Display.getDefault().asyncExec(() -> {
+            Display.getDefault().syncExec(() -> {
                 this.callbackReplay.accept(this);
             });
         } catch (IllegalArgumentException ex) {
@@ -95,8 +103,9 @@ public class ReplayerJob extends Job {
      *
      * @throws ReplayException
      * @throws IOException
+     * @throws CoreException 
      */
-    private void startReplay() throws ReplayException, IOException {
+    private void startReplay() throws ReplayException, IOException, CoreException {
         IProgressMonitor monitor = this.progress;
         monitor.worked(50);
         monitor.setTaskName("Downloading Files");
@@ -113,6 +122,8 @@ public class ReplayerJob extends Job {
         this.copyProject(tempdir.toPath(), this.location.get().toPath());
 
         monitor.worked(50);
+        
+        this.project.get().refreshLocal(IResource.DEPTH_INFINITE, subMonitorReplay);
 
         Display.getDefault().asyncExec(() -> {
             this.callbackReplay.accept(this);
@@ -156,7 +167,8 @@ public class ReplayerJob extends Job {
                 this::onListVersionsFinished);
         job.setUser(true);
         job.schedule();
-
+        
+        while (job.getState() == Job.RUNNING);
     }
 
     /**
@@ -167,9 +179,10 @@ public class ReplayerJob extends Job {
     private void onListVersionsFinished(ListVersionsJob job) {
         try {
             this.version = job.getSelectedVersion();
-            this.createIProject();
-            this.startReplay();
-        } catch (ReplayException | IOException e) {
+            if(this.createIProject()) {
+                this.startReplay();
+            }
+        } catch (ReplayException | IOException | CoreException e) {
 
             e.printStackTrace();
         }
@@ -177,21 +190,42 @@ public class ReplayerJob extends Job {
 
     /**
      * Creates a IProject.
-     *
+     * @return boolean
      */
-    private void createIProject() {
+    private boolean createIProject() {
+        boolean isCreated = false;
+        String projectName = this.getAssignment().getName() + "-"
+                + this.getVersion().get().getTimestamp().format(DateTimeFormatter.BASIC_ISO_DATE);
         IWorkspace workspace = ResourcesPlugin.getWorkspace();
         IWorkspaceRoot root = workspace.getRoot();
-        IProject newProject = root.getProject(this.getAssignment().getName() + "-"
-                + this.getVersion().get().getTimestamp().format(DateTimeFormatter.BASIC_ISO_DATE));
+        IProject newProject = root.getProject(projectName);
         try {
             newProject.create(null);
             newProject.open(null);
+            this.project = Optional.ofNullable(newProject);
+            isCreated = true;
         } catch (CoreException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            
+            AtomicBoolean dialogResult = new AtomicBoolean();
+            if (e.getMessage().equals("Resource '/" + projectName + "' already exists.")) {
+                
+                Display.getDefault().syncExec(() -> {
+                    dialogResult.set(MessageDialog.openQuestion(shell, "Download Submission", 
+                            "Project already exists " + projectName
+                           + "\n Should the content be overwritten ?"));
+                  
+                });
+                
+                if (dialogResult.get()) {
+                    FileUtils.deleteContentInFolder(newProject.getLocation().toFile());
+                    isCreated = true;
+                    System.out.println("ja");
+                    
+                }
+            }
         }
         this.location = Optional.ofNullable(newProject.getLocation().toFile());
+        return isCreated;
     }
 
     /**
