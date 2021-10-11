@@ -75,7 +75,7 @@ public class ListVersionsJob extends Job {
                 }
             });
 
-            Display.getDefault().asyncExec(() -> {
+            Display.getDefault().syncExec(() -> {
                 this.callbackVersionlist.accept(this);
             });
         } catch (IllegalArgumentException | ReplayException ex) {

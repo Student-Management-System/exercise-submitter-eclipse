@@ -179,7 +179,7 @@ public class ReplayerJob extends Job {
     private void onListVersionsFinished(ListVersionsJob job) {
         try {
             this.version = job.getSelectedVersion();
-            if(this.createIProject()) {
+            if (this.createIProject()) {
                 this.startReplay();
             }
         } catch (ReplayException | IOException | CoreException e) {
