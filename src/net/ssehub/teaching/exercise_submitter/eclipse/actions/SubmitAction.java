@@ -139,11 +139,8 @@ public class SubmitAction extends AbstractSingleProjectAction {
      */
     private void onSubmissionFinished(SubmissionJob job) {
         if (job.getSubmissionResult().isAccepted()) {
-            Preferences preferences = InstanceScope.INSTANCE.getNode(Activator.PLUGIN_ID);
-            preferences.put(job.getProject().getLocation().toString(), job.getAssigment().getManagementId());
-            preferences.put(job.getAssigment().getManagementId(), job.getAssigment().getName());
             try {
-                preferences.flush();
+                Activator.getDefault().getProjectManager().setConnection(job.getProject(), job.getAssigment());
             } catch (BackingStoreException e) {
                 Display.getDefault().syncExec(() -> {
                     AdvancedExceptionDialog.showUnexpectedExceptionDialog(e, "Cant save settings");
