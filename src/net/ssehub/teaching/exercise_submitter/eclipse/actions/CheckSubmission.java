@@ -69,7 +69,7 @@ public class CheckSubmission extends AbstractSingleProjectAction {
         }
     }
     /**
-     * 
+     * This method handles the selection process for the assignment.
      * @param project
      * @param window
      * @return Optional<Assignment>
