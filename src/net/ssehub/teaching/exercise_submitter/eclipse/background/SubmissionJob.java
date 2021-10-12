@@ -8,6 +8,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ILock;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
@@ -106,9 +107,15 @@ public class SubmissionJob extends Job {
                 this.callback.accept(this);
             });
         } catch (SubmissionException | IllegalArgumentException | AuthenticationException ex) {
-            Display.getDefault().asyncExec(() -> {
-                AdvancedExceptionDialog.showUnexpectedExceptionDialog(ex, "Failed to submit");
-            });
+            if (ex instanceof SubmissionException && ex.getLocalizedMessage().equals("Version is already submitted")) {
+                Display.getDefault().asyncExec(() -> {
+                    MessageDialog.openError(shell, "Submitter", ex.getLocalizedMessage());
+                });
+            } else {
+                Display.getDefault().asyncExec(() -> {
+                    AdvancedExceptionDialog.showUnexpectedExceptionDialog(ex, "Failed to submit");
+                });
+            }
 
         } finally {
             lock.release();
