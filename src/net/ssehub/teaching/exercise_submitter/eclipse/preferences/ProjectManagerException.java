@@ -8,11 +8,12 @@ package net.ssehub.teaching.exercise_submitter.eclipse.preferences;
 public class ProjectManagerException extends Exception {
 
     
-    private static final long serialVersionUID = 1235810634456177790L;
     
     public static final String NOTAVAILABLE = "Connected assignment not available";
     public static final String NOTCONNECTED = "Not connected to an assignment";
     public static final String LISTVERSIONFAILURE = "Cant list the version history";
+    
+    private static final long serialVersionUID = 1235810634456177790L;
     
     /**
      * This method instantiates a new Projectmanager exception.
