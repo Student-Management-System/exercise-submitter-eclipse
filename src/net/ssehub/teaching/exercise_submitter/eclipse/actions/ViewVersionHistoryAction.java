@@ -9,6 +9,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import net.ssehub.teaching.exercise_submitter.eclipse.Activator;
 import net.ssehub.teaching.exercise_submitter.eclipse.background.ListVersionsJob;
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AdvancedExceptionDialog;
+import net.ssehub.teaching.exercise_submitter.eclipse.log.EclipseLog;
 import net.ssehub.teaching.exercise_submitter.eclipse.preferences.ProjectManagerException;
 import net.ssehub.teaching.exercise_submitter.lib.data.Assignment;
 import net.ssehub.teaching.exercise_submitter.lib.student_management_system.ApiException;
@@ -28,7 +29,10 @@ public class ViewVersionHistoryAction extends AbstractSingleProjectAction {
         try {
             assignment = Activator.getDefault().getProjectManager().getConnection(project);
             ListVersionsJob job;
-
+            
+            EclipseLog.info("Version log of assignment " + assignment.getName() + "downloading");
+            
+            
             job = new ListVersionsJob(window.getShell(), Activator.getDefault().getManager().getReplayer(assignment),
                     assignment, this::onListVersionFinished);
             job.setUser(true);
