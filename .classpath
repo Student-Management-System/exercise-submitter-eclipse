@@ -6,8 +6,8 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
-	<classpathentry excluding="res/" kind="src" path="src"/>
-	<classpathentry kind="src" path="res"/>
+	<classpathentry kind="src" path="src/"/>
+	<classpathentry kind="src" path="res/"/>
 	<classpathentry exported="true" kind="lib" path="target/dependency/exercise-submitter-lib-jar-with-dependencies.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
