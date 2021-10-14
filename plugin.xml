@@ -140,17 +140,15 @@
         </definition>
     </extension>
     
-     <extension
-    	  id="net.ssehub.teaching.exercise_submitter.eclipse.problemmarkers"
-    	  name="Submitter Marker"
-          point="org.eclipse.core.resources.markers">
-          <super
-          	type="org.eclipse.core.resources.problemmarker">
-          	</super>
-          	<attribute name = "key"/>
-          	<attribute name = "rule"/>
-          	<persistence value = "true">
-          	</persistence>
+    <extension
+        id="net.ssehub.teaching.exercise_submitter.eclipse.problemmarkers"
+        name="Submitter Marker"
+        point="org.eclipse.core.resources.markers">
+          
+        <super type="org.eclipse.core.resources.problemmarker" />
+        <attribute name="key"/>
+        <attribute name="rule"/>
+        <persistence value="true" />
     </extension>
     
     <extension
