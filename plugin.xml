@@ -153,5 +153,19 @@
           	</persistence>
     </extension>
     
-
+    <extension
+        point="org.eclipse.ui.decorators">
+        
+        <decorator
+            id="net.ssehub.teaching.exercise_submitter.eclipse.assignmentDecorator"
+            label="Last Exercise Submitter Assignment"
+            state="true"
+            adaptable="true"
+            class="net.ssehub.teaching.exercise_submitter.eclipse.labels.AssignmentLabelDecorator">
+        
+            <enablement>
+                <objectClass name="org.eclipse.core.resources.IProject" />
+            </enablement>
+        </decorator>
+    </extension>
 </plugin>

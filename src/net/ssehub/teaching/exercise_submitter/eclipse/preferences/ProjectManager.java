@@ -1,6 +1,7 @@
 package net.ssehub.teaching.exercise_submitter.eclipse.preferences;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -43,6 +44,25 @@ public class ProjectManager {
         preferences.put(assignment.getManagementId(), assignment.getName());
         preferences.flush();
     }
+    
+    /**
+     * Retrieves the name of the {@link Assignment} that is associated with the given project.
+     *  
+     * @param project The project to get the {@link Assignment} for.
+     * 
+     * @return The name of the {@link Assignment}, or empty.
+     */
+    public Optional<String> getStoredAssignmentName(IProject project) {
+        Optional<String> assignmentName = Optional.empty();
+        
+        String assignmentid = preferences.get(project.getLocation().toString(), null);
+        if (assignmentid != null) {
+            assignmentName = Optional.ofNullable(preferences.get(assignmentid, null));
+        }
+        
+        return assignmentName;
+    }
+    
 
     /**
      * This method gets the connection from a project to an assignment if available.
