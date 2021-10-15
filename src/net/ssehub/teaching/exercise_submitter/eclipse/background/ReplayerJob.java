@@ -100,7 +100,7 @@ public class ReplayerJob extends Job {
      *
      * @throws ReplayException
      * @throws IOException
-     * @throws CoreException 
+     * @throws CoreException
      */
     private void startReplay() throws ReplayException, IOException, CoreException {
         IProgressMonitor monitor = this.progress;
@@ -119,7 +119,7 @@ public class ReplayerJob extends Job {
         this.copyProject(tempdir.toPath(), this.location.get().toPath());
 
         monitor.worked(50);
-        
+
         this.project.get().refreshLocal(IResource.DEPTH_INFINITE, subMonitorReplay);
 
         Display.getDefault().asyncExec(() -> {
@@ -164,8 +164,9 @@ public class ReplayerJob extends Job {
                 this::onListVersionsFinished);
         job.setUser(true);
         job.schedule();
+        //TODO: change method
         
-        
+       
         while (job.getState() == Job.RUNNING) {
             try {
                 job.join();
@@ -194,12 +195,13 @@ public class ReplayerJob extends Job {
 
     /**
      * Creates a IProject.
+     *
      * @return boolean
      */
     private boolean createIProject() {
         boolean isCreated = false;
         String projectName = this.getAssignment().getName() + "-"
-                + this.getVersion().get().getTimestamp().format(DateTimeFormatter.BASIC_ISO_DATE);
+                + this.getVersion().get().getTimestamp().format(DateTimeFormatter.ofPattern("dd-MM-YYYY-HH-mm-ss"));
         IWorkspace workspace = ResourcesPlugin.getWorkspace();
         IWorkspaceRoot root = workspace.getRoot();
         IProject newProject = root.getProject(projectName);
@@ -209,22 +211,21 @@ public class ReplayerJob extends Job {
             this.project = Optional.ofNullable(newProject);
             isCreated = true;
         } catch (CoreException e) {
-            
+
             AtomicBoolean dialogResult = new AtomicBoolean();
             if (e.getMessage().equals("Resource '/" + projectName + "' already exists.")) {
-                
+
                 Display.getDefault().syncExec(() -> {
-                    dialogResult.set(MessageDialog.openQuestion(shell, "Download Submission", 
-                            "Project already exists " + projectName
-                           + "\n Should the content be overwritten ?"));
-                  
+                    dialogResult.set(MessageDialog.openQuestion(this.shell, "Download Submission",
+                            "Project already exists " + projectName + "\n Should the content be overwritten ?"));
+
                 });
-                
+
                 if (dialogResult.get()) {
                     FileUtils.deleteContentInFolder(newProject.getLocation().toFile());
                     isCreated = true;
                     System.out.println("ja");
-                    
+
                 }
             }
         }
