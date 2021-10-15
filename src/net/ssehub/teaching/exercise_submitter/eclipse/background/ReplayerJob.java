@@ -3,7 +3,6 @@ package net.ssehub.teaching.exercise_submitter.eclipse.background;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -20,7 +19,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.ILock;
@@ -28,7 +26,6 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-
 
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AdvancedExceptionDialog;
 import net.ssehub.teaching.exercise_submitter.eclipse.utils.FileUtils;
@@ -168,7 +165,14 @@ public class ReplayerJob extends Job {
         job.setUser(true);
         job.schedule();
         
-        while (job.getState() == Job.RUNNING);
+        
+        while (job.getState() == Job.RUNNING) {
+            try {
+                job.join();
+            } catch (InterruptedException e) {
+                // ignore
+            }
+        }
     }
 
     /**
