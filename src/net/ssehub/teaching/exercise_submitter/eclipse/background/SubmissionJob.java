@@ -109,7 +109,8 @@ public class SubmissionJob extends Job {
         } catch (SubmissionException | IllegalArgumentException | AuthenticationException ex) {
             if (ex instanceof SubmissionException && ex.getLocalizedMessage().equals("Version is already submitted")) {
                 Display.getDefault().asyncExec(() -> {
-                    MessageDialog.openError(shell, "Submitter", ex.getLocalizedMessage());
+                    MessageDialog.openError(shell, "Submitter", "This project and the current"
+                            + " project version on the Server are the same");
                 });
             } else {
                 Display.getDefault().asyncExec(() -> {
