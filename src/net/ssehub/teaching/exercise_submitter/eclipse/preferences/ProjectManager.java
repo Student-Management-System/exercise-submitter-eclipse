@@ -2,6 +2,7 @@ package net.ssehub.teaching.exercise_submitter.eclipse.preferences;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -57,10 +58,27 @@ public class ProjectManager {
         
         String assignmentid = preferences.get(project.getLocation().toString(), null);
         if (assignmentid != null) {
-            assignmentName = Optional.ofNullable(preferences.get(assignmentid, null));
+          Optional<Assignment> assignment = getAssignmentByMgmtId(assignmentid);
+          if(assignment.isPresent()) {
+              assignmentName = Optional.ofNullable(assignment.get().getName());
+          }
         }
         
         return assignmentName;
+    }
+
+    private Optional<Assignment> getAssignmentByMgmtId(String assignmentid) {
+        Assignment assignment = null;
+        try {
+           List<Assignment> assignmentlist = Activator.getDefault().getManager().getAllAssignments().stream().filter(element -> element.getManagementId().equals(assignmentid))
+            .collect(Collectors.toList());
+           if(assignmentlist.size() == 1) {
+               assignment = assignmentlist.get(0);
+           }
+        } catch (ApiException e) {
+           //TODO: maybe better catch or make a throw
+        }
+        return Optional.ofNullable(assignment);
     }
     
 
@@ -75,13 +93,14 @@ public class ProjectManager {
         String assignmentid = preferences.get(project.getLocation().toString(), null);
         Assignment assignment = null;
         if (assignmentid != null) {
-            String assignmentname = preferences.get(assignmentid, null);
+            
+            Optional<Assignment> downloadedAssignment = this.getAssignmentByMgmtId(assignmentid);
 
-            if (assignmentname == null) {
+            if (downloadedAssignment.isEmpty()) {
                 throw new ProjectManagerException(ProjectManagerException.NOTCONNECTED);
             }
 
-            assignment = new Assignment(assignmentid, assignmentname, State.SUBMISSION, true);
+            assignment = downloadedAssignment.get();
 
             try {
                 if (!this.checkIfConnectedAssignmentisSubmittable(assignment)) {
