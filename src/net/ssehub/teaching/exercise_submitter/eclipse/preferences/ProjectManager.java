@@ -11,7 +11,6 @@ import org.osgi.service.prefs.Preferences;
 
 import net.ssehub.teaching.exercise_submitter.eclipse.Activator;
 import net.ssehub.teaching.exercise_submitter.lib.data.Assignment;
-import net.ssehub.teaching.exercise_submitter.lib.data.Assignment.State;
 import net.ssehub.teaching.exercise_submitter.lib.student_management_system.ApiException;
 import net.ssehub.teaching.exercise_submitter.lib.student_management_system.AuthenticationException;
 import net.ssehub.teaching.exercise_submitter.lib.student_management_system.NetworkException;
@@ -42,45 +41,50 @@ public class ProjectManager {
      */
     public void setConnection(IProject project, Assignment assignment) throws BackingStoreException {
         preferences.put(project.getLocation().toString(), assignment.getManagementId());
-        preferences.put(assignment.getManagementId(), assignment.getName());
         preferences.flush();
     }
-    
+
     /**
-     * Retrieves the name of the {@link Assignment} that is associated with the given project.
-     *  
-     * @param project The project to get the {@link Assignment} for.
+     * Retrieves the name of the {@link Assignment} that is associated with the
+     * given project.
      * 
+     * @param project The project to get the {@link Assignment} for.
+     *
      * @return The name of the {@link Assignment}, or empty.
      */
     public Optional<String> getStoredAssignmentName(IProject project) {
         Optional<String> assignmentName = Optional.empty();
-        
+
         String assignmentid = preferences.get(project.getLocation().toString(), null);
         if (assignmentid != null) {
-          Optional<Assignment> assignment = getAssignmentByMgmtId(assignmentid);
-          if(assignment.isPresent()) {
-              assignmentName = Optional.ofNullable(assignment.get().getName());
-          }
+            Optional<Assignment> assignment = this.getAssignmentByMgmtId(assignmentid);
+            if (assignment.isPresent()) {
+                assignmentName = Optional.ofNullable(assignment.get().getName());
+            }
         }
-        
+
         return assignmentName;
     }
 
+    /**
+     * Returns the assignment if its available on the server.
+     *
+     * @param assignmentid
+     * @return Optional<Assignment>
+     */
     private Optional<Assignment> getAssignmentByMgmtId(String assignmentid) {
         Assignment assignment = null;
         try {
-           List<Assignment> assignmentlist = Activator.getDefault().getManager().getAllAssignments().stream().filter(element -> element.getManagementId().equals(assignmentid))
-            .collect(Collectors.toList());
-           if(assignmentlist.size() == 1) {
-               assignment = assignmentlist.get(0);
-           }
+            List<Assignment> assignmentlist = Activator.getDefault().getManager().getAllAssignments().stream()
+                    .filter(element -> element.getManagementId().equals(assignmentid)).collect(Collectors.toList());
+            if (assignmentlist.size() == 1) {
+                assignment = assignmentlist.get(0);
+            }
         } catch (ApiException e) {
-           //TODO: maybe better catch or make a throw
+            // TODO: maybe better catch or make a throw
         }
         return Optional.ofNullable(assignment);
     }
-    
 
     /**
      * This method gets the connection from a project to an assignment if available.
@@ -93,7 +97,7 @@ public class ProjectManager {
         String assignmentid = preferences.get(project.getLocation().toString(), null);
         Assignment assignment = null;
         if (assignmentid != null) {
-            
+
             Optional<Assignment> downloadedAssignment = this.getAssignmentByMgmtId(assignmentid);
 
             if (downloadedAssignment.isEmpty()) {
