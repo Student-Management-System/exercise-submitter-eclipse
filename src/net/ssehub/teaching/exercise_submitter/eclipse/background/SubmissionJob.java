@@ -14,7 +14,6 @@ import org.eclipse.swt.widgets.Shell;
 
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AdvancedExceptionDialog;
 import net.ssehub.teaching.exercise_submitter.lib.data.Assignment;
-import net.ssehub.teaching.exercise_submitter.lib.student_management_system.AuthenticationException;
 import net.ssehub.teaching.exercise_submitter.lib.submission.SubmissionException;
 import net.ssehub.teaching.exercise_submitter.lib.submission.SubmissionResult;
 import net.ssehub.teaching.exercise_submitter.lib.submission.Submitter;
@@ -106,7 +105,7 @@ public class SubmissionJob extends Job {
             Display.getDefault().asyncExec(() -> {
                 this.callback.accept(this);
             });
-        } catch (SubmissionException | IllegalArgumentException | AuthenticationException ex) {
+        } catch (SubmissionException | IllegalArgumentException ex) {
             if (ex instanceof SubmissionException && ex.getLocalizedMessage().equals("Version is already submitted")) {
                 Display.getDefault().asyncExec(() -> {
                     MessageDialog.openError(shell, "Submitter", "This project and the current"

@@ -203,7 +203,7 @@ public class ReplayerJob extends Job {
     private boolean createIProject() {
         boolean isCreated = false;
         String projectName = this.getAssignment().getName() + "-"
-                + this.getVersion().get().getTimestamp().format(DateTimeFormatter.ofPattern("dd-MM-YYYY-HH-mm-ss"));
+                + DateTimeFormatter.ofPattern("dd-MM-YYYY-HH-mm-ss").format(this.getVersion().get().getTimestamp());
         IWorkspace workspace = ResourcesPlugin.getWorkspace();
         IWorkspaceRoot root = workspace.getRoot();
         IProject newProject = root.getProject(projectName);

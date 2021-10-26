@@ -1,6 +1,5 @@
 package net.ssehub.teaching.exercise_submitter.eclipse.dialog;
 
-import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 
 import org.eclipse.core.resources.IProject;
@@ -78,8 +77,8 @@ public class CheckSubmissionDialog extends Dialog {
         new Label(container, SWT.NULL).setText("Version TimeStamp: ");
         Label currentVersionLabel = new Label(container, SWT.RIGHT);
         currentVersionLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
-        String versionString = this.versionlist.get(0).getTimestamp()
-                .format(DateTimeFormatter.ofPattern("dd/MM/YYYY|HH:mm"));
+        String versionString = DateTimeFormatter.ofPattern("dd/MM/YYYY|HH:mm").format(
+                this.versionlist.get(0).getTimestamp());
         currentVersionLabel.setText(versionString);
 
         new Label(container, SWT.NULL).setText("List all Versions: ");
@@ -181,7 +180,7 @@ public class CheckSubmissionDialog extends Dialog {
                     this.checkresult.getAssignment(), this::onReplayFinished);
             job.setUser(true);
             job.schedule();
-        } catch (IllegalArgumentException | ApiException | IOException e) {
+        } catch (IllegalArgumentException | ApiException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
@@ -206,7 +205,7 @@ public class CheckSubmissionDialog extends Dialog {
                     this.checkresult.getAssignment(), this::onListVersionFinished);
             job.setUser(true);
             job.schedule();
-        } catch (IllegalArgumentException | ApiException | IOException e) {
+        } catch (IllegalArgumentException | ApiException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }

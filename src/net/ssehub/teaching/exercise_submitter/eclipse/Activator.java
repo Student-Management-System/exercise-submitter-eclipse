@@ -76,8 +76,7 @@ public class Activator extends AbstractUIPlugin {
                     .withCourse("java-wise2021") // TODO: get course from config
                     .withAuthUrl(prop.getProperty("authurl"))
                     .withMgmtUrl(prop.getProperty("mgmturl"))
-                    .withSvnUrl(prop.getProperty("svnurl"));
-                   // .withDummyApiConnection(); // TODO: get URLs from config
+                    .withExerciseSubmitterServerUrl(prop.getProperty("exerciseSubmitterUrl"));
             manager = factory.build();
             
         } catch (StorageException ex) {

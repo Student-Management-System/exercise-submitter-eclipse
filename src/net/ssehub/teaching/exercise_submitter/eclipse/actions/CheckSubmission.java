@@ -1,6 +1,5 @@
 package net.ssehub.teaching.exercise_submitter.eclipse.actions;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -64,8 +63,6 @@ public class CheckSubmission extends AbstractSingleProjectAction {
             AdvancedExceptionDialog.showUnexpectedExceptionDialog(e, "Generic API exception");
         } catch (ReplayException e) {
             MessageDialog.openError(window.getShell(), "Check Submission", e.getMessage());
-        } catch (IllegalArgumentException | IOException e) {
-            AdvancedExceptionDialog.showUnexpectedExceptionDialog(e, "IO Exception");
         }
     }
     /**

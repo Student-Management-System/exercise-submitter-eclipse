@@ -1,6 +1,5 @@
 package net.ssehub.teaching.exercise_submitter.eclipse.actions;
 
-import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
@@ -55,7 +54,7 @@ public class DownloadSubmissionAction extends AbstractHandler {
             Replayer replayer = null;
             try {
                 replayer = manager.getReplayer(selectedAssigment.get());
-            } catch (IllegalArgumentException | ApiException | IOException e1) {
+            } catch (IllegalArgumentException | ApiException e1) {
                 // TODO Auto-generated catch block
                 e1.printStackTrace();
             }
@@ -121,7 +120,7 @@ public class DownloadSubmissionAction extends AbstractHandler {
         IWorkspace workspace = ResourcesPlugin.getWorkspace();
         IWorkspaceRoot root = workspace.getRoot();
         IProject newProject = root.getProject(job.getAssignment().getName() + "-"
-                + job.getVersion().get().getTimestamp().format(DateTimeFormatter.BASIC_ISO_DATE));
+                + DateTimeFormatter.BASIC_ISO_DATE.format(job.getVersion().get().getTimestamp()));
         try {
             newProject.create(null);
             newProject.open(null);
