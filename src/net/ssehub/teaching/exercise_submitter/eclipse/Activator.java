@@ -30,6 +30,7 @@ public class Activator extends AbstractUIPlugin {
     private ExerciseSubmitterManager manager;
     
     private ProjectManager projectmanager;
+    
 
     @Override
     public void start(BundleContext context) throws Exception {
@@ -121,5 +122,5 @@ public class Activator extends AbstractUIPlugin {
         // TODO: this returns null if init failed and thus causes NullPointerExceptions all over the place
         return projectmanager;
     }
-
+   
 }
