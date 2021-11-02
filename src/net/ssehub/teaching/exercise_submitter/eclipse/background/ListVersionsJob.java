@@ -30,7 +30,6 @@ import net.ssehub.teaching.exercise_submitter.lib.replay.Replayer.Version;
 public class ListVersionsJob extends Job {
 
     private static ILock lock = Job.getJobManager().newLock();
-    private Assignment assignment;
     private Optional<List<Version>> versionlist = Optional.empty();
     private Shell shell;
     private Replayer replayer;
@@ -48,7 +47,6 @@ public class ListVersionsJob extends Job {
     public ListVersionsJob(Shell shell, Replayer replayer, Assignment assignment,
             Consumer<ListVersionsJob> callbackVersionlist) {
         super("List Versions");
-        this.assignment = assignment;
         this.shell = shell;
         this.replayer = replayer;
         this.callbackVersionlist = callbackVersionlist;

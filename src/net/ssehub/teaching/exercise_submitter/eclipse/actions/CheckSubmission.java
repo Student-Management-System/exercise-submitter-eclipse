@@ -29,13 +29,11 @@ import net.ssehub.teaching.exercise_submitter.lib.student_management_system.Netw
  */
 public class CheckSubmission extends AbstractSingleProjectAction {
 
-    private IWorkbenchWindow window;
     private IProject project;
 
     @Override
     protected void execute(IProject project, IWorkbenchWindow window) {
 
-        this.window = window;
         this.project = project;
 
         try {
