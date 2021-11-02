@@ -17,7 +17,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
-
+import net.ssehub.teaching.exercise_submitter.eclipse.utils.TimeUtils;
 import net.ssehub.teaching.exercise_submitter.lib.replay.Replayer;
 
 /**
@@ -62,7 +62,7 @@ public class VersionDialog extends Dialog {
         table.setLayout(rw);
         container.setLayout(rw);
 
-        String[] colNames = {"TimeStamp", "Author"};
+        String[] colNames = {"Timestamp", "Author"};
 
         for (String s : colNames) {
             TableColumn tc = new TableColumn(table, SWT.NONE);
@@ -73,7 +73,7 @@ public class VersionDialog extends Dialog {
         for (Replayer.Version version : this.versionlist) {
 
             TableItem item = new TableItem(table, SWT.NONE);
-            item.setText(0, version.getTimestamp().toString());
+            item.setText(0, TimeUtils.instantToLocalString(version.getTimestamp()));
             item.setText(1, version.getAuthor());
           
         }

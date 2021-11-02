@@ -6,7 +6,7 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.time.format.DateTimeFormatter;
+import java.time.Instant;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
@@ -29,6 +29,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AdvancedExceptionDialog;
 import net.ssehub.teaching.exercise_submitter.eclipse.utils.FileUtils;
+import net.ssehub.teaching.exercise_submitter.eclipse.utils.TimeUtils;
 import net.ssehub.teaching.exercise_submitter.lib.data.Assignment;
 import net.ssehub.teaching.exercise_submitter.lib.replay.ReplayException;
 import net.ssehub.teaching.exercise_submitter.lib.replay.Replayer;
@@ -202,8 +203,9 @@ public class ReplayerJob extends Job {
      */
     private boolean createIProject() {
         boolean isCreated = false;
-        String projectName = this.getAssignment().getName() + "-"
-                + DateTimeFormatter.ofPattern("dd-MM-YYYY-HH-mm-ss").format(this.getVersion().get().getTimestamp());
+        
+        Instant timestamp = version.get().getTimestamp();
+        String projectName = this.getAssignment().getName() + "-" + TimeUtils.instantToLocalStringNoColons(timestamp);
         IWorkspace workspace = ResourcesPlugin.getWorkspace();
         IWorkspaceRoot root = workspace.getRoot();
         IProject newProject = root.getProject(projectName);

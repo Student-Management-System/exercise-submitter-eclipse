@@ -1,7 +1,5 @@
 package net.ssehub.teaching.exercise_submitter.eclipse.dialog;
 
-import java.time.format.DateTimeFormatter;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
@@ -21,6 +19,7 @@ import net.ssehub.teaching.exercise_submitter.eclipse.background.CheckSubmission
 import net.ssehub.teaching.exercise_submitter.eclipse.background.ListVersionsJob;
 import net.ssehub.teaching.exercise_submitter.eclipse.background.ReplayerJob;
 import net.ssehub.teaching.exercise_submitter.eclipse.background.SubmissionJob;
+import net.ssehub.teaching.exercise_submitter.eclipse.utils.TimeUtils;
 import net.ssehub.teaching.exercise_submitter.lib.ExerciseSubmitterManager;
 import net.ssehub.teaching.exercise_submitter.lib.replay.Replayer.Version;
 import net.ssehub.teaching.exercise_submitter.lib.student_management_system.ApiException;
@@ -74,11 +73,10 @@ public class CheckSubmissionDialog extends Dialog {
         String resultString = this.checkresult.getResult() ? "The content is the same" : "The content is NOT the same";
         resultLabel.setText(resultString);
 
-        new Label(container, SWT.NULL).setText("Version TimeStamp: ");
+        new Label(container, SWT.NULL).setText("Version Timestamp: ");
         Label currentVersionLabel = new Label(container, SWT.RIGHT);
         currentVersionLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
-        String versionString = DateTimeFormatter.ofPattern("dd/MM/YYYY|HH:mm").format(
-                this.versionlist.get(0).getTimestamp());
+        String versionString = TimeUtils.instantToLocalString(this.versionlist.get(0).getTimestamp());
         currentVersionLabel.setText(versionString);
 
         new Label(container, SWT.NULL).setText("List all Versions: ");

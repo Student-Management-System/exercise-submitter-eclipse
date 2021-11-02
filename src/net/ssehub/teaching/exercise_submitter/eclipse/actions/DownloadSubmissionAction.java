@@ -1,17 +1,11 @@
 package net.ssehub.teaching.exercise_submitter.eclipse.actions;
 
-import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.expressions.IEvaluationContext;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.ISources;
@@ -33,6 +27,7 @@ import net.ssehub.teaching.exercise_submitter.lib.student_management_system.ApiE
  * @author Lukas
  */
 public class DownloadSubmissionAction extends AbstractHandler {
+    
     //TODO: remove selected dir 
     @Override
     public Object execute(ExecutionEvent event) throws ExecutionException {
@@ -72,6 +67,7 @@ public class DownloadSubmissionAction extends AbstractHandler {
         return null;
       
     }
+    
     /**
      * Creates the assignmentdialog.
      * @param window , current window
@@ -104,6 +100,7 @@ public class DownloadSubmissionAction extends AbstractHandler {
         }
         return selected;
     }
+    
     /**
      * Called when replay is finished.
      * @param job
@@ -112,22 +109,5 @@ public class DownloadSubmissionAction extends AbstractHandler {
         System.out.println("Replay success");
 
     }
-    /**
-     * Creates a IProject.
-     * @param job
-     */
-    public static void createIProject(ReplayerJob job) {
-        IWorkspace workspace = ResourcesPlugin.getWorkspace();
-        IWorkspaceRoot root = workspace.getRoot();
-        IProject newProject = root.getProject(job.getAssignment().getName() + "-"
-                + DateTimeFormatter.BASIC_ISO_DATE.format(job.getVersion().get().getTimestamp()));
-        try {
-            newProject.create(null);
-            newProject.open(null);
-        } catch (CoreException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        job.setLocation(Optional.ofNullable(newProject.getLocation().toFile()));
-    }
+    
 }
