@@ -64,7 +64,7 @@ public class Activator extends AbstractUIPlugin {
         try {
             
             Properties prop = new Properties();
-            prop.load(Activator.class.getClassLoader().getResourceAsStream("/config/config.properties"));
+            prop.load(Activator.class.getResourceAsStream("config.properties"));
             
             String username = PreferencePage.SECURE_PREFERENCES.get(PreferencePage.KEY_USERNAME, "");
             String password = PreferencePage.SECURE_PREFERENCES.get(PreferencePage.KEY_PASSWORD, "");
