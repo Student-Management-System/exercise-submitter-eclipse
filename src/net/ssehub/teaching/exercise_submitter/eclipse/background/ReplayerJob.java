@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.time.Instant;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -280,9 +281,11 @@ public class ReplayerJob extends Job {
                 
                 try {
                     if (Files.isDirectory(sourceFile)) {
-                        Files.createDirectory(targetFile);
+                        if (!Files.exists(targetFile)) {
+                            Files.createDirectory(targetFile);
+                        }
                     } else {
-                        Files.copy(sourceFile, targetFile);
+                        Files.copy(sourceFile, targetFile, StandardCopyOption.REPLACE_EXISTING);
                     }
                 } catch (IOException e) {
                     throw new UncheckedIOException(e);
