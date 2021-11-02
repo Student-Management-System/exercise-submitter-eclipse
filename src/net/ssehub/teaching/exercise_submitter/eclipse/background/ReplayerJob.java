@@ -260,8 +260,7 @@ public class ReplayerJob extends Job {
     private void copyDefaultClasspath(Path targetDirectory) throws IOException {
         InputStream in = getClass().getResourceAsStream(".classpath");
         if (in != null) {
-            byte[] content = in.readAllBytes();
-            Files.write(targetDirectory.resolve(".classpath"), content);
+            Files.copy(in, targetDirectory.resolve(".classpath"));
         } else {
             throw new IOException(".classpath resource not found");
         }
