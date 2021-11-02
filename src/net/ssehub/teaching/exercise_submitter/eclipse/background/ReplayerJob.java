@@ -2,16 +2,17 @@ package net.ssehub.teaching.exercise_submitter.eclipse.background;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.time.Instant;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -28,6 +29,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AdvancedExceptionDialog;
+import net.ssehub.teaching.exercise_submitter.eclipse.log.EclipseLog;
 import net.ssehub.teaching.exercise_submitter.eclipse.utils.FileUtils;
 import net.ssehub.teaching.exercise_submitter.eclipse.utils.TimeUtils;
 import net.ssehub.teaching.exercise_submitter.lib.data.Assignment;
@@ -117,7 +119,8 @@ public class ReplayerJob extends Job {
 
         File tempdir = this.replayer.replay(this.version.get());
 
-        this.copyProject(tempdir.toPath(), this.location.get().toPath());
+        copyProject(tempdir.toPath(), this.location.get().toPath());
+        copyDefaultClasspath(this.location.get().toPath());
 
         monitor.worked(50);
 
@@ -234,28 +237,60 @@ public class ReplayerJob extends Job {
             }
         }
         this.location = Optional.ofNullable(newProject.getLocation().toFile());
+        
+        try {
+            IProjectDescription description = newProject.getDescription();
+            description.setNatureIds(new String[] {"org.eclipse.jdt.core.javanature"});
+            newProject.setDescription(description, null);
+        } catch (CoreException e) {
+            EclipseLog.warning("Failed to set java nature for new project: " + e.getMessage());
+        }
+        
         return isCreated;
     }
 
     /**
+     * Copies the default <code>.classpath</code> file from the resources to the given target directory.
+     * 
+     * @param targetDirectory The directory where to create the <code>.classpath</code> file in.
+     * 
+     * @throws IOException If creating the file fails.
+     */
+    private void copyDefaultClasspath(Path targetDirectory) throws IOException {
+        InputStream in = getClass().getResourceAsStream(".classpath");
+        if (in != null) {
+            byte[] content = in.readAllBytes();
+            Files.write(targetDirectory.resolve(".classpath"), content);
+        } else {
+            throw new IOException(".classpath resource not found");
+        }
+    }
+    
+    /**
      * Copies the project from the temp folder to the project folder.
      *
-     * @param firstdir
-     * @param seconddir
+     * @param source
+     * @param target
      * @throws IOException
      */
-    private void copyProject(Path firstdir, Path seconddir) throws IOException {
-        Files.walk(firstdir).forEach(sourceFile -> {
-            Path destination = seconddir.resolve(firstdir.relativize(sourceFile));
-            if (!destination.equals(seconddir)) {
+    private void copyProject(Path source, Path target) throws IOException {
+        try {
+            Files.walk(source).forEach(sourceFile -> {
+                Path targetFile = target.resolve(source.relativize(sourceFile));
+                
                 try {
-                    Files.copy(sourceFile, destination, StandardCopyOption.REPLACE_EXISTING);
+                    if (Files.isDirectory(sourceFile)) {
+                        Files.createDirectory(targetFile);
+                    } else {
+                        Files.copy(sourceFile, targetFile);
+                    }
                 } catch (IOException e) {
                     throw new UncheckedIOException(e);
                 }
-            }
-
-        });
+            });
+        } catch (UncheckedIOException e) {
+            throw e.getCause();
+        }
     }
 
 }
