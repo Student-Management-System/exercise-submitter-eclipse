@@ -111,6 +111,16 @@ public class Activator extends AbstractUIPlugin {
         // TODO: this returns null if init failed and thus causes NullPointerExceptions all over the place
         return manager;
     }
+    
+    /**
+     * Checks whether the {@link ExerciseSubmitterManager} is initialized.
+     * 
+     * @return Whether the manager is intialized.
+     */
+    public synchronized boolean isManagerInitialized() {
+        return manager != null;
+    }
+    
     /**
      * This class get the projectmanager and creates him if neccesary.
      * @return ProjectManager
