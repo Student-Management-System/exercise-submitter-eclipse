@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.SWT;
 import org.eclipse.ui.IWorkbenchWindow;
 
 import net.ssehub.teaching.exercise_submitter.eclipse.Activator;
@@ -77,13 +78,16 @@ public class CheckSubmission extends AbstractSingleProjectAction {
         Assignment assignment = null;
         try {
             Assignment savedAssignment = Activator.getDefault().getProjectManager().getConnection(project);
-            boolean questionResult = MessageDialog.openQuestion(window.getShell(), "Submit",
-                    savedAssignment.getName() + " is connected."
-                            + " Do you want to check with this assignment or change it ?"
-                            + " \n\n Yes = keep \n No = Change assignment");
-            if (questionResult) {
+            
+            int chosen = MessageDialog.open(MessageDialog.QUESTION, window.getShell(), "Choose Assignment",
+                    "This project was last submitted to " + savedAssignment.getName() + ". Submit to this again?",
+                    SWT.NONE, savedAssignment.getName(), "Different Assignment");
+            
+            System.out.println(chosen);
+            
+            if (chosen == 0) {
                 assignment = savedAssignment;
-            } else {
+            } else if (chosen == 1) {
                 EclipseLog.info("Showing assignment selector to user");
                 assignment = this.displayAssignmentDialog(window);
             }
