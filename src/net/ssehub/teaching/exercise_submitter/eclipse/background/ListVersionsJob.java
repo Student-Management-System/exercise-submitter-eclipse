@@ -11,7 +11,6 @@ import org.eclipse.core.runtime.jobs.ILock;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AdvancedExceptionDialog;
@@ -62,7 +61,7 @@ public class ListVersionsJob extends Job {
 
             this.versionlist = Optional.ofNullable(this.replayer.getVersions());
 
-            Display.getDefault().syncExec(() -> {
+            this.shell.getDisplay().syncExec(() -> {
 
                 if (this.versionlist.isPresent()) {
                     if (this.versionlist.get().size() == 0) {
@@ -73,11 +72,11 @@ public class ListVersionsJob extends Job {
                 }
             });
 
-            Display.getDefault().syncExec(() -> {
+            this.shell.getDisplay().syncExec(() -> {
                 this.callbackVersionlist.accept(this);
             });
         } catch (IllegalArgumentException | ReplayException ex) {
-            Display.getDefault().asyncExec(() -> {
+            this.shell.getDisplay().asyncExec(() -> {
                 AdvancedExceptionDialog.showUnexpectedExceptionDialog(ex, "Failed to download versionlist");
             });
 
