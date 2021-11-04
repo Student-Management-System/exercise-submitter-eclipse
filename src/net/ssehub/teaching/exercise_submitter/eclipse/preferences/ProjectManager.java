@@ -40,7 +40,7 @@ public class ProjectManager {
      * @throws BackingStoreException
      */
     public void setConnection(IProject project, Assignment assignment) throws BackingStoreException {
-        preferences.put(project.getLocation().toString(), assignment.getManagementId());
+        preferences.put(project.getLocation().toString(), assignment.getName());
         preferences.flush();
     }
 
@@ -53,30 +53,20 @@ public class ProjectManager {
      * @return The name of the {@link Assignment}, or empty.
      */
     public Optional<String> getStoredAssignmentName(IProject project) {
-        Optional<String> assignmentName = Optional.empty();
-
-        String assignmentid = preferences.get(project.getLocation().toString(), null);
-        if (assignmentid != null) {
-            Optional<Assignment> assignment = this.getAssignmentByMgmtId(assignmentid);
-            if (assignment.isPresent()) {
-                assignmentName = Optional.ofNullable(assignment.get().getName());
-            }
-        }
-
-        return assignmentName;
+        return Optional.ofNullable(preferences.get(project.getLocation().toString(), null));
     }
 
     /**
      * Returns the assignment if its available on the server.
      *
-     * @param assignmentid
-     * @return Optional<Assignment>
+     * @param assignmentName The name of the assignment.
+     * @return The found assignment, or {@link Optional#empty()} if no assignment with this name xists.
      */
-    private Optional<Assignment> getAssignmentByMgmtId(String assignmentid) {
+    private Optional<Assignment> getAssignmentByName(String assignmentName) {
         Assignment assignment = null;
         try {
             List<Assignment> assignmentlist = Activator.getDefault().getManager().getAllAssignments().stream()
-                    .filter(element -> element.getManagementId().equals(assignmentid)).collect(Collectors.toList());
+                    .filter(element -> element.getName().equals(assignmentName)).collect(Collectors.toList());
             if (assignmentlist.size() == 1) {
                 assignment = assignmentlist.get(0);
             }
@@ -94,11 +84,11 @@ public class ProjectManager {
      * @throws ProjectManagerException
      */
     public Assignment getConnection(IProject project) throws ProjectManagerException {
-        String assignmentid = preferences.get(project.getLocation().toString(), null);
+        String assignemntName = preferences.get(project.getLocation().toString(), null);
         Assignment assignment = null;
-        if (assignmentid != null) {
+        if (assignemntName != null) {
 
-            Optional<Assignment> downloadedAssignment = this.getAssignmentByMgmtId(assignmentid);
+            Optional<Assignment> downloadedAssignment = getAssignmentByName(assignemntName);
 
             if (downloadedAssignment.isEmpty()) {
                 throw new ProjectManagerException(ProjectManagerException.NOTCONNECTED);
