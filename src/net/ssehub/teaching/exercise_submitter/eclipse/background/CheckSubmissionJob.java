@@ -15,7 +15,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AdvancedExceptionDialog;
+import net.ssehub.teaching.exercise_submitter.eclipse.dialog.ExceptionDialogs;
 import net.ssehub.teaching.exercise_submitter.lib.data.Assignment;
 import net.ssehub.teaching.exercise_submitter.lib.replay.ReplayException;
 import net.ssehub.teaching.exercise_submitter.lib.replay.Replayer;
@@ -115,7 +115,7 @@ public class CheckSubmissionJob extends Job {
                 if (e instanceof ReplayException && e.getMessage().equals("No version is uploaded")) {
                     MessageDialog.openError(this.shell, "Check Submission", e.getMessage());
                 } else {
-                    AdvancedExceptionDialog.showUnexpectedExceptionDialog(e, "Failed check submission");
+                    ExceptionDialogs.showUnexpectedExceptionDialog(e, "Failed check submission");
                 }
             });
         } finally {

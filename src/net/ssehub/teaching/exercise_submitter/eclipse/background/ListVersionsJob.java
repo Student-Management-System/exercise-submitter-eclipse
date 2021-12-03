@@ -13,7 +13,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
 
-import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AdvancedExceptionDialog;
+import net.ssehub.teaching.exercise_submitter.eclipse.dialog.ExceptionDialogs;
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.VersionDialog;
 import net.ssehub.teaching.exercise_submitter.lib.data.Assignment;
 import net.ssehub.teaching.exercise_submitter.lib.replay.ReplayException;
@@ -77,7 +77,7 @@ public class ListVersionsJob extends Job {
             });
         } catch (IllegalArgumentException | ReplayException ex) {
             this.shell.getDisplay().asyncExec(() -> {
-                AdvancedExceptionDialog.showUnexpectedExceptionDialog(ex, "Failed to download versionlist");
+                ExceptionDialogs.showUnexpectedExceptionDialog(ex, "Failed to download versionlist");
             });
 
         } finally {

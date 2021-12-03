@@ -12,7 +12,7 @@ import org.osgi.service.prefs.BackingStoreException;
 
 import net.ssehub.teaching.exercise_submitter.eclipse.Activator;
 import net.ssehub.teaching.exercise_submitter.eclipse.background.SubmissionJob;
-import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AdvancedExceptionDialog;
+import net.ssehub.teaching.exercise_submitter.eclipse.dialog.ExceptionDialogs;
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AssignmentDialog;
 import net.ssehub.teaching.exercise_submitter.eclipse.log.EclipseLog;
 import net.ssehub.teaching.exercise_submitter.eclipse.preferences.ProjectManagerException;
@@ -83,17 +83,15 @@ public class SubmitAction extends AbstractSingleProjectActionUsingManager {
                 sj.schedule();
 
             } catch (UserNotInCourseException e) {
-                AdvancedExceptionDialog.showUnexpectedExceptionDialog(e, "User is not in course");
+                ExceptionDialogs.showUserNotInCourseDialog(manager.getCourse().getId());
             } catch (NetworkException e) {
-                AdvancedExceptionDialog.showUnexpectedExceptionDialog(e,
-                        "Failed to connect to student management system");
+                ExceptionDialogs.showNetworkExceptionDialog(e);
             } catch (AuthenticationException e) {
-                AdvancedExceptionDialog.showUnexpectedExceptionDialog(e,
-                        "Failed to authenticate to student management system");
+                ExceptionDialogs.showLoginFailureDialog();
             } catch (GroupNotFoundException e) {
-                AdvancedExceptionDialog.showUnexpectedExceptionDialog(e, "Group for assignment not found");
+                ExceptionDialogs.showUserNotInGroupDialog(assignment.get().getName());
             } catch (ApiException e) {
-                AdvancedExceptionDialog.showUnexpectedExceptionDialog(e, "Generic API exception");
+                ExceptionDialogs.showUnexpectedExceptionDialog(e, "Generic API exception");
             }
             // TODO: verschiedene Hausaufgaben noch hinzufügen?
 
@@ -132,12 +130,11 @@ public class SubmitAction extends AbstractSingleProjectActionUsingManager {
             } while (dialogResult == Window.OK && selected.isEmpty());
 
         } catch (NetworkException e) {
-            AdvancedExceptionDialog.showUnexpectedExceptionDialog(e, "Failed to connect to student management system");
+            ExceptionDialogs.showNetworkExceptionDialog(e);
         } catch (AuthenticationException e) {
-            AdvancedExceptionDialog.showUnexpectedExceptionDialog(e,
-                    "Failed to authenticate to student management system");
+            ExceptionDialogs.showLoginFailureDialog();
         } catch (ApiException e) {
-            AdvancedExceptionDialog.showUnexpectedExceptionDialog(e, "Generic API exception");
+            ExceptionDialogs.showUnexpectedExceptionDialog(e, "Generic API exception");
         }
 
         return selected;
@@ -157,7 +154,7 @@ public class SubmitAction extends AbstractSingleProjectActionUsingManager {
                 Activator.getDefault().getProjectManager().setConnection(job.getProject(), job.getAssigment());
             } catch (BackingStoreException e) {
                 Display.getDefault().syncExec(() -> {
-                    AdvancedExceptionDialog.showUnexpectedExceptionDialog(e, "Cant save settings");
+                    ExceptionDialogs.showUnexpectedExceptionDialog(e, "Cant save settings");
                 });
             }
         }

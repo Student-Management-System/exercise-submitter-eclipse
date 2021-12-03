@@ -12,7 +12,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AdvancedExceptionDialog;
+import net.ssehub.teaching.exercise_submitter.eclipse.dialog.ExceptionDialogs;
 import net.ssehub.teaching.exercise_submitter.lib.data.Assignment;
 import net.ssehub.teaching.exercise_submitter.lib.submission.SubmissionException;
 import net.ssehub.teaching.exercise_submitter.lib.submission.SubmissionResult;
@@ -113,7 +113,7 @@ public class SubmissionJob extends Job {
                 });
             } else {
                 Display.getDefault().asyncExec(() -> {
-                    AdvancedExceptionDialog.showUnexpectedExceptionDialog(ex, "Failed to submit");
+                    ExceptionDialogs.showUnexpectedExceptionDialog(ex, "Failed to submit");
                 });
             }
 

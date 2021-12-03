@@ -10,7 +10,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 
 import net.ssehub.teaching.exercise_submitter.eclipse.Activator;
 import net.ssehub.teaching.exercise_submitter.eclipse.background.CheckSubmissionJob;
-import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AdvancedExceptionDialog;
+import net.ssehub.teaching.exercise_submitter.eclipse.dialog.ExceptionDialogs;
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AssignmentDialog;
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.CheckSubmissionDialog;
 import net.ssehub.teaching.exercise_submitter.eclipse.log.EclipseLog;
@@ -55,12 +55,11 @@ public class CheckSubmission extends AbstractSingleProjectActionUsingManager {
             job.schedule();
 
         } catch (NetworkException e) {
-            AdvancedExceptionDialog.showUnexpectedExceptionDialog(e, "Failed to connect to student management system");
+            ExceptionDialogs.showNetworkExceptionDialog(e);
         } catch (AuthenticationException e) {
-            AdvancedExceptionDialog.showUnexpectedExceptionDialog(e,
-                    "Failed to authenticate to student management system");
+            ExceptionDialogs.showLoginFailureDialog();
         } catch (ApiException e) {
-            AdvancedExceptionDialog.showUnexpectedExceptionDialog(e, "Generic API exception");
+            ExceptionDialogs.showUnexpectedExceptionDialog(e, "Generic API exception");
         } catch (ReplayException e) {
             MessageDialog.openError(window.getShell(), "Check Submission", e.getMessage());
         }

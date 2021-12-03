@@ -6,7 +6,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 
 import net.ssehub.teaching.exercise_submitter.eclipse.Activator;
 import net.ssehub.teaching.exercise_submitter.eclipse.background.ListVersionsJob;
-import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AdvancedExceptionDialog;
+import net.ssehub.teaching.exercise_submitter.eclipse.dialog.ExceptionDialogs;
 import net.ssehub.teaching.exercise_submitter.eclipse.log.EclipseLog;
 import net.ssehub.teaching.exercise_submitter.eclipse.preferences.ProjectManagerException;
 import net.ssehub.teaching.exercise_submitter.lib.ExerciseSubmitterManager;
@@ -42,7 +42,7 @@ public class ViewVersionHistoryAction extends AbstractSingleProjectActionUsingMa
                         || e.getMessage().equals(ProjectManagerException.NOTCONNECTED)) {
                     MessageDialog.openError(window.getShell(), "View version history", e.getLocalizedMessage());
                 } else {
-                    AdvancedExceptionDialog.showUnexpectedExceptionDialog(e, "Cant view version history");
+                    ExceptionDialogs.showUnexpectedExceptionDialog(e, "Cant view version history");
                 }
             }
         }

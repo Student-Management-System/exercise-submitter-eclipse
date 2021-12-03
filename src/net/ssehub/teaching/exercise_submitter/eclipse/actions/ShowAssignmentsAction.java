@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.eclipse.core.commands.ExecutionEvent;
 
-import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AdvancedExceptionDialog;
+import net.ssehub.teaching.exercise_submitter.eclipse.dialog.ExceptionDialogs;
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AssignmentDialog;
 import net.ssehub.teaching.exercise_submitter.eclipse.log.EclipseLog;
 import net.ssehub.teaching.exercise_submitter.lib.ExerciseSubmitterManager;
@@ -30,13 +30,11 @@ public class ShowAssignmentsAction extends AbstractActionUsingManager {
                     assignments, AssignmentDialog.Sorted.GROUPED);
             assDialog.open();
         } catch (NetworkException e) {
-            AdvancedExceptionDialog.showUnexpectedExceptionDialog(e,
-                    "Failed to connect to student management system");
+            ExceptionDialogs.showNetworkExceptionDialog(e);
         } catch (AuthenticationException e) {
-            AdvancedExceptionDialog.showUnexpectedExceptionDialog(e,
-                    "Failed to authenticate to student management system");
+            ExceptionDialogs.showLoginFailureDialog();
         } catch (ApiException e) {
-            AdvancedExceptionDialog.showUnexpectedExceptionDialog(e, "Generic API exception");
+            ExceptionDialogs.showUnexpectedExceptionDialog(e, "Generic API exception");
         }
     }        
 

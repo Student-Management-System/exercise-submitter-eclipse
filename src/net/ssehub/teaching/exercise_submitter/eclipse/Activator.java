@@ -8,7 +8,7 @@ import org.eclipse.equinox.security.storage.StorageException;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AdvancedExceptionDialog;
+import net.ssehub.teaching.exercise_submitter.eclipse.dialog.ExceptionDialogs;
 import net.ssehub.teaching.exercise_submitter.eclipse.log.EclipseLog;
 import net.ssehub.teaching.exercise_submitter.eclipse.preferences.PreferencePage;
 import net.ssehub.teaching.exercise_submitter.eclipse.preferences.ProjectManager;
@@ -64,10 +64,11 @@ public class Activator extends AbstractUIPlugin {
     public synchronized void initManager() {
         this.manager = Optional.empty();
         
+        String course = "";
         try {
-            
             Properties prop = new Properties();
             prop.load(Activator.class.getResourceAsStream("config.properties"));
+            course = prop.getProperty("course");
             
             String username = PreferencePage.SECURE_PREFERENCES.get(PreferencePage.KEY_USERNAME, "");
             String password = PreferencePage.SECURE_PREFERENCES.get(PreferencePage.KEY_PASSWORD, "");
@@ -77,28 +78,24 @@ public class Activator extends AbstractUIPlugin {
             factory
                     .withUsername(username)
                     .withPassword(password)
-                    .withCourse(prop.getProperty("course"))
+                    .withCourse(course)
                     .withAuthUrl(prop.getProperty("authurl"))
                     .withMgmtUrl(prop.getProperty("mgmturl"))
                     .withExerciseSubmitterServerUrl(prop.getProperty("exerciseSubmitterUrl"));
             this.manager = Optional.of(factory.build());
             
         } catch (StorageException ex) {
-            AdvancedExceptionDialog.showUnexpectedExceptionDialog(ex, "Failed to load login data from preferences");
+            ExceptionDialogs.showUnexpectedExceptionDialog(ex, "Failed to load login data from preferences");
         } catch (NetworkException e) {
-            AdvancedExceptionDialog.showUnexpectedExceptionDialog(e, "Failed to connect to student management system");
-            // TODO: more user-friendly dialog?
+            ExceptionDialogs.showNetworkExceptionDialog(e);
         } catch (UserNotInCourseException e) {
-            AdvancedExceptionDialog.showUnexpectedExceptionDialog(e,
-                    "User not enrolled in course or course does not exist");
-            // TODO: more user-friendly dialog?
+            ExceptionDialogs.showUserNotInCourseDialog(course);
         } catch (AuthenticationException e) {
-            AdvancedExceptionDialog.showUnexpectedExceptionDialog(e, "Failed to log into student management system");
-            // TODO: more user-friendly dialog
+            ExceptionDialogs.showLoginFailureDialog();
         } catch (ApiException e) {
-            AdvancedExceptionDialog.showUnexpectedExceptionDialog(e, "Generic API exception");
+            ExceptionDialogs.showUnexpectedExceptionDialog(e, "Generic API exception");
         } catch (IOException e) {
-            AdvancedExceptionDialog.showUnexpectedExceptionDialog(e, "Cant read config file");
+            ExceptionDialogs.showUnexpectedExceptionDialog(e, "Cant read config file");
         }
     }
     

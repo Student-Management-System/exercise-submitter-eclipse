@@ -29,7 +29,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AdvancedExceptionDialog;
+import net.ssehub.teaching.exercise_submitter.eclipse.dialog.ExceptionDialogs;
 import net.ssehub.teaching.exercise_submitter.eclipse.log.EclipseLog;
 import net.ssehub.teaching.exercise_submitter.eclipse.utils.FileUtils;
 import net.ssehub.teaching.exercise_submitter.eclipse.utils.TimeUtils;
@@ -88,7 +88,7 @@ public class ReplayerJob extends Job {
             });
         } catch (IllegalArgumentException ex) {
             Display.getDefault().asyncExec(() -> {
-                AdvancedExceptionDialog.showUnexpectedExceptionDialog(ex, "Failed to download");
+                ExceptionDialogs.showUnexpectedExceptionDialog(ex, "Failed to download");
             });
 
         } finally {
