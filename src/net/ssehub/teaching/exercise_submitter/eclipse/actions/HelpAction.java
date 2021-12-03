@@ -25,7 +25,7 @@ public class HelpAction extends AbstractHandler {
         StringBuilder message = new StringBuilder();
         
         if (Activator.getDefault().isManagerInitialized()) {
-            ExerciseSubmitterManager manager = Activator.getDefault().getManager();
+            ExerciseSubmitterManager manager = Activator.getDefault().getManager().get();
             IApiConnection connection = manager.getStudentManagementConnection();
             
             message.append("Course: ").append(manager.getCourse().getName())

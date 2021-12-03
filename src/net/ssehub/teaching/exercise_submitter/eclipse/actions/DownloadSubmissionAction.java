@@ -2,16 +2,13 @@ package net.ssehub.teaching.exercise_submitter.eclipse.actions;
 
 import java.util.Optional;
 
-import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbenchWindow;
 
-import net.ssehub.teaching.exercise_submitter.eclipse.Activator;
 import net.ssehub.teaching.exercise_submitter.eclipse.background.ReplayerJob;
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AssignmentDialog;
 import net.ssehub.teaching.exercise_submitter.eclipse.log.EclipseLog;
@@ -26,11 +23,11 @@ import net.ssehub.teaching.exercise_submitter.lib.student_management_system.ApiE
  *
  * @author Lukas
  */
-public class DownloadSubmissionAction extends AbstractHandler {
+public class DownloadSubmissionAction extends AbstractActionUsingManager {
     
     //TODO: remove selected dir 
     @Override
-    public Object execute(ExecutionEvent event) throws ExecutionException {
+    public void execute(ExecutionEvent event, ExerciseSubmitterManager manager) {
         
         IWorkbenchWindow window = null;
         
@@ -41,7 +38,6 @@ public class DownloadSubmissionAction extends AbstractHandler {
            
         }
 
-        ExerciseSubmitterManager manager = Activator.getDefault().getManager();
         Optional<Assignment> selectedAssigment = this.createAssignmentDialog(window, manager);
         
         if (selectedAssigment.isPresent()) {
@@ -64,8 +60,6 @@ public class DownloadSubmissionAction extends AbstractHandler {
         } else {
             MessageDialog.openInformation(window.getShell(), "Exercise Submitter", "No Assignment selected");
         }
-        return null;
-      
     }
     
     /**

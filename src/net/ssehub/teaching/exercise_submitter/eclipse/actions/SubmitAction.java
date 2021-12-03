@@ -34,10 +34,10 @@ import net.ssehub.teaching.exercise_submitter.lib.submission.Submitter;
  * @author Adam
  * @author Lukas
  */
-public class SubmitAction extends AbstractSingleProjectAction {
+public class SubmitAction extends AbstractSingleProjectActionUsingManager {
 
     @Override
-    protected void execute(IProject project, IWorkbenchWindow window) {
+    protected void execute(IProject project, IWorkbenchWindow window, ExerciseSubmitterManager manager) {
         EclipseLog.info("Starting submision of project " + project.getName());
 
         EclipseMarker.clearMarkerFromProjekt(project);
@@ -52,12 +52,10 @@ public class SubmitAction extends AbstractSingleProjectAction {
             }
         }
 
-        ExerciseSubmitterManager manager = Activator.getDefault().getManager();
-
         Optional<Assignment> assignment = Optional.empty();
 
         try {
-            Assignment savedAssignment = Activator.getDefault().getProjectManager().getConnection(project);
+            Assignment savedAssignment = Activator.getDefault().getProjectManager().getConnection(project, manager);
             boolean questionResult = MessageDialog.openQuestion(window.getShell(), "Submit",
                     savedAssignment.getName() + " is connected. Do you want to submit to this assignment or change it ?"
                             + " \n\n Yes = keep \n No = Change assignment");

@@ -15,6 +15,7 @@ import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AssignmentDialog;
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.CheckSubmissionDialog;
 import net.ssehub.teaching.exercise_submitter.eclipse.log.EclipseLog;
 import net.ssehub.teaching.exercise_submitter.eclipse.preferences.ProjectManagerException;
+import net.ssehub.teaching.exercise_submitter.lib.ExerciseSubmitterManager;
 import net.ssehub.teaching.exercise_submitter.lib.data.Assignment;
 import net.ssehub.teaching.exercise_submitter.lib.replay.ReplayException;
 import net.ssehub.teaching.exercise_submitter.lib.student_management_system.ApiException;
@@ -28,18 +29,18 @@ import net.ssehub.teaching.exercise_submitter.lib.student_management_system.Netw
  * @author Lukas
  * @author Adam
  */
-public class CheckSubmission extends AbstractSingleProjectAction {
+public class CheckSubmission extends AbstractSingleProjectActionUsingManager {
 
     private IProject project;
 
     @Override
-    protected void execute(IProject project, IWorkbenchWindow window) {
+    protected void execute(IProject project, IWorkbenchWindow window, ExerciseSubmitterManager manager) {
 
         this.project = project;
 
         try {
             
-            Optional<Assignment> selectedAssignment = chooseAssignment(project, window);
+            Optional<Assignment> selectedAssignment = chooseAssignment(project, window, manager);
             
             if (selectedAssignment.isEmpty()) {
                 throw new ReplayException("No assignment is selected");
@@ -48,8 +49,8 @@ public class CheckSubmission extends AbstractSingleProjectAction {
             EclipseLog.info("Starting download newest Version ");
 
             CheckSubmissionJob job = new CheckSubmissionJob(window.getShell(),
-                    Activator.getDefault().getManager().getReplayer(selectedAssignment.get()), selectedAssignment.get(),
-                    project.getLocation().toFile(), this::onCheckSubmissionFinished);
+                    manager.getReplayer(selectedAssignment.get()), selectedAssignment.get(),
+                    project.getLocation().toFile(), finishedJob -> onCheckSubmissionFinished(finishedJob, manager));
             job.setUser(true);
             job.schedule();
 
@@ -68,16 +69,17 @@ public class CheckSubmission extends AbstractSingleProjectAction {
      * This method handles the selection process for the assignment.
      * @param project
      * @param window
+     * @param manager 
      * @return Optional<Assignment>
      * @throws ApiException
      * @throws ReplayException
      */
-    private Optional<Assignment> chooseAssignment(IProject project, IWorkbenchWindow window) throws 
-        ApiException, ReplayException {
+    private Optional<Assignment> chooseAssignment(IProject project, IWorkbenchWindow window,
+            ExerciseSubmitterManager manager) throws ApiException, ReplayException {
        
         Assignment assignment = null;
         try {
-            Assignment savedAssignment = Activator.getDefault().getProjectManager().getConnection(project);
+            Assignment savedAssignment = Activator.getDefault().getProjectManager().getConnection(project, manager);
             
             int chosen = MessageDialog.open(MessageDialog.QUESTION, window.getShell(), "Choose Assignment",
                     "This project was last submitted to " + savedAssignment.getName() + ". Submit to this again?",
@@ -89,11 +91,11 @@ public class CheckSubmission extends AbstractSingleProjectAction {
                 assignment = savedAssignment;
             } else if (chosen == 1) {
                 EclipseLog.info("Showing assignment selector to user");
-                assignment = this.displayAssignmentDialog(window);
+                assignment = displayAssignmentDialog(window, manager);
             }
         } catch (ProjectManagerException ex) {
             EclipseLog.info("Showing assignment selector to user");
-            assignment = this.displayAssignmentDialog(window);
+            assignment = displayAssignmentDialog(window, manager);
         }
         
         return Optional.ofNullable(assignment);
@@ -103,16 +105,17 @@ public class CheckSubmission extends AbstractSingleProjectAction {
      * Crates the assignmentdialog.
      *
      * @param window , the current window
+     * @param manager 
      * @return Assignment ,the selected assignment
      * @throws NetworkException
      * @throws AuthenticationException
      * @throws ApiException
      * @throws ReplayException
      */
-    private Assignment displayAssignmentDialog(IWorkbenchWindow window)
+    private Assignment displayAssignmentDialog(IWorkbenchWindow window, ExerciseSubmitterManager manager)
             throws NetworkException, AuthenticationException, ApiException, ReplayException {
 
-        List<Assignment> assignments = Activator.getDefault().getManager().getAllSubmittableAssignments();
+        List<Assignment> assignments = manager.getAllSubmittableAssignments();
         AssignmentDialog assDialog = new AssignmentDialog(window.getShell(), assignments, AssignmentDialog.Sorted.NONE);
         assDialog.open();
 
@@ -130,12 +133,13 @@ public class CheckSubmission extends AbstractSingleProjectAction {
      * Called when check submission is finished.
      *
      * @param job
+     * @param manager
      */
-    private void onCheckSubmissionFinished(CheckSubmissionJob job) {
+    private void onCheckSubmissionFinished(CheckSubmissionJob job, ExerciseSubmitterManager manager) {
         // TODO: build dialog
 
         CheckSubmissionDialog dialog = new CheckSubmissionDialog(job.getShell(), job.getVersionlist(),
-                Activator.getDefault().getManager(), this.project, job.getCheckResult());
+                manager, this.project, job.getCheckResult());
         dialog.open();
 
     }

@@ -9,6 +9,7 @@ import net.ssehub.teaching.exercise_submitter.eclipse.background.ListVersionsJob
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AdvancedExceptionDialog;
 import net.ssehub.teaching.exercise_submitter.eclipse.log.EclipseLog;
 import net.ssehub.teaching.exercise_submitter.eclipse.preferences.ProjectManagerException;
+import net.ssehub.teaching.exercise_submitter.lib.ExerciseSubmitterManager;
 import net.ssehub.teaching.exercise_submitter.lib.data.Assignment;
 import net.ssehub.teaching.exercise_submitter.lib.student_management_system.ApiException;
 
@@ -18,20 +19,20 @@ import net.ssehub.teaching.exercise_submitter.lib.student_management_system.ApiE
  * @author lukas
  *
  */
-public class ViewVersionHistoryAction extends AbstractSingleProjectAction {
+public class ViewVersionHistoryAction extends AbstractSingleProjectActionUsingManager {
 
     @Override
-    protected void execute(IProject project, IWorkbenchWindow window) {
+    protected void execute(IProject project, IWorkbenchWindow window, ExerciseSubmitterManager manager) {
 
         Assignment assignment;
         try {
-            assignment = Activator.getDefault().getProjectManager().getConnection(project);
+            assignment = Activator.getDefault().getProjectManager().getConnection(project, manager);
             ListVersionsJob job;
             
             EclipseLog.info("Version log of assignment " + assignment.getName() + "downloading");
             
             
-            job = new ListVersionsJob(window.getShell(), Activator.getDefault().getManager().getReplayer(assignment),
+            job = new ListVersionsJob(window.getShell(), manager.getReplayer(assignment),
                     assignment, this::onListVersionFinished);
             job.setUser(true);
             job.schedule();

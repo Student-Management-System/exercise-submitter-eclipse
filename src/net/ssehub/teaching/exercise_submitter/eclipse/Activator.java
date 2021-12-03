@@ -1,6 +1,7 @@
 package net.ssehub.teaching.exercise_submitter.eclipse;
 
 import java.io.IOException;
+import java.util.Optional;
 import java.util.Properties;
 
 import org.eclipse.equinox.security.storage.StorageException;
@@ -27,7 +28,7 @@ public class Activator extends AbstractUIPlugin {
 
     private static Activator plugin;
     
-    private ExerciseSubmitterManager manager;
+    private Optional<ExerciseSubmitterManager> manager = Optional.empty();
     
     private ProjectManager projectmanager;
     
@@ -61,6 +62,8 @@ public class Activator extends AbstractUIPlugin {
      * May be called multiple times, if the username or password in the preference store change.
      */
     public synchronized void initManager() {
+        this.manager = Optional.empty();
+        
         try {
             
             Properties prop = new Properties();
@@ -74,11 +77,11 @@ public class Activator extends AbstractUIPlugin {
             factory
                     .withUsername(username)
                     .withPassword(password)
-                    .withCourse("java-wise2021") // TODO: get course from config
+                    .withCourse(prop.getProperty("course"))
                     .withAuthUrl(prop.getProperty("authurl"))
                     .withMgmtUrl(prop.getProperty("mgmturl"))
                     .withExerciseSubmitterServerUrl(prop.getProperty("exerciseSubmitterUrl"));
-            manager = factory.build();
+            this.manager = Optional.of(factory.build());
             
         } catch (StorageException ex) {
             AdvancedExceptionDialog.showUnexpectedExceptionDialog(ex, "Failed to load login data from preferences");
@@ -102,23 +105,23 @@ public class Activator extends AbstractUIPlugin {
     /**
      * Returns the {@link ExerciseSubmitterManager}. Manager is lazily initialized.
      * 
-     * @return The {@link ExerciseSubmitterManager}.
+     * @return The {@link ExerciseSubmitterManager}, or {@link Optional#empty()} if it could not be created (e.g. due to
+     *      login issues.
      */
-    public synchronized ExerciseSubmitterManager getManager() {
-        if (manager == null) {
+    public synchronized Optional<ExerciseSubmitterManager> getManager() {
+        if (manager.isEmpty()) {
             initManager();
         }
-        // TODO: this returns null if init failed and thus causes NullPointerExceptions all over the place
         return manager;
     }
     
     /**
      * Checks whether the {@link ExerciseSubmitterManager} is initialized.
      * 
-     * @return Whether the manager is intialized.
+     * @return Whether the manager is initialized.
      */
     public synchronized boolean isManagerInitialized() {
-        return manager != null;
+        return manager.isPresent();
     }
     
     /**

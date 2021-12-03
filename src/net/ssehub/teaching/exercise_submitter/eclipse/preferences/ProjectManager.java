@@ -10,6 +10,7 @@ import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
 import net.ssehub.teaching.exercise_submitter.eclipse.Activator;
+import net.ssehub.teaching.exercise_submitter.lib.ExerciseSubmitterManager;
 import net.ssehub.teaching.exercise_submitter.lib.data.Assignment;
 import net.ssehub.teaching.exercise_submitter.lib.student_management_system.ApiException;
 import net.ssehub.teaching.exercise_submitter.lib.student_management_system.AuthenticationException;
@@ -60,12 +61,13 @@ public class ProjectManager {
      * Returns the assignment if its available on the server.
      *
      * @param assignmentName The name of the assignment.
-     * @return The found assignment, or {@link Optional#empty()} if no assignment with this name xists.
+     * @param manager The {@link ExerciseSubmitterManager} to get {@link Assignment}s from.
+     * @return The found assignment, or {@link Optional#empty()} if no assignment with this name exists.
      */
-    private Optional<Assignment> getAssignmentByName(String assignmentName) {
+    private Optional<Assignment> getAssignmentByName(String assignmentName, ExerciseSubmitterManager manager) {
         Assignment assignment = null;
         try {
-            List<Assignment> assignmentlist = Activator.getDefault().getManager().getAllAssignments().stream()
+            List<Assignment> assignmentlist = manager.getAllAssignments().stream()
                     .filter(element -> element.getName().equals(assignmentName)).collect(Collectors.toList());
             if (assignmentlist.size() == 1) {
                 assignment = assignmentlist.get(0);
@@ -80,15 +82,16 @@ public class ProjectManager {
      * This method gets the connection from a project to an assignment if available.
      *
      * @param project
+     * @param manager
      * @return Assignment
      * @throws ProjectManagerException
      */
-    public Assignment getConnection(IProject project) throws ProjectManagerException {
+    public Assignment getConnection(IProject project, ExerciseSubmitterManager manager) throws ProjectManagerException {
         String assignemntName = preferences.get(project.getLocation().toString(), null);
         Assignment assignment = null;
         if (assignemntName != null) {
 
-            Optional<Assignment> downloadedAssignment = getAssignmentByName(assignemntName);
+            Optional<Assignment> downloadedAssignment = getAssignmentByName(assignemntName, manager);
 
             if (downloadedAssignment.isEmpty()) {
                 throw new ProjectManagerException(ProjectManagerException.NOTCONNECTED);
@@ -97,7 +100,7 @@ public class ProjectManager {
             assignment = downloadedAssignment.get();
 
             try {
-                if (!this.checkIfConnectedAssignmentisSubmittable(assignment)) {
+                if (!checkIfConnectedAssignmentisSubmittable(assignment, manager)) {
                     throw new ProjectManagerException(ProjectManagerException.NOTAVAILABLE);
 
                 }
@@ -116,19 +119,20 @@ public class ProjectManager {
      * Checks if a specific assignment is available to submit.
      *
      * @param assignment
+     * @param manager
      * @throws ApiException
      * @throws AuthenticationException
      * @throws NetworkException
      * @return boolean
      */
-    private boolean checkIfConnectedAssignmentisSubmittable(Assignment assignment)
+    private boolean checkIfConnectedAssignmentisSubmittable(Assignment assignment, ExerciseSubmitterManager manager)
             throws NetworkException, AuthenticationException, ApiException {
 
         boolean result = false;
 
-        List<Assignment> assignments = Activator.getDefault().getManager().getAllSubmittableAssignments();
+        List<Assignment> assignments = manager.getAllSubmittableAssignments();
 
-        if (assignments.size() != 0 && assignments.stream()
+        if (assignments.stream()
                 .filter(listelement -> listelement.getManagementId().equals(assignment.getManagementId()))
                 .count() > 0) {
             result = true;

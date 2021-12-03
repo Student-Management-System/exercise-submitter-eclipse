@@ -22,7 +22,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 abstract class AbstractSingleProjectAction extends AbstractHandler {
 
     @Override
-    public Object execute(ExecutionEvent event) throws ExecutionException {
+    public final Object execute(ExecutionEvent event) throws ExecutionException {
         IWorkbenchWindow window = null;
         IStructuredSelection selection = null;
 
