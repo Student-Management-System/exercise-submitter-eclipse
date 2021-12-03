@@ -84,7 +84,7 @@ public class EclipseMarker {
      * 
      * @return Whether there are any error or warning markers in the project.
      */
-    public static boolean areMarkersInProjekt(IProject project) {
+    public static boolean areMarkersInProject(IProject project) {
         boolean available = false;
         try {
             available = Arrays.stream(project.findMarkers(null, true, IResource.DEPTH_INFINITE))

@@ -5,17 +5,13 @@ import java.util.Optional;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.window.Window;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.osgi.service.prefs.BackingStoreException;
 
 import net.ssehub.teaching.exercise_submitter.eclipse.background.SubmissionJob;
-import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AssignmentDialog;
+import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AssignmentSelectionDialog;
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.ExceptionDialogs;
 import net.ssehub.teaching.exercise_submitter.eclipse.log.EclipseLog;
 import net.ssehub.teaching.exercise_submitter.eclipse.preferences.ProjectManager;
-import net.ssehub.teaching.exercise_submitter.eclipse.preferences.ProjectManagerException;
 import net.ssehub.teaching.exercise_submitter.eclipse.problemmarkers.EclipseMarker;
 import net.ssehub.teaching.exercise_submitter.lib.ExerciseSubmitterManager;
 import net.ssehub.teaching.exercise_submitter.lib.data.Assignment;
@@ -42,7 +38,7 @@ public class SubmitAction extends AbstractSingleProjectActionUsingManager {
 
         EclipseMarker.clearMarkerFromProjekt(project);
 
-        if (EclipseMarker.areMarkersInProjekt(project)) {
+        if (EclipseMarker.areMarkersInProject(project)) {
             boolean bResult = MessageDialog.openConfirm(window.getShell(), "Exercise Submitter",
                     "There are open errors/warnings in the selected project.\n\nContinue?");
 
@@ -53,27 +49,14 @@ public class SubmitAction extends AbstractSingleProjectActionUsingManager {
         }
 
         Optional<Assignment> assignment = Optional.empty();
-
+        
         try {
-            Assignment savedAssignment = ProjectManager.INSTANCE.getConnection(project, manager);
-            boolean questionResult = MessageDialog.openQuestion(window.getShell(), "Submit",
-                    savedAssignment.getName() + " is connected. Do you want to submit to this assignment or change it ?"
-                            + " \n\n Yes = keep \n No = Change assignment");
-            if (questionResult) {
-                assignment = Optional.ofNullable(savedAssignment);
-            } else {
-                EclipseLog.info("Showing assignment selector to user");
-                assignment = this.chooseAssignment(window, manager);
-            }
-        } catch (ProjectManagerException e) {
-            EclipseLog.info("Showing assignment selector to user");
-            assignment = this.chooseAssignment(window, manager);
-        }
-
-        if (assignment.isPresent()) {
-            EclipseLog.info("User selected assignment " + assignment.get().getName());
-
-            try {
+            assignment = AssignmentSelectionDialog.selectAssignmentWithConnected(project, window, manager,
+                    manager::isSubmittable);
+    
+            if (assignment.isPresent()) {
+                EclipseLog.info("User selected assignment " + assignment.get().getName());
+    
                 Submitter submitter = manager.getSubmitter(assignment.get());
 
                 EclipseLog.info("Starting submission job");
@@ -81,63 +64,21 @@ public class SubmitAction extends AbstractSingleProjectActionUsingManager {
                         this::onSubmissionFinished);
                 sj.setUser(true);
                 sj.schedule();
-
-            } catch (UserNotInCourseException e) {
-                ExceptionDialogs.showUserNotInCourseDialog(manager.getCourse().getId());
-            } catch (NetworkException e) {
-                ExceptionDialogs.showNetworkExceptionDialog(e);
-            } catch (AuthenticationException e) {
-                ExceptionDialogs.showLoginFailureDialog();
-            } catch (GroupNotFoundException e) {
-                ExceptionDialogs.showUserNotInGroupDialog(assignment.get().getName());
-            } catch (ApiException e) {
-                ExceptionDialogs.showUnexpectedExceptionDialog(e, "Generic API exception");
+    
+                // TODO: verschiedene Hausaufgaben noch hinzufügen?
             }
-            // TODO: verschiedene Hausaufgaben noch hinzufügen?
-
-        } else {
-            EclipseLog.info("User canceled at assignment selection");
-        }
-    }
-
-    /**
-     * Lets the user choose an assignment.
-     *
-     * @param window  The window to show the dialog for.
-     * @param manager The {@link ExerciseSubmitterManager} to get
-     *                {@link Assignment}s from.
-     *
-     * @return The assignment selected by the user. Empty if the user canceled.
-     */
-    private Optional<Assignment> chooseAssignment(IWorkbenchWindow window, ExerciseSubmitterManager manager) {
-        Optional<Assignment> selected = Optional.empty();
-
-        try {
-            AssignmentDialog assDialog = new AssignmentDialog(window.getShell(), manager.getAllSubmittableAssignments(),
-                    AssignmentDialog.Sorted.NONE);
-
-            int dialogResult;
-
-            do {
-
-                dialogResult = assDialog.open();
-                // only use selected Assignment if user press ok
-                if (dialogResult == Window.OK) {
-                    selected = assDialog.getSelectedAssignment();
-                }
-
-                // user press ok without selecting anything. -> Retry
-            } while (dialogResult == Window.OK && selected.isEmpty());
-
+            
+        } catch (UserNotInCourseException e) {
+            ExceptionDialogs.showUserNotInCourseDialog(manager.getCourse().getId());
         } catch (NetworkException e) {
             ExceptionDialogs.showNetworkExceptionDialog(e);
         } catch (AuthenticationException e) {
             ExceptionDialogs.showLoginFailureDialog();
+        } catch (GroupNotFoundException e) {
+            ExceptionDialogs.showUserNotInGroupDialog(assignment.get().getName());
         } catch (ApiException e) {
             ExceptionDialogs.showUnexpectedExceptionDialog(e, "Generic API exception");
         }
-
-        return selected;
     }
 
     /**
@@ -150,13 +91,7 @@ public class SubmitAction extends AbstractSingleProjectActionUsingManager {
      */
     private void onSubmissionFinished(SubmissionJob job) {
         if (job.getSubmissionResult().isAccepted()) {
-            try {
-                ProjectManager.INSTANCE.setConnection(job.getProject(), job.getAssigment());
-            } catch (BackingStoreException e) {
-                Display.getDefault().syncExec(() -> {
-                    ExceptionDialogs.showUnexpectedExceptionDialog(e, "Cant save settings");
-                });
-            }
+            ProjectManager.INSTANCE.setConnection(job.getProject(), job.getAssigment());
         }
         createSubmissionFinishedDialog(job);
     }

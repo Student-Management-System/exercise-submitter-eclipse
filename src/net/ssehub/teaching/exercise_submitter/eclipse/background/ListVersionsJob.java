@@ -14,7 +14,8 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
 
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.ExceptionDialogs;
-import net.ssehub.teaching.exercise_submitter.eclipse.dialog.VersionDialog;
+import net.ssehub.teaching.exercise_submitter.eclipse.dialog.VersionListDialog;
+import net.ssehub.teaching.exercise_submitter.eclipse.dialog.VersionSelectionDialog;
 import net.ssehub.teaching.exercise_submitter.lib.data.Assignment;
 import net.ssehub.teaching.exercise_submitter.lib.replay.ReplayException;
 import net.ssehub.teaching.exercise_submitter.lib.replay.Replayer;
@@ -32,11 +33,11 @@ public class ListVersionsJob extends Job {
     private Optional<List<Version>> versionlist = Optional.empty();
     private Shell shell;
     private Replayer replayer;
-    private Consumer<ListVersionsJob> callbackVersionlist;
+    private Optional<Consumer<ListVersionsJob>> callbackVersionlist = Optional.empty();
     private Optional<Version> selectedVersion = Optional.empty();
 
     /**
-     * Creates an instance of ListVersionsJob.
+     * Creates an instance of ListVersionsJob that calls the given callback after the user selected a version.
      *
      * @param shell
      * @param replayer
@@ -48,8 +49,20 @@ public class ListVersionsJob extends Job {
         super("List Versions");
         this.shell = shell;
         this.replayer = replayer;
-        this.callbackVersionlist = callbackVersionlist;
-
+        this.callbackVersionlist = Optional.of(callbackVersionlist);
+    }
+    
+    /**
+     * Creates an instance of ListVersionsJob that does not allow selection of a version.
+     *
+     * @param shell
+     * @param replayer
+     * @param assignment
+     */
+    public ListVersionsJob(Shell shell, Replayer replayer, Assignment assignment) {
+        super("List Versions");
+        this.shell = shell;
+        this.replayer = replayer;
     }
 
     @Override
@@ -67,14 +80,16 @@ public class ListVersionsJob extends Job {
                     if (this.versionlist.get().size() == 0) {
                         MessageDialog.openInformation(this.shell, "Exercise Submitter", "No Version available");
                     } else {
-                        this.createVersionDialog(this.versionlist.get());
+                        createVersionDialog(this.versionlist.get());
                     }
                 }
             });
 
-            this.shell.getDisplay().syncExec(() -> {
-                this.callbackVersionlist.accept(this);
-            });
+            if (callbackVersionlist.isPresent()) {
+                this.shell.getDisplay().syncExec(() -> {
+                    this.callbackVersionlist.get().accept(this);
+                });
+            }
         } catch (IllegalArgumentException | ReplayException ex) {
             this.shell.getDisplay().asyncExec(() -> {
                 ExceptionDialogs.showUnexpectedExceptionDialog(ex, "Failed to download versionlist");
@@ -94,27 +109,25 @@ public class ListVersionsJob extends Job {
      * @param versions
      */
     private void createVersionDialog(List<Version> versions) {
-        try {
-            VersionDialog versionDialog = new VersionDialog(this.shell, versions);
-
+        if (callbackVersionlist.isPresent()) {
+            VersionSelectionDialog versionDialog = new VersionSelectionDialog(this.shell, versions);
+            
             int dialogResult;
-
             do {
-
+                
                 dialogResult = versionDialog.open();
                 // only use selected Assignment if user press ok
                 if (dialogResult == Window.OK) {
                     this.selectedVersion = versionDialog.getSelectedAssignment();
                 }
-
+                
                 // user press ok without selecting anything. -> Retry
             } while (dialogResult == Window.OK && this.selectedVersion.isEmpty());
-
-        } catch (IllegalArgumentException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            
+        } else {
+            VersionListDialog versionDialog = new VersionListDialog(this.shell, versions);
+            versionDialog.open();
         }
-
     }
 
     /**

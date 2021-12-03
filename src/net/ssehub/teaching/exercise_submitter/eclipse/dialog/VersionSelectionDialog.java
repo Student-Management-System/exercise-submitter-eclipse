@@ -26,7 +26,7 @@ import net.ssehub.teaching.exercise_submitter.lib.replay.Replayer;
  * @author lukas
  *
  */
-public class VersionDialog extends Dialog {
+public class VersionSelectionDialog extends Dialog {
     
     private List<Replayer.Version> versionlist;
     private Optional<Replayer.Version> selectedVersion;
@@ -36,7 +36,7 @@ public class VersionDialog extends Dialog {
      * @param parentShell , the parent shell
      * @param versionlist , the list of the version which should be displayed
      */
-    public VersionDialog(Shell parentShell, List<Replayer.Version> versionlist) {
+    public VersionSelectionDialog(Shell parentShell, List<Replayer.Version> versionlist) {
         super(parentShell);
         this.versionlist = versionlist;
         this.selectedVersion = Optional.empty();
@@ -54,7 +54,7 @@ public class VersionDialog extends Dialog {
         Composite container = (Composite) super.createDialogArea(parent);
 
         Table table = new Table(container, SWT.FULL_SELECTION | SWT.BORDER | SWT.SINGLE);
-        table.setLinesVisible(true);
+        table.setLinesVisible(false);
         table.setHeaderVisible(true);
         FillLayout rw = new FillLayout();
 
@@ -88,8 +88,8 @@ public class VersionDialog extends Dialog {
             public void widgetSelected(SelectionEvent event) {
                 int[] selections = table.getSelectionIndices();
                 if (selections.length == 1) {
-                    VersionDialog.this.selectedVersion = Optional
-                            .of(VersionDialog.this.versionlist.get(selections[0]));
+                    VersionSelectionDialog.this.selectedVersion = Optional
+                            .of(VersionSelectionDialog.this.versionlist.get(selections[0]));
                 }
             }
         });

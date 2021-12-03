@@ -148,7 +148,7 @@ public class CheckSubmissionDialog extends Dialog {
         try {
 
             job = new SubmissionJob(this.manager.getSubmitter(this.checkresult.getAssignment()), this.project,
-                    this.checkresult.getAssignment(), this.getShell(), this::onSubmissionFinished);
+                    this.checkresult.getAssignment(), getParentShell(), this::onSubmissionFinished);
             job.setUser(true);
             job.schedule();
         } catch (IllegalArgumentException | ApiException e) {
@@ -174,7 +174,7 @@ public class CheckSubmissionDialog extends Dialog {
         ReplayerJob job;
         try {
 
-            job = new ReplayerJob(this.getShell(), this.manager.getReplayer(this.checkresult.getAssignment()),
+            job = new ReplayerJob(getParentShell(), this.manager.getReplayer(this.checkresult.getAssignment()),
                     this.checkresult.getAssignment(), this::onReplayFinished);
             job.setUser(true);
             job.schedule();
@@ -184,14 +184,7 @@ public class CheckSubmissionDialog extends Dialog {
         }
 
     }
-    /**
-     * Called when list versions is finished.
-     *
-     * @param job
-     */
-    private void onListVersionFinished(ListVersionsJob job) {
-        System.out.println("List version success");
-    }
+    
     /**
      * Creates an ListVerionJob.
      */
@@ -199,8 +192,8 @@ public class CheckSubmissionDialog extends Dialog {
         ListVersionsJob job;
         try {
 
-            job = new ListVersionsJob(this.getShell(), this.manager.getReplayer(this.checkresult.getAssignment()),
-                    this.checkresult.getAssignment(), this::onListVersionFinished);
+            job = new ListVersionsJob(getParentShell(), this.manager.getReplayer(this.checkresult.getAssignment()),
+                    this.checkresult.getAssignment());
             job.setUser(true);
             job.schedule();
         } catch (IllegalArgumentException | ApiException e) {

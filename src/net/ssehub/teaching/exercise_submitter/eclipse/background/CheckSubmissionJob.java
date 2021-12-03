@@ -12,7 +12,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ILock;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.ExceptionDialogs;
@@ -106,12 +105,12 @@ public class CheckSubmissionJob extends Job {
 
             this.result = Optional.ofNullable(this.replayer.isSameContent(this.dir, this.version.get()));
 
-            Display.getDefault().asyncExec(() -> {
+            this.shell.getDisplay().asyncExec(() -> {
                 this.callbackCheckSubmission.accept(this);
             });
 
         } catch (ReplayException | IOException e) {
-            Display.getDefault().asyncExec(() -> {
+            this.shell.getDisplay().asyncExec(() -> {
                 if (e instanceof ReplayException && e.getMessage().equals("No version is uploaded")) {
                     MessageDialog.openError(this.shell, "Check Submission", e.getMessage());
                 } else {

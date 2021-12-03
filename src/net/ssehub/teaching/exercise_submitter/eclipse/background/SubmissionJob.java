@@ -9,7 +9,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ILock;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.ExceptionDialogs;
@@ -102,17 +101,17 @@ public class SubmissionJob extends Job {
         try {
             lock.acquire();
             this.result = this.submitter.submit(this.project.getLocation().toFile());
-            Display.getDefault().asyncExec(() -> {
+            this.shell.getDisplay().asyncExec(() -> {
                 this.callback.accept(this);
             });
         } catch (SubmissionException | IllegalArgumentException ex) {
             if (ex instanceof SubmissionException && ex.getLocalizedMessage().equals("Version is already submitted")) {
-                Display.getDefault().asyncExec(() -> {
+                this.shell.getDisplay().asyncExec(() -> {
                     MessageDialog.openError(shell, "Submitter", "This project and the current"
                             + " project version on the Server are the same");
                 });
             } else {
-                Display.getDefault().asyncExec(() -> {
+                this.shell.getDisplay().asyncExec(() -> {
                     ExceptionDialogs.showUnexpectedExceptionDialog(ex, "Failed to submit");
                 });
             }

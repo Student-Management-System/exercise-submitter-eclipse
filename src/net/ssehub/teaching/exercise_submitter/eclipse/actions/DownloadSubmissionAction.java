@@ -3,19 +3,18 @@ package net.ssehub.teaching.exercise_submitter.eclipse.actions;
 import java.util.Optional;
 
 import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.expressions.IEvaluationContext;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.window.Window;
-import org.eclipse.ui.ISources;
-import org.eclipse.ui.IWorkbenchWindow;
 
 import net.ssehub.teaching.exercise_submitter.eclipse.background.ReplayerJob;
-import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AssignmentDialog;
+import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AssignmentSelectionDialog;
+import net.ssehub.teaching.exercise_submitter.eclipse.dialog.ExceptionDialogs;
 import net.ssehub.teaching.exercise_submitter.eclipse.log.EclipseLog;
 import net.ssehub.teaching.exercise_submitter.lib.ExerciseSubmitterManager;
 import net.ssehub.teaching.exercise_submitter.lib.data.Assignment;
-import net.ssehub.teaching.exercise_submitter.lib.replay.Replayer;
 import net.ssehub.teaching.exercise_submitter.lib.student_management_system.ApiException;
+import net.ssehub.teaching.exercise_submitter.lib.student_management_system.AuthenticationException;
+import net.ssehub.teaching.exercise_submitter.lib.student_management_system.GroupNotFoundException;
+import net.ssehub.teaching.exercise_submitter.lib.student_management_system.NetworkException;
+import net.ssehub.teaching.exercise_submitter.lib.student_management_system.UserNotInCourseException;
 
 /**
  * Lets the user download a submission and creates a local project with the
@@ -29,79 +28,33 @@ public class DownloadSubmissionAction extends AbstractActionUsingManager {
     @Override
     public void execute(ExecutionEvent event, ExerciseSubmitterManager manager) {
         
-        IWorkbenchWindow window = null;
-        
-        if (event.getApplicationContext() instanceof IEvaluationContext) {
-            IEvaluationContext context = (IEvaluationContext) event.getApplicationContext();
-
-            window = (IWorkbenchWindow) context.getVariable(ISources.ACTIVE_WORKBENCH_WINDOW_NAME);
-           
-        }
-
-        Optional<Assignment> selectedAssigment = this.createAssignmentDialog(window, manager);
-        
-        if (selectedAssigment.isPresent()) {
+        Optional<Assignment> selectedAssignment = Optional.empty();
+        try {
+            AssignmentSelectionDialog assDialog = new AssignmentSelectionDialog(EventHelper.getShell(event),
+                    manager.getAllReplayableAssignments());
             
-            Replayer replayer = null;
-            try {
-                replayer = manager.getReplayer(selectedAssigment.get());
-            } catch (IllegalArgumentException | ApiException e1) {
-                // TODO Auto-generated catch block
-                e1.printStackTrace();
+            selectedAssignment = assDialog.openAndGetSelectedAssignment();
+
+            if (selectedAssignment.isPresent()) {
+                EclipseLog.info("Starting download from Assignment: " + selectedAssignment.get());
+                
+                ReplayerJob job = new ReplayerJob(EventHelper.getShell(event),
+                        manager.getReplayer(selectedAssignment.get()), selectedAssignment.get(), finishedJob -> { });
+                job.setUser(true);
+                job.schedule();
             }
             
-            EclipseLog.info("Starting download from Assignment: " + selectedAssigment.get());
-    
-            ReplayerJob job = new ReplayerJob(window.getShell(), replayer, selectedAssigment.get(), 
-                    this::onReplayFinished);
-            job.setUser(true);
-            job.schedule();
-            
-        } else {
-            MessageDialog.openInformation(window.getShell(), "Exercise Submitter", "No Assignment selected");
-        }
-    }
-    
-    /**
-     * Creates the assignmentdialog.
-     * @param window , current window
-     * @param manager , authented submittermanager
-     * @return an Optional Assignment, the selected assignment
-     */
-    private Optional<Assignment> createAssignmentDialog(IWorkbenchWindow window, ExerciseSubmitterManager manager) {
-        Optional<Assignment> selected = Optional.empty();
-
-        try {
-            AssignmentDialog assDialog = new AssignmentDialog(window.getShell(), manager.getAllSubmittableAssignments(),
-                    AssignmentDialog.Sorted.NONE);
-
-            int dialogResult;
-
-            do {
-
-                dialogResult = assDialog.open();
-                // only use selected Assignment if user press ok
-                if (dialogResult == Window.OK) {
-                    selected = assDialog.getSelectedAssignment();
-                }
-
-                // user press ok without selecting anything. -> Retry
-            } while (dialogResult == Window.OK && selected.isEmpty());
-
+        } catch (NetworkException e) {
+            ExceptionDialogs.showNetworkExceptionDialog(e);
+        } catch (UserNotInCourseException e) {
+            ExceptionDialogs.showUserNotInCourseDialog(manager.getCourse().getId());
+        } catch (GroupNotFoundException e) {
+            ExceptionDialogs.showUserNotInGroupDialog(selectedAssignment.map(Assignment::getName).orElse("unknown"));
+        } catch (AuthenticationException e) {
+            ExceptionDialogs.showLoginFailureDialog();
         } catch (ApiException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            ExceptionDialogs.showUnexpectedExceptionDialog(e, "Generic API exception");
         }
-        return selected;
-    }
-    
-    /**
-     * Called when replay is finished.
-     * @param job
-     */
-    private void onReplayFinished(ReplayerJob job) {
-        System.out.println("Replay success");
-
     }
     
 }

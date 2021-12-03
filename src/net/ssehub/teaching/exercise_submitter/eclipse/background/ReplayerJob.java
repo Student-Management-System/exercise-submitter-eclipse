@@ -26,7 +26,6 @@ import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.ILock;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.ExceptionDialogs;
@@ -81,13 +80,13 @@ public class ReplayerJob extends Job {
             lock.acquire();
             this.progress = monitor;
 
-            this.createVersionDialog();
+            createVersionDialog();
 
-            Display.getDefault().syncExec(() -> {
+            this.shell.getDisplay().syncExec(() -> {
                 this.callbackReplay.accept(this);
             });
         } catch (IllegalArgumentException ex) {
-            Display.getDefault().asyncExec(() -> {
+            this.shell.getDisplay().asyncExec(() -> {
                 ExceptionDialogs.showUnexpectedExceptionDialog(ex, "Failed to download");
             });
 
@@ -127,7 +126,7 @@ public class ReplayerJob extends Job {
 
         this.project.get().refreshLocal(IResource.DEPTH_INFINITE, subMonitorReplay);
 
-        Display.getDefault().asyncExec(() -> {
+        this.shell.getDisplay().asyncExec(() -> {
             this.callbackReplay.accept(this);
         });
 
@@ -223,7 +222,7 @@ public class ReplayerJob extends Job {
             AtomicBoolean dialogResult = new AtomicBoolean();
             if (e.getMessage().equals("Resource '/" + projectName + "' already exists.")) {
 
-                Display.getDefault().syncExec(() -> {
+                this.shell.getDisplay().syncExec(() -> {
                     dialogResult.set(MessageDialog.openQuestion(this.shell, "Download Submission",
                             "Project already exists " + projectName + "\n Should the content be overwritten ?"));
 
