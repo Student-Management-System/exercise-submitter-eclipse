@@ -11,7 +11,6 @@ import org.osgi.framework.BundleContext;
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.ExceptionDialogs;
 import net.ssehub.teaching.exercise_submitter.eclipse.log.EclipseLog;
 import net.ssehub.teaching.exercise_submitter.eclipse.preferences.PreferencePage;
-import net.ssehub.teaching.exercise_submitter.eclipse.preferences.ProjectManager;
 import net.ssehub.teaching.exercise_submitter.lib.ExerciseSubmitterFactory;
 import net.ssehub.teaching.exercise_submitter.lib.ExerciseSubmitterManager;
 import net.ssehub.teaching.exercise_submitter.lib.student_management_system.ApiException;
@@ -30,9 +29,6 @@ public class Activator extends AbstractUIPlugin {
     
     private Optional<ExerciseSubmitterManager> manager = Optional.empty();
     
-    private ProjectManager projectmanager;
-    
-
     @Override
     public void start(BundleContext context) throws Exception {
         super.start(context);
@@ -121,16 +117,4 @@ public class Activator extends AbstractUIPlugin {
         return manager.isPresent();
     }
     
-    /**
-     * This class get the projectmanager and creates him if neccesary.
-     * @return ProjectManager
-     */
-    public synchronized ProjectManager getProjectManager() {
-        if (projectmanager == null) {
-            this.projectmanager = new ProjectManager();
-        }
-        // TODO: this returns null if init failed and thus causes NullPointerExceptions all over the place
-        return projectmanager;
-    }
-   
 }

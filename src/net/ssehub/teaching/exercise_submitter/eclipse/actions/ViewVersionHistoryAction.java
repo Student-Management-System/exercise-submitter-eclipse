@@ -4,10 +4,10 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.IWorkbenchWindow;
 
-import net.ssehub.teaching.exercise_submitter.eclipse.Activator;
 import net.ssehub.teaching.exercise_submitter.eclipse.background.ListVersionsJob;
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.ExceptionDialogs;
 import net.ssehub.teaching.exercise_submitter.eclipse.log.EclipseLog;
+import net.ssehub.teaching.exercise_submitter.eclipse.preferences.ProjectManager;
 import net.ssehub.teaching.exercise_submitter.eclipse.preferences.ProjectManagerException;
 import net.ssehub.teaching.exercise_submitter.lib.ExerciseSubmitterManager;
 import net.ssehub.teaching.exercise_submitter.lib.data.Assignment;
@@ -26,7 +26,7 @@ public class ViewVersionHistoryAction extends AbstractSingleProjectActionUsingMa
 
         Assignment assignment;
         try {
-            assignment = Activator.getDefault().getProjectManager().getConnection(project, manager);
+            assignment = ProjectManager.INSTANCE.getConnection(project, manager);
             ListVersionsJob job;
             
             EclipseLog.info("Version log of assignment " + assignment.getName() + "downloading");

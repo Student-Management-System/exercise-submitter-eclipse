@@ -24,13 +24,17 @@ import net.ssehub.teaching.exercise_submitter.lib.student_management_system.Netw
  */
 public class ProjectManager {
 
+    /**
+     * Global singleton instance.
+     */
+    public static final ProjectManager INSTANCE = new ProjectManager();
+    
     private static Preferences preferences = InstanceScope.INSTANCE.getNode(Activator.PLUGIN_ID);
 
     /**
-     * This method instantiates an new ProjectManager.
+     * No other instances but the singleton instance.
      */
-    public ProjectManager() {
-
+    private ProjectManager() {
     }
 
     /**

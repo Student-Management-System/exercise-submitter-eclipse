@@ -6,7 +6,6 @@ import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
 
-import net.ssehub.teaching.exercise_submitter.eclipse.Activator;
 import net.ssehub.teaching.exercise_submitter.eclipse.preferences.ProjectManager;
 import net.ssehub.teaching.exercise_submitter.lib.data.Assignment;
 
@@ -45,7 +44,7 @@ public class AssignmentLabelDecorator implements ILabelDecorator {
     public String decorateText(String text, Object element) {
         IProject project = ((IAdaptable) element).getAdapter(IProject.class);
         
-        String result = Activator.getDefault().getProjectManager().getStoredAssignmentName(project)
+        String result = ProjectManager.INSTANCE.getStoredAssignmentName(project)
                 .map(assignmentName ->  text + " submitted as: " + assignmentName)
                 .orElse(null);
         

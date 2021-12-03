@@ -8,12 +8,12 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.IWorkbenchWindow;
 
-import net.ssehub.teaching.exercise_submitter.eclipse.Activator;
 import net.ssehub.teaching.exercise_submitter.eclipse.background.CheckSubmissionJob;
-import net.ssehub.teaching.exercise_submitter.eclipse.dialog.ExceptionDialogs;
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AssignmentDialog;
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.CheckSubmissionDialog;
+import net.ssehub.teaching.exercise_submitter.eclipse.dialog.ExceptionDialogs;
 import net.ssehub.teaching.exercise_submitter.eclipse.log.EclipseLog;
+import net.ssehub.teaching.exercise_submitter.eclipse.preferences.ProjectManager;
 import net.ssehub.teaching.exercise_submitter.eclipse.preferences.ProjectManagerException;
 import net.ssehub.teaching.exercise_submitter.lib.ExerciseSubmitterManager;
 import net.ssehub.teaching.exercise_submitter.lib.data.Assignment;
@@ -78,7 +78,7 @@ public class CheckSubmission extends AbstractSingleProjectActionUsingManager {
        
         Assignment assignment = null;
         try {
-            Assignment savedAssignment = Activator.getDefault().getProjectManager().getConnection(project, manager);
+            Assignment savedAssignment = ProjectManager.INSTANCE.getConnection(project, manager);
             
             int chosen = MessageDialog.open(MessageDialog.QUESTION, window.getShell(), "Choose Assignment",
                     "This project was last submitted to " + savedAssignment.getName() + ". Submit to this again?",

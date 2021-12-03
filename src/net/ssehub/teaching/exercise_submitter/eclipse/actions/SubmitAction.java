@@ -10,11 +10,11 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.osgi.service.prefs.BackingStoreException;
 
-import net.ssehub.teaching.exercise_submitter.eclipse.Activator;
 import net.ssehub.teaching.exercise_submitter.eclipse.background.SubmissionJob;
-import net.ssehub.teaching.exercise_submitter.eclipse.dialog.ExceptionDialogs;
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AssignmentDialog;
+import net.ssehub.teaching.exercise_submitter.eclipse.dialog.ExceptionDialogs;
 import net.ssehub.teaching.exercise_submitter.eclipse.log.EclipseLog;
+import net.ssehub.teaching.exercise_submitter.eclipse.preferences.ProjectManager;
 import net.ssehub.teaching.exercise_submitter.eclipse.preferences.ProjectManagerException;
 import net.ssehub.teaching.exercise_submitter.eclipse.problemmarkers.EclipseMarker;
 import net.ssehub.teaching.exercise_submitter.lib.ExerciseSubmitterManager;
@@ -55,7 +55,7 @@ public class SubmitAction extends AbstractSingleProjectActionUsingManager {
         Optional<Assignment> assignment = Optional.empty();
 
         try {
-            Assignment savedAssignment = Activator.getDefault().getProjectManager().getConnection(project, manager);
+            Assignment savedAssignment = ProjectManager.INSTANCE.getConnection(project, manager);
             boolean questionResult = MessageDialog.openQuestion(window.getShell(), "Submit",
                     savedAssignment.getName() + " is connected. Do you want to submit to this assignment or change it ?"
                             + " \n\n Yes = keep \n No = Change assignment");
@@ -151,7 +151,7 @@ public class SubmitAction extends AbstractSingleProjectActionUsingManager {
     private void onSubmissionFinished(SubmissionJob job) {
         if (job.getSubmissionResult().isAccepted()) {
             try {
-                Activator.getDefault().getProjectManager().setConnection(job.getProject(), job.getAssigment());
+                ProjectManager.INSTANCE.setConnection(job.getProject(), job.getAssigment());
             } catch (BackingStoreException e) {
                 Display.getDefault().syncExec(() -> {
                     ExceptionDialogs.showUnexpectedExceptionDialog(e, "Cant save settings");
