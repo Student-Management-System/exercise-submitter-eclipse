@@ -3,10 +3,9 @@ package net.ssehub.teaching.exercise_submitter.eclipse.preferences;
 import java.util.Optional;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.swt.widgets.Display;
-import org.osgi.service.prefs.BackingStoreException;
-import org.osgi.service.prefs.Preferences;
 
 import net.ssehub.teaching.exercise_submitter.eclipse.Activator;
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.ExceptionDialogs;
@@ -20,6 +19,7 @@ import net.ssehub.teaching.exercise_submitter.lib.student_management_system.User
 /**
  * This class handles the project connection with an assignment.
  *
+ * @author Adam
  * @author lukas
  *
  */
@@ -30,8 +30,8 @@ public class ProjectManager {
      */
     public static final ProjectManager INSTANCE = new ProjectManager();
     
-    private static Preferences preferences = InstanceScope.INSTANCE.getNode(Activator.PLUGIN_ID);
-
+    private static final QualifiedName CONNECTED_ASSIGNMENT_NAME = new QualifiedName(Activator.PLUGIN_ID, "assignment");
+    
     /**
      * No other instances but the singleton instance.
      */
@@ -41,17 +41,15 @@ public class ProjectManager {
     /**
      * This method sets a connection between a project and an assignment.
      *
-     * @param project
-     * @param assignment
-     * @throws BackingStoreException
+     * @param project The project to add the assignment connection for.
+     * @param assignment The assignment to associate with the given project.
      */
     public void setConnection(IProject project, Assignment assignment) {
-        preferences.put(project.getLocation().toString(), assignment.getName());
         try {
-            preferences.flush();
-        } catch (BackingStoreException e) {
+            project.setPersistentProperty(CONNECTED_ASSIGNMENT_NAME, assignment.getName());
+        } catch (CoreException e) {
             Display.getDefault().syncExec(() -> {
-                ExceptionDialogs.showUnexpectedExceptionDialog(e, "Failed to store assignment connection");
+                ExceptionDialogs.showUnexpectedExceptionDialog(e, "Failed to store assignment name");
             });
         }
     }
@@ -65,7 +63,17 @@ public class ProjectManager {
      * @return The name of the {@link Assignment}, or empty.
      */
     public Optional<String> getStoredAssignmentName(IProject project) {
-        return Optional.ofNullable(preferences.get(project.getLocation().toString(), null));
+        Optional<String> assignmentName = Optional.empty();
+        if (project.isOpen()) {
+            try {
+                assignmentName = Optional.ofNullable(project.getPersistentProperty(CONNECTED_ASSIGNMENT_NAME));
+            } catch (CoreException e) {
+                Display.getDefault().syncExec(() -> {
+                    ExceptionDialogs.showUnexpectedExceptionDialog(e, "Failed to load assignment name");
+                });
+            }
+        }
+        return assignmentName;
     }
 
     /**
