@@ -14,7 +14,7 @@ public class ClearMarkerAction extends AbstractSingleProjectAction {
 
     @Override
     protected void execute(IProject project, IWorkbenchWindow window) {
-        EclipseMarker.clearMarkerFromProjekt(project);
+        EclipseMarker.clearMarkerFromProject(project);
     }
     
 }

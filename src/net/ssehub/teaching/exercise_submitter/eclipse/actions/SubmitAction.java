@@ -36,7 +36,7 @@ public class SubmitAction extends AbstractSingleProjectActionUsingManager {
     protected void execute(IProject project, IWorkbenchWindow window, ExerciseSubmitterManager manager) {
         EclipseLog.info("Starting submision of project " + project.getName());
 
-        EclipseMarker.clearMarkerFromProjekt(project);
+        EclipseMarker.clearMarkerFromProject(project);
 
         if (EclipseMarker.areMarkersInProject(project)) {
             boolean bResult = MessageDialog.openConfirm(window.getShell(), "Exercise Submitter",

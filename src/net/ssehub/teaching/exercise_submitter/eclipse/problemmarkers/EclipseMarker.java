@@ -38,8 +38,7 @@ public class EclipseMarker {
      * @param sev The severity of the marker.
      * @param project The project to add the marker in.
      */
-    public static void addMarker(File file, String message, int lineNumber,
-            Severity sev, IProject project) {
+    public static void addMarker(File file, String message, int lineNumber, Severity sev, IProject project) {
         try {
             IFile ifile = project.getFile(file.getPath());
             IMarker marker = ifile.createMarker(MARKER_TYPE);
@@ -51,12 +50,11 @@ public class EclipseMarker {
                 marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
             }
             
-            if (lineNumber == -1) {
+            if (lineNumber <= 0) {
                 lineNumber = 1;
             }
             
             marker.setAttribute(IMarker.LINE_NUMBER, lineNumber);
-            
             
         } catch (CoreException e) {
             ExceptionDialogs.showUnexpectedExceptionDialog(e, "Failed to add problem marker to project");
@@ -68,7 +66,7 @@ public class EclipseMarker {
      * 
      * @param project The project to clear all our markers from.
      */
-    public static void clearMarkerFromProjekt(IProject project) {
+    public static void clearMarkerFromProject(IProject project) {
         EclipseLog.info("Clearing markers from project " + project.getName());
         try {
             project.deleteMarkers(MARKER_TYPE, false, IResource.DEPTH_INFINITE);
@@ -77,6 +75,18 @@ public class EclipseMarker {
         }
     }
 
+    /**
+     * Checks if the given marker has severity warning or error.
+     * 
+     * @param marker The marker to check.
+     * 
+     * @return <code>true</code> if the marker has severity warning or error, <code>false</code> otherwise.
+     */
+    private static boolean isErrorOrWarning(IMarker marker) {
+        int severity = marker.getAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
+        return severity == IMarker.SEVERITY_ERROR || severity == IMarker.SEVERITY_WARNING;
+    }
+    
     /**
      * Checks if there are any warning or error markers at all (including ones not by us) in the given project.
      * 
@@ -88,9 +98,7 @@ public class EclipseMarker {
         boolean available = false;
         try {
             available = Arrays.stream(project.findMarkers(null, true, IResource.DEPTH_INFINITE))
-                .filter(marker ->
-                        marker.getAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR) == IMarker.SEVERITY_WARNING
-                        || marker.getAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR) == IMarker.SEVERITY_ERROR)
+                .filter(EclipseMarker::isErrorOrWarning)
                 .count() > 0;
         } catch (CoreException e) {
             ExceptionDialogs.showUnexpectedExceptionDialog(e, "Failed to search problem markers in project");
