@@ -229,9 +229,14 @@ public class ReplayerJob extends Job {
                 });
 
                 if (dialogResult.get()) {
-                    FileUtils.deleteContentInFolder(newProject.getLocation().toFile());
-                    isCreated = true;
-                    System.out.println("ja");
+                    try {
+                        FileUtils.deleteContentInFolder(newProject.getLocation().toFile().toPath());
+                        isCreated = true;
+                        System.out.println("ja");
+                    } catch (IOException e1) {
+                        // TODO
+                        e1.printStackTrace();
+                    }
 
                 }
             }
