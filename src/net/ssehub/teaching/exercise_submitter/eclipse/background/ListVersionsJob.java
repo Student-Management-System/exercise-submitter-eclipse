@@ -1,151 +1,112 @@
 package net.ssehub.teaching.exercise_submitter.eclipse.background;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.ILock;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
 
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.ExceptionDialogs;
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.VersionListDialog;
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.VersionSelectionDialog;
+import net.ssehub.teaching.exercise_submitter.lib.ExerciseSubmitterManager;
 import net.ssehub.teaching.exercise_submitter.lib.data.Assignment;
 import net.ssehub.teaching.exercise_submitter.lib.replay.ReplayException;
 import net.ssehub.teaching.exercise_submitter.lib.replay.Replayer;
 import net.ssehub.teaching.exercise_submitter.lib.replay.Replayer.Version;
+import net.ssehub.teaching.exercise_submitter.lib.student_management_system.ApiException;
+import net.ssehub.teaching.exercise_submitter.lib.student_management_system.AuthenticationException;
+import net.ssehub.teaching.exercise_submitter.lib.student_management_system.GroupNotFoundException;
+import net.ssehub.teaching.exercise_submitter.lib.student_management_system.NetworkException;
+import net.ssehub.teaching.exercise_submitter.lib.student_management_system.UserNotInCourseException;
 
 /**
- * this class handles the Versiondialog as a background job.
- *
+ * A job that lists the versions of a given assignment.
+ * 
+ * @author Adam
  * @author lukas
- *
  */
-public class ListVersionsJob extends Job {
+public class ListVersionsJob extends AbstractJob<List<Version>> {
 
-    private static ILock lock = Job.getJobManager().newLock();
-    private Optional<List<Version>> versionlist = Optional.empty();
-    private Shell shell;
-    private Replayer replayer;
-    private Optional<Consumer<ListVersionsJob>> callbackVersionlist = Optional.empty();
-    private Optional<Version> selectedVersion = Optional.empty();
-
-    /**
-     * Creates an instance of ListVersionsJob that calls the given callback after the user selected a version.
-     *
-     * @param shell
-     * @param replayer
-     * @param assignment
-     * @param callbackVersionlist
-     */
-    public ListVersionsJob(Shell shell, Replayer replayer, Assignment assignment,
-            Consumer<ListVersionsJob> callbackVersionlist) {
-        super("List Versions");
-        this.shell = shell;
-        this.replayer = replayer;
-        this.callbackVersionlist = Optional.of(callbackVersionlist);
-    }
+    private ExerciseSubmitterManager manager;
+    
+    private Assignment assignment;
     
     /**
-     * Creates an instance of ListVersionsJob that does not allow selection of a version.
-     *
-     * @param shell
-     * @param replayer
-     * @param assignment
+     * Creates a new job.
+     * 
+     * @param shell The parent shell.
+     * @param manager The manager to contact the student management system.
+     * @param assignment The assignment to get the version list for. 
+     * @param callback The callback that is called when a version list is available.
      */
-    public ListVersionsJob(Shell shell, Replayer replayer, Assignment assignment) {
-        super("List Versions");
-        this.shell = shell;
-        this.replayer = replayer;
+    public ListVersionsJob(Shell shell, ExerciseSubmitterManager manager, Assignment assignment,
+            Consumer<List<Version>> callback) {
+        super("List Versions", shell, callback);
+        this.manager = manager;
+        this.assignment = assignment;
     }
 
     @Override
-    protected IStatus run(IProgressMonitor monitor) {
-        monitor.beginTask("Downloading Versionlist", 100);
-
-        try {
-            lock.acquire();
-
-            this.versionlist = Optional.ofNullable(this.replayer.getVersions());
-
-            this.shell.getDisplay().syncExec(() -> {
-
-                if (this.versionlist.isPresent()) {
-                    if (this.versionlist.get().size() == 0) {
-                        MessageDialog.openInformation(this.shell, "Exercise Submitter", "No Version available");
-                    } else {
-                        createVersionDialog(this.versionlist.get());
-                    }
-                }
-            });
-
-            if (callbackVersionlist.isPresent()) {
-                this.shell.getDisplay().syncExec(() -> {
-                    this.callbackVersionlist.get().accept(this);
-                });
-            }
-        } catch (IllegalArgumentException | ReplayException ex) {
-            this.shell.getDisplay().asyncExec(() -> {
-                ExceptionDialogs.showUnexpectedExceptionDialog(ex, "Failed to download versionlist");
-            });
-
-        } finally {
-            lock.release();
-
-        }
-
-        return Status.OK_STATUS;
-    }
-
-    /**
-     * Creates the versiondialog.
-     *
-     * @param versions
-     */
-    private void createVersionDialog(List<Version> versions) {
-        if (callbackVersionlist.isPresent()) {
-            VersionSelectionDialog versionDialog = new VersionSelectionDialog(this.shell, versions);
+    protected Optional<List<Version>> run() {
+        Optional<List<Version>> result = Optional.empty();
+        
+        try (Replayer replayer = this.manager.getReplayer(this.assignment)) {
             
-            int dialogResult;
-            do {
-                
-                dialogResult = versionDialog.open();
-                // only use selected Assignment if user press ok
-                if (dialogResult == Window.OK) {
-                    this.selectedVersion = versionDialog.getSelectedAssignment();
-                }
-                
-                // user press ok without selecting anything. -> Retry
-            } while (dialogResult == Window.OK && this.selectedVersion.isEmpty());
+            result = Optional.of(replayer.getVersions());
             
-        } else {
-            VersionListDialog versionDialog = new VersionListDialog(this.shell, versions);
-            versionDialog.open();
+        } catch (NetworkException e) {
+            ExceptionDialogs.showNetworkExceptionDialog(e);
+        } catch (UserNotInCourseException e) {
+            ExceptionDialogs.showUserNotInCourseDialog(manager.getCourse().getId());
+        } catch (GroupNotFoundException e) {
+            ExceptionDialogs.showUserNotInGroupDialog(assignment.getName());
+        } catch (AuthenticationException e) {
+            ExceptionDialogs.showLoginFailureDialog();
+        } catch (ApiException e) {
+            ExceptionDialogs.showUnexpectedExceptionDialog(e, "Generic API exception");
+        } catch (IOException e) {
+            ExceptionDialogs.showUnexpectedExceptionDialog(e, "Failed to store replay");
+        } catch (ReplayException e) {
+            ExceptionDialogs.showUnexpectedExceptionDialog(e, "Failed to replay");
         }
+        
+        return result;
     }
-
+    
     /**
-     * Gets the versionlist.
-     *
-     * @return Optional<List<Version>>
+     * Creates a callback for a {@link ListVersionsJob} that shows a dialog that lists the versions.
+     * 
+     * @param shell The shell to open the dialog for.
+     * @param assignmentName The name of the assignment that the versions are displayed for.
+     * 
+     * @return A callback.
      */
-    public Optional<List<Version>> getVersionlist() {
-        return this.versionlist;
+    public static Consumer<List<Version>> displayVersionsCallback(Shell shell, String assignmentName) {
+        return (versions) -> {
+            VersionListDialog dialog = new VersionListDialog(shell, assignmentName, versions);
+            dialog.open();
+        };
     }
-
+    
     /**
-     * Gets the selected version.
-     *
-     * @return Optional<Version> , the selected version
+     * Creates a callback for a {@link ListVersionsJob} that shows a dialog that lets the user select an assignment.
+     * 
+     * @param shell The shell to open the dialog for.
+     * @param assignmentName The name of the assignment that the versions are displayed for.
+     * @param selectionCallback A callback that will be called with the user-selected version.
+     * 
+     * @return A callback.
      */
-    public Optional<Version> getSelectedVersion() {
-        return this.selectedVersion;
+    public static Consumer<List<Version>> selectVersionCallback(Shell shell, String assignmentName,
+            Consumer<Version> selectionCallback) {
+        
+        return (versions) -> {
+            VersionSelectionDialog dialog = new VersionListDialog(shell, assignmentName, versions);
+            Optional<Version> selected = dialog.openAndGetSelectedVersion();
+            selected.ifPresent(selectionCallback);
+        };
     }
 
 }

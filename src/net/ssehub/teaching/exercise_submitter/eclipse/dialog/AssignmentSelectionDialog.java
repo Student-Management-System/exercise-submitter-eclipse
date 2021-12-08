@@ -13,11 +13,11 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -108,6 +108,24 @@ public class AssignmentSelectionDialog extends Dialog {
     protected Control createDialogArea(Composite parent) {
         Composite container = (Composite) super.createDialogArea(parent);
 
+        if (!assignments.isEmpty()) {
+            createAssignmentTable(container);
+            
+        } else {
+            container.setLayout(new FillLayout());
+            Label noVersions = new Label(parent, SWT.CENTER);
+            noVersions.setText("No assignments available.");
+        }
+
+        return container;
+    }
+    
+    /**
+     * Creates the table with the assignments.
+     * 
+     * @param container The container to add the table to.
+     */
+    private void createAssignmentTable(Composite container) {
         Table table = new Table(container, SWT.FULL_SELECTION | SWT.BORDER | SWT.SINGLE);
         table.setLinesVisible(false);
         table.setHeaderVisible(true);
@@ -122,7 +140,7 @@ public class AssignmentSelectionDialog extends Dialog {
         for (String s : colNames) {
             TableColumn tc = new TableColumn(table, SWT.NONE);
             tc.setText(s);
-            tc.setResizable(false);
+            tc.setResizable(true);
         }
 
         this.assignments = new ArrayList<>(this.assignments); // create copy so that it can be sorted
@@ -156,8 +174,6 @@ public class AssignmentSelectionDialog extends Dialog {
                 }
             }
         });
-
-        return container;
     }
 
     @Override
@@ -165,13 +181,12 @@ public class AssignmentSelectionDialog extends Dialog {
         super.configureShell(newShell);
         newShell.setText("Select Assignment");
     }
-
+    
     @Override
-    protected Point getInitialSize() {
-        return new Point(280, 200);
+    protected boolean isResizable() {
+        return true;
     }
-    
-    
+
     /**
      * Lets the user chose the assignment for the given project. If an assignment has been stored for this project,
      * the user is first offered to use the stored assignment (if it fulfills the given predicate).

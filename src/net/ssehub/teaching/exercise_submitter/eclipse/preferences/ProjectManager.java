@@ -9,6 +9,7 @@ import org.eclipse.swt.widgets.Display;
 
 import net.ssehub.teaching.exercise_submitter.eclipse.Activator;
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.ExceptionDialogs;
+import net.ssehub.teaching.exercise_submitter.eclipse.labels.AssignmentLabelDecorator;
 import net.ssehub.teaching.exercise_submitter.lib.ExerciseSubmitterManager;
 import net.ssehub.teaching.exercise_submitter.lib.data.Assignment;
 import net.ssehub.teaching.exercise_submitter.lib.student_management_system.ApiException;
@@ -47,6 +48,7 @@ public class ProjectManager {
     public void setConnection(IProject project, Assignment assignment) {
         try {
             project.setPersistentProperty(CONNECTED_ASSIGNMENT_NAME, assignment.getName());
+            AssignmentLabelDecorator.update(project);
         } catch (CoreException e) {
             Display.getDefault().syncExec(() -> {
                 ExceptionDialogs.showUnexpectedExceptionDialog(e, "Failed to store assignment name");

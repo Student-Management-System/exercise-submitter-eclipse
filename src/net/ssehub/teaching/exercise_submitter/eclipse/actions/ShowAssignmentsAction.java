@@ -5,10 +5,11 @@ import java.util.Optional;
 
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.widgets.Shell;
 
-import net.ssehub.teaching.exercise_submitter.eclipse.dialog.ExceptionDialogs;
 import net.ssehub.teaching.exercise_submitter.eclipse.background.ListVersionsJob;
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AssignmentSelectionDialog;
+import net.ssehub.teaching.exercise_submitter.eclipse.dialog.ExceptionDialogs;
 import net.ssehub.teaching.exercise_submitter.eclipse.log.EclipseLog;
 import net.ssehub.teaching.exercise_submitter.lib.ExerciseSubmitterManager;
 import net.ssehub.teaching.exercise_submitter.lib.data.Assignment;
@@ -42,9 +43,9 @@ public class ShowAssignmentsAction extends AbstractActionUsingManager {
                 if (manager.isReplayable(assignment.get())) {
                     EclipseLog.info("Loading version log of assignment " + assignment.get().getName());
                     
-                    ListVersionsJob job = new ListVersionsJob(EventHelper.getShell(event),
-                            manager.getReplayer(assignment.get()), assignment.get());
-                    job.setUser(true);
+                    Shell shell = EventHelper.getShell(event);
+                    ListVersionsJob job = new ListVersionsJob(shell, manager, assignment.get(),
+                            ListVersionsJob.displayVersionsCallback(shell, assignment.get().getName()));
                     job.schedule();
                     
                 } else {

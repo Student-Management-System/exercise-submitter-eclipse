@@ -44,7 +44,7 @@ public class ExceptionDialogs  {
         MultiStatus status = new MultiStatus(Activator.PLUGIN_ID, IStatus.ERROR, new IStatus[] {inner}, message2, null);
         // TODO: the stack trace cannot be easily copied in this dialog... maybe use a different method?
         
-        ErrorDialog.openError(Display.getCurrent().getActiveShell(), title, message1, status);
+        ErrorDialog.openError(Display.getDefault().getActiveShell(), title, message1, status);
     }
     
     /**
@@ -65,7 +65,7 @@ public class ExceptionDialogs  {
      * Shows an error dialog that informs the user that logging into the student management system failed.
      */
     public static void showLoginFailureDialog() {
-        MessageDialog.openError(Display.getCurrent().getActiveShell(), "Login Failed", "Failed to log into the student"
+        MessageDialog.openError(Display.getDefault().getActiveShell(), "Login Failed", "Failed to log into the student"
                 + " management system.\n\nPlease make sure that the login data in the preference page is correct.");
     }
     
@@ -85,7 +85,7 @@ public class ExceptionDialogs  {
      * @param courseId The course that the user is not enrolled in.
      */
     public static void showUserNotInCourseDialog(String courseId) {
-        MessageDialog.openError(Display.getCurrent().getActiveShell(), "Not In Course",
+        MessageDialog.openError(Display.getDefault().getActiveShell(), "Not In Course",
                 "You are not enrolled in the course " + courseId
                 + ".\n\nPlease log into the student management system and enroll yourself in this course.");
     }
@@ -96,7 +96,7 @@ public class ExceptionDialogs  {
      * @param assignment The name of the assignment.
      */
     public static void showUserNotInGroupDialog(String assignment) {
-        MessageDialog.openError(Display.getCurrent().getActiveShell(), "Not In Group",
+        MessageDialog.openError(Display.getDefault().getActiveShell(), "Not In Group",
                 "You are not a memeber of a group in assignment " + assignment
                 + ".\n\nGroups for assignments are created when the assignment starts. Please contact a tutor if you"
                 + " want to be added to a group after an assignment has already started.");

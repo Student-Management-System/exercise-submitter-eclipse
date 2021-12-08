@@ -83,7 +83,7 @@
             name="Clear Problem Markers" />
         <command
             id="net.ssehub.teaching.exercise_submitter.eclipse.ViewVersionHistory"
-            name="View version history" />
+            name="View Version History" />
         <command
             id="net.ssehub.teaching.exercise_submitter.eclipse.downloadSubmission"
             name="Download Submission" />

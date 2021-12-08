@@ -1,163 +1,164 @@
 package net.ssehub.teaching.exercise_submitter.eclipse.background;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Consumer;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.ILock;
-import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 
+import net.ssehub.teaching.exercise_submitter.eclipse.background.CheckSubmissionJob.CheckResult;
+import net.ssehub.teaching.exercise_submitter.eclipse.dialog.CheckSubmissionDialog;
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.ExceptionDialogs;
+import net.ssehub.teaching.exercise_submitter.lib.ExerciseSubmitterManager;
 import net.ssehub.teaching.exercise_submitter.lib.data.Assignment;
 import net.ssehub.teaching.exercise_submitter.lib.replay.ReplayException;
 import net.ssehub.teaching.exercise_submitter.lib.replay.Replayer;
 import net.ssehub.teaching.exercise_submitter.lib.replay.Replayer.Version;
+import net.ssehub.teaching.exercise_submitter.lib.student_management_system.ApiException;
+import net.ssehub.teaching.exercise_submitter.lib.student_management_system.AuthenticationException;
+import net.ssehub.teaching.exercise_submitter.lib.student_management_system.GroupNotFoundException;
+import net.ssehub.teaching.exercise_submitter.lib.student_management_system.NetworkException;
+import net.ssehub.teaching.exercise_submitter.lib.student_management_system.UserNotInCourseException;
 
 /**
- * A background job that executes check submission.
+ * A background job that checks if the given project content equal the latest submission to the given assignment.
+ * 
  * @author lukas
- *
+ * @author Adam
  */
-public class CheckSubmissionJob extends Job {
+public class CheckSubmissionJob extends AbstractJob<CheckResult> {
 
-    private static ILock lock = Job.getJobManager().newLock();
-
-    private Shell shell;
-    private Replayer replayer;
+    private ExerciseSubmitterManager manager;
+    
     private Assignment assignment;
-    private Consumer<CheckSubmissionJob> callbackCheckSubmission;
-    private File dir;
-    private List<Version> versionlist;
-    private Optional<Version> version = Optional.empty();
-    private Optional<Boolean> result = Optional.empty();
     
+    private IProject project;
     
     /**
-     * Creats an instance of CheckSubmissionJob.
-     * @param shell , the current window shell
-     * @param replayer , authenticated replayer
-     * @param assignment , selected assigment
-     * @param toCheck , the dir to check
-     * @param callbackCheckSubmission
+     * Creates a new job.
+     * 
+     * @param shell The shell that this job belongs to.
+     * @param manager The manager to contact the student management system with.
+     * @param assignment The assignment to check.
+     * @param project The project to check.
      */
-    public CheckSubmissionJob(Shell shell, Replayer replayer, Assignment assignment, File toCheck,
-            Consumer<CheckSubmissionJob> callbackCheckSubmission) {
-        super("Check SubmissionJob");
-        this.shell = shell;
-        this.replayer = replayer;
+    public CheckSubmissionJob(Shell shell, ExerciseSubmitterManager manager, Assignment assignment, IProject project) {
+        super("Check SubmissionJob", shell, result -> {
+            CheckSubmissionDialog dialog = new CheckSubmissionDialog(shell, manager, result);
+            dialog.open();
+        });
+        this.manager  = manager;
         this.assignment = assignment;
-        this.dir = toCheck;
-        this.callbackCheckSubmission = callbackCheckSubmission;
+        this.project = project;
     }
+    
     /**
-     * Class for managing the checkresult.
-     * @author lukas
-     *
+     * Represents the result of checking whether a project has the same content as the latest submission.
      */
     public static class CheckResult {
-        private boolean result;
+        
+        private boolean sameContent;
+        
         private Assignment assignment;
+        
+        private IProject project;
+        
+        private Version version;
+        
         /**
-         * Instantiates a new CheckResult class.
-         * @param result , is the content the same
-         * @param assignment , the compared assignment
+         * Creates a check result.
+         * 
+         * @param sameContent Whether the latest submission and the assignment have the same content.
+         * @param assignment The assignment that was checked.
+         * @param project The project that was checked.
+         * @param version The version of the assignment that was checked.
          */
-        public CheckResult(boolean result, Assignment assignment) {
-            this.result = result;
+        public CheckResult(boolean sameContent, Assignment assignment, IProject project, Version version) {
+            this.sameContent = sameContent;
             this.assignment = assignment;
+            this.project = project;
+            this.version = version;
         }
+
         /**
-         * Gets the result.
-         * @return boolean , is the same ?
+         * Whether the content of the project and the latest submission are the same.
+         * 
+         * @return Whether the content is equal.
          */
-        public boolean getResult() {
-            return result;
+        public boolean isSameContent() {
+            return sameContent;
         }
+        
         /**
-         * Gets the compared assignment.
-         * @return assignment
+         * Returns the assignment that the project was checked against.
+         * 
+         * @return The assignment.
          */
         public Assignment getAssignment() {
             return assignment;
         }
+        
+        /**
+         * Returns the project that was checked.
+         * 
+         * @return The project.
+         */
+        public IProject getProject() {
+            return project;
+        }
+        
+        /**
+         * Returns the version of the assignment that was checked.
+         * 
+         * @return The version.
+         */
+        public Version getVersion() {
+            return version;
+        }
+        
     }
 
     @Override
-    protected IStatus run(IProgressMonitor arg0) {
-
-        try {
-            lock.acquire();
-
-            versionlist = this.replayer.getVersions();
-
-            if (versionlist.size() == 0) {
-                throw new ReplayException("No version is uploaded");
+    protected Optional<CheckResult> run() {
+        
+        Optional<CheckResult> result = Optional.empty();
+        
+        try (Replayer replayer = this.manager.getReplayer(this.assignment)) {
+            
+            List<Version> versions = replayer.getVersions();
+            if (!versions.isEmpty()) {
+                Version latest = versions.get(0);
+                
+                boolean sameContent = replayer.isSameContent(this.project.getLocation().toFile(), latest);
+                
+                result = Optional.of(new CheckResult(sameContent, this.assignment, this.project, latest));
+                
+            } else {
+                this.shell.getDisplay().asyncExec(() -> {
+                    MessageDialog.openWarning(this.shell, "Check Submission", "No submission uploaded to "
+                            + this.assignment.getName());
+                });
             }
-
-            this.version = Optional.ofNullable(versionlist.get(0));
-
-            this.result = Optional.ofNullable(this.replayer.isSameContent(this.dir, this.version.get()));
-
-            this.shell.getDisplay().asyncExec(() -> {
-                this.callbackCheckSubmission.accept(this);
-            });
-
-        } catch (ReplayException | IOException e) {
-            this.shell.getDisplay().asyncExec(() -> {
-                if (e instanceof ReplayException && e.getMessage().equals("No version is uploaded")) {
-                    MessageDialog.openError(this.shell, "Check Submission", e.getMessage());
-                } else {
-                    ExceptionDialogs.showUnexpectedExceptionDialog(e, "Failed check submission");
-                }
-            });
-        } finally {
-            lock.release();
+            
+        } catch (NetworkException e) {
+            ExceptionDialogs.showNetworkExceptionDialog(e);
+        } catch (UserNotInCourseException e) {
+            ExceptionDialogs.showUserNotInCourseDialog(manager.getCourse().getId());
+        } catch (GroupNotFoundException e) {
+            ExceptionDialogs.showUserNotInGroupDialog(assignment.getName());
+        } catch (AuthenticationException e) {
+            ExceptionDialogs.showLoginFailureDialog();
+        } catch (ApiException e) {
+            ExceptionDialogs.showUnexpectedExceptionDialog(e, "Generic API exception");
+        } catch (IOException e) {
+            ExceptionDialogs.showUnexpectedExceptionDialog(e, "Failed to store replay");
+        } catch (ReplayException e) {
+            ExceptionDialogs.showUnexpectedExceptionDialog(e, "Failed to replay");
         }
-        return Status.OK_STATUS;
+        
+        return result;
     }
-    /**
-     * Get the Version the dir gets compared.
-     * @return Optional of Version
-     */
-    public Optional<Version> getVersion() {
-        return this.version;
-    }
-    /**
-     * Get the result of the comparison.
-     * @return Optional of Boolean
-     */
-    public CheckResult getCheckResult() {
-        return new CheckResult(this.result.get(), this.assignment);
-    }
-    /**
-     * Get the current shell.
-     * @return shell
-     */
-    public Shell getShell() {
-        return shell;
-    }
-    /**
-     * Gets the current replayer.
-     * @return Replayer
-     */
-    public Replayer getReplayer() {
-        return replayer;
-    }
-    /**
-     * Gets the current versionlist.
-     * @return List<Version>
-     */
-    public List<Version> getVersionlist() {
-        return versionlist;
-    }
-    
-   
 
 }

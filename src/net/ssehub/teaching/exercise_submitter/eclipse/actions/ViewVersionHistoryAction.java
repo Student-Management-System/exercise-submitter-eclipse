@@ -38,9 +38,8 @@ public class ViewVersionHistoryAction extends AbstractSingleProjectActionUsingMa
                 if (manager.isReplayable(assignment.get())) {
                     EclipseLog.info("Version log of assignment " + assignment.get().getName() + "downloading");
                     
-                    ListVersionsJob job = new ListVersionsJob(window.getShell(), manager.getReplayer(assignment.get()),
-                            assignment.get());
-                    job.setUser(true);
+                    ListVersionsJob job = new ListVersionsJob(window.getShell(), manager, assignment.get(),
+                            ListVersionsJob.displayVersionsCallback(window.getShell(), assignment.get().getName()));
                     job.schedule();
                     
                 } else {

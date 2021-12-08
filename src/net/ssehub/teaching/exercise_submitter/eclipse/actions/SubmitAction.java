@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 
 import net.ssehub.teaching.exercise_submitter.eclipse.background.SubmissionJob;
@@ -17,11 +18,10 @@ import net.ssehub.teaching.exercise_submitter.lib.ExerciseSubmitterManager;
 import net.ssehub.teaching.exercise_submitter.lib.data.Assignment;
 import net.ssehub.teaching.exercise_submitter.lib.student_management_system.ApiException;
 import net.ssehub.teaching.exercise_submitter.lib.student_management_system.AuthenticationException;
-import net.ssehub.teaching.exercise_submitter.lib.student_management_system.GroupNotFoundException;
 import net.ssehub.teaching.exercise_submitter.lib.student_management_system.NetworkException;
 import net.ssehub.teaching.exercise_submitter.lib.student_management_system.UserNotInCourseException;
 import net.ssehub.teaching.exercise_submitter.lib.submission.Problem;
-import net.ssehub.teaching.exercise_submitter.lib.submission.Submitter;
+import net.ssehub.teaching.exercise_submitter.lib.submission.SubmissionResult;
 
 /**
  * Submits the selected project. Lets the user choose which assignment the
@@ -55,17 +55,17 @@ public class SubmitAction extends AbstractSingleProjectActionUsingManager {
                     manager::isSubmittable);
     
             if (assignment.isPresent()) {
-                EclipseLog.info("User selected assignment " + assignment.get().getName());
-    
-                Submitter submitter = manager.getSubmitter(assignment.get());
+                Assignment selectedAssignment = assignment.get();
+                
+                EclipseLog.info("User selected assignment " + selectedAssignment.getName());
 
                 EclipseLog.info("Starting submission job");
-                SubmissionJob sj = new SubmissionJob(submitter, project, assignment.get(), window.getShell(),
-                        this::onSubmissionFinished);
-                sj.setUser(true);
-                sj.schedule();
-    
-                // TODO: verschiedene Hausaufgaben noch hinzufügen?
+                SubmissionJob job = new SubmissionJob(window.getShell(), manager, selectedAssignment, project,
+                        (submissionResult) -> {
+                            createSubmissionFinishedDialog(window.getShell(), project, selectedAssignment,
+                                    submissionResult);
+                        });
+                job.schedule();
             }
             
         } catch (UserNotInCourseException e) {
@@ -74,56 +74,48 @@ public class SubmitAction extends AbstractSingleProjectActionUsingManager {
             ExceptionDialogs.showNetworkExceptionDialog(e);
         } catch (AuthenticationException e) {
             ExceptionDialogs.showLoginFailureDialog();
-        } catch (GroupNotFoundException e) {
-            ExceptionDialogs.showUserNotInGroupDialog(assignment.get().getName());
         } catch (ApiException e) {
             ExceptionDialogs.showUnexpectedExceptionDialog(e, "Generic API exception");
         }
     }
 
     /**
-     * Callback that is called when the {@link SubmissionJob} has finished. This is
-     * always called, even when the submission failed.
-     * <p>
-     * Displays the submission result to the user.
-     *
-     * @param job The {@link SubmissionJob} that finished.
-     */
-    private void onSubmissionFinished(SubmissionJob job) {
-        if (job.getSubmissionResult().isAccepted()) {
-            ProjectManager.INSTANCE.setConnection(job.getProject(), job.getAssigment());
-        }
-        createSubmissionFinishedDialog(job);
-    }
-
-    /**
      * Creates submissionFinishedDialog.
      *
-     * @param job , finishedjob
+     * @param shell The parent shell to open the dialog for.
+     * @param project The project that was submitted.
+     * @param assignment The assignment that was submitted.
+     * @param result The result of the submission.
      */
-    public static void createSubmissionFinishedDialog(SubmissionJob job) {
-        EclipseLog.info("Submission job finished (project " + job.getProject().getName() + ")");
+    public static void createSubmissionFinishedDialog(Shell shell, IProject project, Assignment assignment,
+            SubmissionResult result) {
+        
+        EclipseLog.info("Submission job finished (project " + project.getName() + ")");
+        
+        if (result.isAccepted()) {
+            ProjectManager.INSTANCE.setConnection(project, assignment);
+        }
 
         String mainMessage;
         int dialogType;
 
-        if (job.getSubmissionResult().isAccepted()) {
+        if (result.isAccepted()) {
             EclipseLog.info("Submission was accepted");
-            mainMessage = "Your project " + job.getProject().getName() + " was successfully submitted to assignment "
-                    + job.getAssigment().getName() + ".";
+            mainMessage = "Your project " + project.getName() + " was successfully submitted to assignment "
+                    + assignment.getName() + ".";
             dialogType = MessageDialog.INFORMATION;
 
         } else {
             EclipseLog.info("Submission was not accepted");
-            mainMessage = "Your submission of project " + job.getProject().getName() + " to assignment "
-                    + job.getAssigment().getName() + " was NOT accepted.";
+            mainMessage = "Your submission of project " + project.getName() + " to assignment "
+                    + assignment.getName() + " was NOT accepted.";
             dialogType = MessageDialog.ERROR;
         }
 
-        EclipseLog.info("Adding " + job.getSubmissionResult().getProblems().size() + " problem markers");
+        EclipseLog.info("Adding " + result.getProblems().size() + " problem markers");
         int numErrors = 0;
         int numWarnings = 0;
-        for (Problem problem : job.getSubmissionResult().getProblems()) {
+        for (Problem problem : result.getProblems()) {
             switch (problem.getSeverity()) {
             case WARNING:
                 numWarnings++;
@@ -134,13 +126,13 @@ public class SubmitAction extends AbstractSingleProjectActionUsingManager {
                 break;
             }
             EclipseMarker.addMarker(problem.getFile().orElse(new File(".project")), problem.getMessage(),
-                    problem.getLine().orElse(-1), problem.getSeverity(), job.getProject()); // TODO: noch nicht fertig
+                    problem.getLine().orElse(-1), problem.getSeverity(), project); // TODO: noch nicht fertig
                                                                                             // dialogbox
         }
 
         String problemsMessage = createProblemMessage(numErrors, numWarnings);
 
-        MessageDialog.open(dialogType, job.getShell(), "Exercise Submitter", mainMessage + "\n\n" + problemsMessage,
+        MessageDialog.open(dialogType, shell, "Submission Result", mainMessage + "\n\n" + problemsMessage,
                 dialogType);
     }
 

@@ -1,126 +1,78 @@
 package net.ssehub.teaching.exercise_submitter.eclipse.background;
 
+import java.util.Optional;
 import java.util.function.Consumer;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.ILock;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.ExceptionDialogs;
+import net.ssehub.teaching.exercise_submitter.lib.ExerciseSubmitterManager;
 import net.ssehub.teaching.exercise_submitter.lib.data.Assignment;
+import net.ssehub.teaching.exercise_submitter.lib.student_management_system.ApiException;
+import net.ssehub.teaching.exercise_submitter.lib.student_management_system.AuthenticationException;
+import net.ssehub.teaching.exercise_submitter.lib.student_management_system.GroupNotFoundException;
+import net.ssehub.teaching.exercise_submitter.lib.student_management_system.NetworkException;
+import net.ssehub.teaching.exercise_submitter.lib.student_management_system.UserNotInCourseException;
 import net.ssehub.teaching.exercise_submitter.lib.submission.SubmissionException;
 import net.ssehub.teaching.exercise_submitter.lib.submission.SubmissionResult;
 import net.ssehub.teaching.exercise_submitter.lib.submission.Submitter;
 
 /**
- * A background job that executes the submission.
+ * A job that submits a given project to a given assignment.
  * 
- * @author Lukas
  * @author Adam
+ * @author lukas
  */
-public class SubmissionJob extends Job {
+public class SubmissionJob extends AbstractJob<SubmissionResult> {
 
-    private static ILock lock = Job.getJobManager().newLock();
+    private ExerciseSubmitterManager manager;
     
-    private Consumer<SubmissionJob> callback;
+    private Assignment assignment;
     
-    private SubmissionResult result;
-    private Submitter submitter;
     private IProject project;
-    private Assignment assigment;
-    private Shell shell;
-
+    
     /**
-     * Creates an instance.
+     * Creates a submission job.
      * 
-     * @param submitter The submitter to use.
-     * @param project The project to submit.
+     * @param shell The parent shell.
+     * @param manager The manager to contact the student management system.
      * @param assignment The assignment to submit to.
-     * @param shell The shell that the event originated from.
-     * @param callback The callback to call once we are finished.
+     * @param project The project to submit.
+     * @param callback The callback to call when the submission is done.
      */
-    public SubmissionJob(Submitter submitter, IProject project, Assignment assignment, Shell shell,
-            Consumer<SubmissionJob> callback) {
-        super("Submission Job");
-        this.callback = callback;
-        
-        this.submitter = submitter;
-        this.result = null;
+    public SubmissionJob(Shell shell, ExerciseSubmitterManager manager, Assignment assignment, IProject project,
+            Consumer<SubmissionResult> callback) {
+        super("Exercise Submission", shell, callback);
+        this.manager = manager;
+        this.assignment = assignment;
         this.project = project;
-        this.assigment = assignment;
-        this.shell = shell;
-        
-    }
-    
-    /**
-     * Returns the project that is submitted.
-     * 
-     * @return The project.
-     */
-    public IProject getProject() {
-        return project;
-    }
-    
-    /**
-     * Returns the assignment that is submitted to.
-     *  
-     * @return The assignment.
-     */
-    public Assignment getAssigment() {
-        return assigment;
-    }
-    
-    /**
-     * Returns the {@link SubmissionResult} of the submission.
-     * 
-     * @return The {@link SubmissionResult} (<code>null</code> until submission is finished).
-     */
-    public SubmissionResult getSubmissionResult() {
-        return result;
-    }
-    
-    /**
-     * Returns the shell that the starting event originated from.
-     * 
-     * @return The shell.
-     */
-    public Shell getShell() {
-        return shell;
     }
 
     @Override
-    protected IStatus run(IProgressMonitor monitor) {
-
-        monitor.beginTask("Transferring Files", BUILD);
-
+    protected Optional<SubmissionResult> run() {
+        Optional<SubmissionResult> result = Optional.empty();
+        
         try {
-            lock.acquire();
-            this.result = this.submitter.submit(this.project.getLocation().toFile());
-            this.shell.getDisplay().asyncExec(() -> {
-                this.callback.accept(this);
-            });
-        } catch (SubmissionException | IllegalArgumentException ex) {
-            if (ex instanceof SubmissionException && ex.getLocalizedMessage().equals("Version is already submitted")) {
-                this.shell.getDisplay().asyncExec(() -> {
-                    MessageDialog.openError(shell, "Submitter", "This project and the current"
-                            + " project version on the Server are the same");
-                });
-            } else {
-                this.shell.getDisplay().asyncExec(() -> {
-                    ExceptionDialogs.showUnexpectedExceptionDialog(ex, "Failed to submit");
-                });
-            }
-
-        } finally {
-            lock.release();
-
+            Submitter submitter = this.manager.getSubmitter(this.assignment);
+            
+            result = Optional.of(submitter.submit(project.getLocation().toFile()));
+            
+        } catch (NetworkException e) {
+            ExceptionDialogs.showNetworkExceptionDialog(e);
+        } catch (UserNotInCourseException e) {
+            ExceptionDialogs.showUserNotInCourseDialog(this.manager.getCourse().getId());
+        } catch (AuthenticationException e) {
+            ExceptionDialogs.showLoginFailureDialog();
+        } catch (GroupNotFoundException e) {
+            ExceptionDialogs.showUserNotInGroupDialog(this.assignment.getName());
+        } catch (ApiException e) {
+            ExceptionDialogs.showUnexpectedExceptionDialog(e, "Generic API exception");
+        } catch (SubmissionException e) {
+            ExceptionDialogs.showUnexpectedExceptionDialog(e, "Failed to submit");
         }
-        return Status.OK_STATUS;
+        
+        return result;
     }
 
 }
