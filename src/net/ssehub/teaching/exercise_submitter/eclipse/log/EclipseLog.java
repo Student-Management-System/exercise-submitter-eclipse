@@ -39,14 +39,5 @@ public class EclipseLog {
     public static void warning(String message) {
         LOG.log(new Status(IStatus.WARNING, Activator.PLUGIN_ID, message));
     }
-    
-    /**
-     * Logs an info message.
-     * 
-     * @param message The info text.
-     */
-    public static void info(String message) {
-        LOG.log(new Status(IStatus.INFO, Activator.PLUGIN_ID, message));
-    }
 
 }

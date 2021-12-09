@@ -24,7 +24,6 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IWorkbenchWindow;
 
-import net.ssehub.teaching.exercise_submitter.eclipse.log.EclipseLog;
 import net.ssehub.teaching.exercise_submitter.eclipse.preferences.ProjectManager;
 import net.ssehub.teaching.exercise_submitter.lib.ExerciseSubmitterManager;
 import net.ssehub.teaching.exercise_submitter.lib.data.Assignment;
@@ -230,8 +229,6 @@ public class AssignmentSelectionDialog extends Dialog {
         });
         
         if (assignment.isEmpty()) {
-            EclipseLog.info("Showing assignment selector to user");
-            
             AssignmentSelectionDialog assDialog = new AssignmentSelectionDialog(window.getShell(),
                     manager.getAllAssignments().stream().filter(accessibleCheck).collect(Collectors.toList()));
             

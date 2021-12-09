@@ -8,7 +8,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import net.ssehub.teaching.exercise_submitter.eclipse.background.CheckSubmissionJob;
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AssignmentSelectionDialog;
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.ExceptionDialogs;
-import net.ssehub.teaching.exercise_submitter.eclipse.log.EclipseLog;
 import net.ssehub.teaching.exercise_submitter.lib.ExerciseSubmitterManager;
 import net.ssehub.teaching.exercise_submitter.lib.data.Assignment;
 import net.ssehub.teaching.exercise_submitter.lib.student_management_system.ApiException;
@@ -35,8 +34,6 @@ public class CheckSubmission extends AbstractSingleProjectActionUsingManager {
                 manager::isReplayable);
             
             if (selectedAssignment.isPresent()) {
-                EclipseLog.info("Starting download newest Version of " + selectedAssignment.get().getName());
-                
                 CheckSubmissionJob job = new CheckSubmissionJob(window.getShell(), manager, selectedAssignment.get(),
                         project);
                 job.schedule();

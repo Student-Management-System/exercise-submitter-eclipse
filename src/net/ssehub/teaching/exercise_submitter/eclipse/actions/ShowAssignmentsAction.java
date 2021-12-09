@@ -10,7 +10,6 @@ import org.eclipse.swt.widgets.Shell;
 import net.ssehub.teaching.exercise_submitter.eclipse.background.ListVersionsJob;
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AssignmentSelectionDialog;
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.ExceptionDialogs;
-import net.ssehub.teaching.exercise_submitter.eclipse.log.EclipseLog;
 import net.ssehub.teaching.exercise_submitter.lib.ExerciseSubmitterManager;
 import net.ssehub.teaching.exercise_submitter.lib.data.Assignment;
 import net.ssehub.teaching.exercise_submitter.lib.student_management_system.ApiException;
@@ -28,8 +27,6 @@ public class ShowAssignmentsAction extends AbstractActionUsingManager {
 
     @Override
     public void execute(ExecutionEvent event, ExerciseSubmitterManager manager) {
-        EclipseLog.info("Showing overview of all assignments");
-        
         Optional<Assignment> assignment = Optional.empty();
         
         try {
@@ -41,8 +38,6 @@ public class ShowAssignmentsAction extends AbstractActionUsingManager {
             
             if (assignment.isPresent()) {
                 if (manager.isReplayable(assignment.get())) {
-                    EclipseLog.info("Loading version log of assignment " + assignment.get().getName());
-                    
                     Shell shell = EventHelper.getShell(event);
                     ListVersionsJob job = new ListVersionsJob(shell, manager, assignment.get(),
                             ListVersionsJob.displayVersionsCallback(shell, assignment.get().getName()));

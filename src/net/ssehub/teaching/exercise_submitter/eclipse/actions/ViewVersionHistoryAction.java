@@ -8,7 +8,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 
 import net.ssehub.teaching.exercise_submitter.eclipse.background.ListVersionsJob;
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.ExceptionDialogs;
-import net.ssehub.teaching.exercise_submitter.eclipse.log.EclipseLog;
 import net.ssehub.teaching.exercise_submitter.eclipse.preferences.ProjectManager;
 import net.ssehub.teaching.exercise_submitter.lib.ExerciseSubmitterManager;
 import net.ssehub.teaching.exercise_submitter.lib.data.Assignment;
@@ -36,8 +35,6 @@ public class ViewVersionHistoryAction extends AbstractSingleProjectActionUsingMa
             
             if (assignment.isPresent()) {
                 if (manager.isReplayable(assignment.get())) {
-                    EclipseLog.info("Version log of assignment " + assignment.get().getName() + "downloading");
-                    
                     ListVersionsJob job = new ListVersionsJob(window.getShell(), manager, assignment.get(),
                             ListVersionsJob.displayVersionsCallback(window.getShell(), assignment.get().getName()));
                     job.schedule();

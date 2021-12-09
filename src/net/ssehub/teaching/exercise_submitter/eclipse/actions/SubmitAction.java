@@ -11,7 +11,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import net.ssehub.teaching.exercise_submitter.eclipse.background.SubmissionJob;
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AssignmentSelectionDialog;
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.ExceptionDialogs;
-import net.ssehub.teaching.exercise_submitter.eclipse.log.EclipseLog;
 import net.ssehub.teaching.exercise_submitter.eclipse.preferences.ProjectManager;
 import net.ssehub.teaching.exercise_submitter.eclipse.problemmarkers.EclipseMarker;
 import net.ssehub.teaching.exercise_submitter.lib.ExerciseSubmitterManager;
@@ -34,8 +33,7 @@ public class SubmitAction extends AbstractSingleProjectActionUsingManager {
 
     @Override
     protected void execute(IProject project, IWorkbenchWindow window, ExerciseSubmitterManager manager) {
-        EclipseLog.info("Starting submision of project " + project.getName());
-
+        
         EclipseMarker.clearMarkerFromProject(project);
 
         if (EclipseMarker.areMarkersInProject(project)) {
@@ -43,7 +41,6 @@ public class SubmitAction extends AbstractSingleProjectActionUsingManager {
                     "There are open errors/warnings in the selected project.\n\nContinue?");
 
             if (!bResult) {
-                EclipseLog.info("Submission aborted by user due to errors/warnings in project");
                 return;
             }
         }
@@ -57,9 +54,6 @@ public class SubmitAction extends AbstractSingleProjectActionUsingManager {
             if (assignment.isPresent()) {
                 Assignment selectedAssignment = assignment.get();
                 
-                EclipseLog.info("User selected assignment " + selectedAssignment.getName());
-
-                EclipseLog.info("Starting submission job");
                 SubmissionJob job = new SubmissionJob(window.getShell(), manager, selectedAssignment, project,
                         (submissionResult) -> {
                             createSubmissionFinishedDialog(window.getShell(), project, selectedAssignment,
@@ -90,8 +84,6 @@ public class SubmitAction extends AbstractSingleProjectActionUsingManager {
     public static void createSubmissionFinishedDialog(Shell shell, IProject project, Assignment assignment,
             SubmissionResult result) {
         
-        EclipseLog.info("Submission job finished (project " + project.getName() + ")");
-        
         if (result.isAccepted()) {
             ProjectManager.INSTANCE.setConnection(project, assignment);
         }
@@ -100,19 +92,16 @@ public class SubmitAction extends AbstractSingleProjectActionUsingManager {
         int dialogType;
 
         if (result.isAccepted()) {
-            EclipseLog.info("Submission was accepted");
             mainMessage = "Your project " + project.getName() + " was successfully submitted to assignment "
                     + assignment.getName() + ".";
             dialogType = MessageDialog.INFORMATION;
 
         } else {
-            EclipseLog.info("Submission was not accepted");
             mainMessage = "Your submission of project " + project.getName() + " to assignment "
                     + assignment.getName() + " was NOT accepted.";
             dialogType = MessageDialog.ERROR;
         }
 
-        EclipseLog.info("Adding " + result.getProblems().size() + " problem markers");
         int numErrors = 0;
         int numWarnings = 0;
         for (Problem problem : result.getProblems()) {

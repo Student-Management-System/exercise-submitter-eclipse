@@ -9,7 +9,6 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.ExceptionDialogs;
-import net.ssehub.teaching.exercise_submitter.eclipse.log.EclipseLog;
 import net.ssehub.teaching.exercise_submitter.eclipse.preferences.PreferencePage;
 import net.ssehub.teaching.exercise_submitter.lib.ExerciseSubmitterFactory;
 import net.ssehub.teaching.exercise_submitter.lib.ExerciseSubmitterManager;
@@ -33,14 +32,12 @@ public class Activator extends AbstractUIPlugin {
     public void start(BundleContext context) throws Exception {
         super.start(context);
         plugin = this;
-        EclipseLog.info("Plug-in started");
     }
 
     @Override
     public void stop(BundleContext context) throws Exception {
         plugin = null;
         super.stop(context);
-        EclipseLog.info("Plug-in stopped");
     }
 
     /**
@@ -69,7 +66,6 @@ public class Activator extends AbstractUIPlugin {
             String username = PreferencePage.SECURE_PREFERENCES.get(PreferencePage.KEY_USERNAME, "");
             String password = PreferencePage.SECURE_PREFERENCES.get(PreferencePage.KEY_PASSWORD, "");
             
-            EclipseLog.info("Creating manager with username " + username);
             ExerciseSubmitterFactory factory = new ExerciseSubmitterFactory();
             factory
                     .withUsername(username)
