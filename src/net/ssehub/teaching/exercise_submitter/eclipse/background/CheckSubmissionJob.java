@@ -45,10 +45,11 @@ public class CheckSubmissionJob extends AbstractJob<CheckResult> {
      * @param project The project to check.
      */
     public CheckSubmissionJob(Shell shell, ExerciseSubmitterManager manager, Assignment assignment, IProject project) {
-        super("Check Submission", shell, result -> {
-            CheckSubmissionDialog dialog = new CheckSubmissionDialog(shell, manager, result);
-            dialog.open();
-        });
+        super("Comparing project " + project.getName() + " with latest submission to " + assignment.getName(), shell,
+                result -> {
+                    CheckSubmissionDialog dialog = new CheckSubmissionDialog(shell, manager, result);
+                    dialog.open();
+                });
         this.manager  = manager;
         this.assignment = assignment;
         this.project = project;

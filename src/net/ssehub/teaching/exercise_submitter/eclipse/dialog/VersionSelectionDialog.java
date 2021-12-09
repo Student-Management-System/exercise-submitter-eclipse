@@ -141,13 +141,15 @@ public class VersionSelectionDialog extends Dialog {
             @Override
             public void widgetSelected(SelectionEvent event) {
                 int[] selections = table.getSelectionIndices();
+                Optional<Button> okButton = Optional.ofNullable(getButton(OK));
+                
                 if (selections.length == 1) {
-                    getButton(OK).setEnabled(true);
+                    okButton.ifPresent(button -> button.setEnabled(true));
                     
                     VersionSelectionDialog.this.selectedVersion = Optional
                             .of(VersionSelectionDialog.this.versionlist.get(selections[0]));
                 } else {
-                    getButton(OK).setEnabled(false);
+                    okButton.ifPresent(button -> button.setEnabled(false));
                 }
             }
         });

@@ -7,10 +7,12 @@ import org.eclipse.equinox.security.storage.SecurePreferencesFactory;
 import org.eclipse.equinox.security.storage.StorageException;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.StringFieldEditor;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import net.ssehub.teaching.exercise_submitter.eclipse.Activator;
+import net.ssehub.teaching.exercise_submitter.eclipse.background.AuthenticateJob;
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.ExceptionDialogs;
 
 /**
@@ -64,7 +66,8 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
             SECURE_PREFERENCES.put(KEY_PASSWORD, this.password.getStringValue(), true);
             SECURE_PREFERENCES.flush();
             
-            Activator.getDefault().initManager();
+            Activator.getDefault().clearManager();
+            new AuthenticateJob(Display.getDefault().getShells()[0], (manager) -> { }).schedule();
             
         } catch (StorageException | IOException ex) {
             ExceptionDialogs.showUnexpectedExceptionDialog(ex, "Failed to store preferences");

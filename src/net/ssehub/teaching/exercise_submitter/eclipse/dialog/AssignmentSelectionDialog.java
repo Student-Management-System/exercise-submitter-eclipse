@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.Dialog;
@@ -24,13 +24,10 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IWorkbenchWindow;
 
-import net.ssehub.teaching.exercise_submitter.eclipse.labels.ProjectAssignmentMapper;
+import net.ssehub.teaching.exercise_submitter.eclipse.background.GetAssignmentsJob;
+import net.ssehub.teaching.exercise_submitter.eclipse.background.GetAssociatedAssignmentJob;
 import net.ssehub.teaching.exercise_submitter.lib.ExerciseSubmitterManager;
 import net.ssehub.teaching.exercise_submitter.lib.data.Assignment;
-import net.ssehub.teaching.exercise_submitter.lib.student_management_system.ApiException;
-import net.ssehub.teaching.exercise_submitter.lib.student_management_system.AuthenticationException;
-import net.ssehub.teaching.exercise_submitter.lib.student_management_system.NetworkException;
-import net.ssehub.teaching.exercise_submitter.lib.student_management_system.UserNotInCourseException;
 
 /**
  * A dialog that allows the user to select an item from a given list of {@link Assignment}s (or to cancel).
@@ -199,44 +196,46 @@ public class AssignmentSelectionDialog extends Dialog {
      *      associated to this project, it is only used if this predicate returns <code>true</code>. If an
      *      {@link AssignmentSelectionDialog} is opened, it only shows {@link Assignment}s for which this predicate is
      *      <code>true</code>.
-     * 
-     * @return The selected {@link Assignment}, or {@link Optional#empty()} if the user cancelled the operation.
-     * 
-     * @throws ApiException
+     * @param callback Callback called with the user-selected assignment, or {@link Optional#empty()} if the user
+     *      cancelled the operation.
      */
-    public static Optional<Assignment> selectAssignmentWithAssociated(IProject project, IWorkbenchWindow window,
-            ExerciseSubmitterManager manager, Predicate<Assignment> accessibleCheck)
-            throws NetworkException, AuthenticationException, UserNotInCourseException, ApiException {
+    public static void selectAssignmentWithAssociated(IProject project, IWorkbenchWindow window,
+            ExerciseSubmitterManager manager, Predicate<Assignment> accessibleCheck,
+            Consumer<Optional<Assignment>> callback) {
         
-        Optional<Assignment> assignment = ProjectAssignmentMapper.INSTANCE.getAssociatedAssignment(project, manager);
-        
-        assignment = assignment.flatMap(saved -> {
-            Optional<Assignment> result;
-            if (accessibleCheck.test(saved)) {
-                result = Optional.of(saved);
+        new GetAssociatedAssignmentJob(window.getShell(), manager, project, assignment -> {
+            
+            assignment = assignment.flatMap(saved -> {
+                Optional<Assignment> result;
+                if (accessibleCheck.test(saved)) {
+                    result = Optional.of(saved);
+                } else {
+                    MessageDialog.openInformation(window.getShell(), "Assignment Not Accessible",
+                            "The project was last submitted to " + saved.getName()
+                            + ", but this assignment is currently not accessible. Choose a different one.");
+                    result = Optional.empty();
+                }
+                return result;
+            }).flatMap(saved -> {
+                int chosen = MessageDialog.open(MessageDialog.QUESTION, window.getShell(), "Choose Assignment",
+                        "This project was last submitted to " + saved.getName() + ". Use this assignment?",
+                        SWT.NONE, saved.getName(), "Different Assignment");
+                
+                return chosen == 0 ? Optional.of(saved) : Optional.empty();
+            });
+            
+            if (assignment.isPresent()) {
+                callback.accept(assignment);
             } else {
-                MessageDialog.openInformation(window.getShell(), "Assignment Not Accessible", "The project was last "
-                        + "submitted to " + saved.getName() + ", but this assignment is currently not accessible."
-                        + " Choose a different one.");
-                result = Optional.empty();
+                new GetAssignmentsJob(window.getShell(), manager, accessibleCheck, assignmentList -> {
+                    AssignmentSelectionDialog assDialog = new AssignmentSelectionDialog(window.getShell(),
+                            assignmentList);
+                    
+                    callback.accept(assDialog.openAndGetSelectedAssignment());
+                }).schedule();
             }
-            return result;
-        }).flatMap(saved -> {
-            int chosen = MessageDialog.open(MessageDialog.QUESTION, window.getShell(), "Choose Assignment",
-                    "This project was last submitted to " + saved.getName() + ". Use this assignment?",
-                    SWT.NONE, saved.getName(), "Different Assignment");
-            
-            return chosen == 0 ? Optional.of(saved) : Optional.empty();
-        });
+        }).schedule();
         
-        if (assignment.isEmpty()) {
-            AssignmentSelectionDialog assDialog = new AssignmentSelectionDialog(window.getShell(),
-                    manager.getAllAssignments().stream().filter(accessibleCheck).collect(Collectors.toList()));
-            
-            assignment = assDialog.openAndGetSelectedAssignment();
-        }
-        
-        return assignment;
     }
     
 }

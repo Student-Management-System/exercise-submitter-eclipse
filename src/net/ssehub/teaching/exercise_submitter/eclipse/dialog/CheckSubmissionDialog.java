@@ -134,32 +134,30 @@ public class CheckSubmissionDialog extends Dialog {
         IProject project = this.checkresult.getProject();
         Assignment assignment = this.checkresult.getAssignment();
         
-        SubmissionJob job = new SubmissionJob(shell, this.manager, assignment, project, 
+        new SubmissionJob(shell, this.manager, assignment, project, 
                 (submissionResult) -> {
                     SubmitAction.createSubmissionFinishedDialog(getParentShell(), project, assignment,
                             submissionResult);
-                });
-        job.schedule();
+                }).schedule();
     }
 
     /**
      * Starts a job that downloads the latest assignment version.
      */
     private void createReplayerJob() {
-        ReplayJob job = new ReplayJob(getParentShell(), this.manager, this.checkresult.getAssignment(),
+        new ReplayJob(getParentShell(), this.manager, this.checkresult.getAssignment(),
                 project -> MessageDialog.openInformation(getParentShell(), "Submission Download",
-                        "Submission has been downloaded into project " + project.getName()));
-        job.schedule();
+                        "Submission has been downloaded into project " + project.getName()))
+            .schedule();
     }
     
     /**
      * Starts a job that shows the version history of the assignment.
      */
     private void createListVersionList() {
-        ListVersionsJob job;
-        job = new ListVersionsJob(getParentShell(), this.manager, this.checkresult.getAssignment(),
-                ListVersionsJob.displayVersionsCallback(getParentShell(), this.checkresult.getAssignment().getName()));
-        job.schedule();
+        new ListVersionsJob(getParentShell(), this.manager, this.checkresult.getAssignment(),
+                ListVersionsJob.displayVersionsCallback(getParentShell(), this.checkresult.getAssignment().getName()))
+            .schedule();
     }
 
     @Override

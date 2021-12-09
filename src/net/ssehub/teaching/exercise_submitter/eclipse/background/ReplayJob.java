@@ -63,7 +63,7 @@ public class ReplayJob extends AbstractJob<IProject> {
      */
     public ReplayJob(Shell shell, ExerciseSubmitterManager manager, Assignment assignment,
             Consumer<IProject> callback) {
-        super("Replay Submission", shell, callback);
+        super("Downloading submission of " + assignment.getName(), shell, callback);
         this.manager = manager;
         this.assignment = assignment;
     }
@@ -72,15 +72,15 @@ public class ReplayJob extends AbstractJob<IProject> {
     protected Optional<IProject> run() {
         Optional<IProject> result = Optional.empty();
         
-        this.monitor.beginTask("Replaying Submission", 4);
+        this.monitor.beginTask("Replaying submission", 4);
         
         try (Replayer replayer = this.manager.getReplayer(this.assignment)) {
-            this.monitor.subTask("Getting versions");
+            this.monitor.subTask("Retrieving versions");
             VersionSelectionDialog versionDialog = new VersionSelectionDialog(this.shell, this.assignment.getName(),
                     replayer.getVersions());
             this.monitor.worked(1);
             
-            this.monitor.subTask("Selecting Version");
+            this.monitor.subTask("Selecting version");
             AtomicReference<Optional<Version>> dialogResult = new AtomicReference<>(Optional.empty());
             this.shell.getDisplay().syncExec(() -> {
                 dialogResult.set(versionDialog.openAndGetSelectedVersion());
@@ -90,11 +90,11 @@ public class ReplayJob extends AbstractJob<IProject> {
             if (dialogResult.get().isPresent()) {
                 Version version = dialogResult.get().get();
 
-                this.monitor.subTask("Downloading Submission");
+                this.monitor.subTask("Downloading submission");
                 File replay = replayer.replay(version);
                 this.monitor.worked(1);
                 
-                this.monitor.subTask("Creating Project");
+                this.monitor.subTask("Creating project");
                 Optional<IProject> projectCreation = createProject(version);
                 if (projectCreation.isPresent()) {
                     IProject project = projectCreation.get();

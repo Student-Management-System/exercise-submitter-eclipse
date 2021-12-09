@@ -4,7 +4,7 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 
-import net.ssehub.teaching.exercise_submitter.eclipse.Activator;
+import net.ssehub.teaching.exercise_submitter.eclipse.background.AuthenticateJob;
 import net.ssehub.teaching.exercise_submitter.lib.ExerciseSubmitterManager;
 
 /**
@@ -17,7 +17,7 @@ abstract class AbstractActionUsingManager extends AbstractHandler {
 
     @Override
     public final Object execute(ExecutionEvent event) throws ExecutionException {
-        Activator.getDefault().getManager().ifPresent(manager -> execute(event, manager));
+        new AuthenticateJob(EventHelper.getShell(event), manager -> execute(event, manager)).schedule();
         return null;
     }
     

@@ -8,6 +8,7 @@ import org.eclipse.equinox.security.storage.StorageException;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
+import net.ssehub.teaching.exercise_submitter.eclipse.background.AuthenticateJob;
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.ExceptionDialogs;
 import net.ssehub.teaching.exercise_submitter.eclipse.preferences.PreferencePage;
 import net.ssehub.teaching.exercise_submitter.lib.ExerciseSubmitterFactory;
@@ -56,7 +57,7 @@ public class Activator extends AbstractUIPlugin {
      * <p>
      * May be called multiple times, if the username or password in the preference store change.
      */
-    public synchronized void initManager() {
+    private void initManager() {
         this.manager = Optional.empty();
         
         String course = "";
@@ -94,7 +95,8 @@ public class Activator extends AbstractUIPlugin {
     }
     
     /**
-     * Returns the {@link ExerciseSubmitterManager}. Manager is lazily initialized.
+     * Returns the {@link ExerciseSubmitterManager}. Manager is lazily initialized. Do not call this in a GUI thread,
+     * as this method may to network operations; use {@link AuthenticateJob} instead.
      * 
      * @return The {@link ExerciseSubmitterManager}, or {@link Optional#empty()} if it could not be created (e.g. due to
      *      login issues.
@@ -113,6 +115,16 @@ public class Activator extends AbstractUIPlugin {
      */
     public synchronized boolean isManagerInitialized() {
         return manager.isPresent();
+    }
+    
+    /**
+     * Discards the currently cached {@link ExerciseSubmitterManager}, so that the next call to {@link #getManager()}
+     * creates a new one.
+     * <p>
+     * Call this method for example if the login data has changed.
+     */
+    public synchronized void clearManager() {
+        this.manager = Optional.empty();
     }
     
 }

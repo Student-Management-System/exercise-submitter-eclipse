@@ -43,7 +43,7 @@ public class ListVersionsJob extends AbstractJob<List<Version>> {
      */
     public ListVersionsJob(Shell shell, ExerciseSubmitterManager manager, Assignment assignment,
             Consumer<List<Version>> callback) {
-        super("List Versions", shell, callback);
+        super("Retrieving version history of " + assignment.getName(), shell, callback);
         this.manager = manager;
         this.assignment = assignment;
     }

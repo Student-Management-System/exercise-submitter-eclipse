@@ -3,7 +3,7 @@ package net.ssehub.teaching.exercise_submitter.eclipse.actions;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.ui.IWorkbenchWindow;
 
-import net.ssehub.teaching.exercise_submitter.eclipse.Activator;
+import net.ssehub.teaching.exercise_submitter.eclipse.background.AuthenticateJob;
 import net.ssehub.teaching.exercise_submitter.lib.ExerciseSubmitterManager;
 
 /**
@@ -17,7 +17,7 @@ abstract class AbstractSingleProjectActionUsingManager extends AbstractSinglePro
 
     @Override
     protected final void execute(IProject project, IWorkbenchWindow window) {
-        Activator.getDefault().getManager().ifPresent(manager -> execute(project, window, manager));
+        new AuthenticateJob(window.getShell(), manager -> execute(project, window, manager)).schedule();
     }
     
     /**

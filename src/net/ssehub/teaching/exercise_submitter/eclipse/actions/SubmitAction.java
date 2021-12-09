@@ -1,7 +1,6 @@
 package net.ssehub.teaching.exercise_submitter.eclipse.actions;
 
 import java.io.File;
-import java.util.Optional;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -10,15 +9,10 @@ import org.eclipse.ui.IWorkbenchWindow;
 
 import net.ssehub.teaching.exercise_submitter.eclipse.background.SubmissionJob;
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AssignmentSelectionDialog;
-import net.ssehub.teaching.exercise_submitter.eclipse.dialog.ExceptionDialogs;
 import net.ssehub.teaching.exercise_submitter.eclipse.labels.ProjectAssignmentMapper;
 import net.ssehub.teaching.exercise_submitter.eclipse.problemmarkers.EclipseMarker;
 import net.ssehub.teaching.exercise_submitter.lib.ExerciseSubmitterManager;
 import net.ssehub.teaching.exercise_submitter.lib.data.Assignment;
-import net.ssehub.teaching.exercise_submitter.lib.student_management_system.ApiException;
-import net.ssehub.teaching.exercise_submitter.lib.student_management_system.AuthenticationException;
-import net.ssehub.teaching.exercise_submitter.lib.student_management_system.NetworkException;
-import net.ssehub.teaching.exercise_submitter.lib.student_management_system.UserNotInCourseException;
 import net.ssehub.teaching.exercise_submitter.lib.submission.Problem;
 import net.ssehub.teaching.exercise_submitter.lib.submission.SubmissionResult;
 
@@ -44,32 +38,18 @@ public class SubmitAction extends AbstractSingleProjectActionUsingManager {
             }
         }
 
-        Optional<Assignment> assignment = Optional.empty();
-        
-        try {
-            assignment = AssignmentSelectionDialog.selectAssignmentWithAssociated(project, window, manager,
-                    manager::isSubmittable);
-    
-            if (assignment.isPresent()) {
-                Assignment selectedAssignment = assignment.get();
-                
-                SubmissionJob job = new SubmissionJob(window.getShell(), manager, selectedAssignment, project,
-                        (submissionResult) -> {
-                            createSubmissionFinishedDialog(window.getShell(), project, selectedAssignment,
-                                    submissionResult);
-                        });
-                job.schedule();
-            }
-            
-        } catch (UserNotInCourseException e) {
-            ExceptionDialogs.showUserNotInCourseDialog(manager.getCourse().getId());
-        } catch (NetworkException e) {
-            ExceptionDialogs.showNetworkExceptionDialog(e);
-        } catch (AuthenticationException e) {
-            ExceptionDialogs.showLoginFailureDialog();
-        } catch (ApiException e) {
-            ExceptionDialogs.showUnexpectedExceptionDialog(e, "Generic API exception");
-        }
+        AssignmentSelectionDialog.selectAssignmentWithAssociated(project, window, manager, manager::isSubmittable,
+                selectedAssignment -> {
+                    if (selectedAssignment.isPresent()) {
+                        Assignment assignment = selectedAssignment.get();
+                        
+                        new SubmissionJob(window.getShell(), manager, assignment, project,
+                                (submissionResult) -> {
+                                    createSubmissionFinishedDialog(window.getShell(), project, assignment,
+                                            submissionResult);
+                                }).schedule();
+                    }
+                });
     }
 
     /**
