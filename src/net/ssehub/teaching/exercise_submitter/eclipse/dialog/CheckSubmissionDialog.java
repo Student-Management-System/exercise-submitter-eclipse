@@ -87,8 +87,8 @@ public class CheckSubmissionDialog extends Dialog {
         listVersionsButton.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent event)  {
-                CheckSubmissionDialog.this.createListVersionList();
-                CheckSubmissionDialog.this.close();
+                createListVersionList();
+                close();
             }
         });
 

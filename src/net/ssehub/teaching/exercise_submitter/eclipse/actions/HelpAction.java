@@ -39,7 +39,7 @@ public class HelpAction extends AbstractHandler {
             message.append("Not yet logged in.");
         }
         
-        Version version = FrameworkUtil.getBundle(this.getClass()).getVersion();
+        Version version = FrameworkUtil.getBundle(getClass()).getVersion();
         message.append("\n\nPlug-In Version: ").append(version.toString());
         
         // TODO: more content

@@ -38,17 +38,17 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
      */
     public PreferencePage() {
         super(GRID);
-        this.setDescription("Exercise Submitter");
+        setDescription("Exercise Submitter");
     }
 
     @Override
     public void createFieldEditors() {
-        this.username = new StringFieldEditor(KEY_USERNAME, "Username:", this.getFieldEditorParent());
-        this.addField(username);
+        this.username = new StringFieldEditor(KEY_USERNAME, "Username:", getFieldEditorParent());
+        addField(username);
        
-        this.password = new StringFieldEditor(KEY_PASSWORD, "Password:", this.getFieldEditorParent());
-        this.password.getTextControl(this.getFieldEditorParent()).setEchoChar('*');
-        this.addField(this.password);
+        this.password = new StringFieldEditor(KEY_PASSWORD, "Password:", getFieldEditorParent());
+        this.password.getTextControl(getFieldEditorParent()).setEchoChar('*');
+        addField(this.password);
         
         try {
             this.username.setStringValue(SECURE_PREFERENCES.get(KEY_USERNAME, ""));
