@@ -43,7 +43,7 @@ public class SubmissionJob extends AbstractJob<SubmissionResult> {
      */
     public SubmissionJob(Shell shell, ExerciseSubmitterManager manager, Assignment assignment, IProject project,
             Consumer<SubmissionResult> callback) {
-        super("Exercise Submission", shell, callback);
+        super("Submit Project", shell, callback);
         this.manager = manager;
         this.assignment = assignment;
         this.project = project;
