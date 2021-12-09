@@ -19,6 +19,8 @@ import net.ssehub.teaching.exercise_submitter.lib.student_management_system.User
 
 /**
  * The activator class controls the plug-in life cycle.
+ * 
+ * @author Adam
  */
 public class Activator extends AbstractUIPlugin {
 
