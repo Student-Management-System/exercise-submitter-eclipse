@@ -22,7 +22,7 @@ import net.ssehub.teaching.exercise_submitter.lib.student_management_system.Netw
 import net.ssehub.teaching.exercise_submitter.lib.student_management_system.UserNotInCourseException;
 
 /**
- * A job that lists the versions of a given assignment.
+ * A job that retrieves the version list of a given assignment.
  * 
  * @author Adam
  * @author lukas

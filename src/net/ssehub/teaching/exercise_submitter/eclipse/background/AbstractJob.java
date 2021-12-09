@@ -29,6 +29,8 @@ public abstract class AbstractJob<T> extends Job {
     
     /**
      * Creates a new job.
+     * <p>
+     * Use {@link #schedule()} to start the job.
      * 
      * @param name The name of this job.
      * @param shell The shell that this job belongs to.

@@ -26,7 +26,8 @@ import net.ssehub.teaching.exercise_submitter.lib.data.Assignment;
 import net.ssehub.teaching.exercise_submitter.lib.data.Assignment.State;
 
 /**
- * This creates the CheckSubmissionDialog.
+ * A dialog that shows the result of comparing a local project with a submitted version. Shows the users some options
+ * (list all versions, submit local project, download from server), based on the result of the check.
  *
  * @author lukas
  * @author Adam
@@ -38,7 +39,7 @@ public class CheckSubmissionDialog extends Dialog {
     private CheckResult checkresult;
 
     /**
-     * Creates an instance of CheckSubmissionDialog.
+     * Creates a new dialog.
      *
      * @param parentShell the parent shell
      * @param manager The manager to contact the student management system with.
@@ -102,8 +103,8 @@ public class CheckSubmissionDialog extends Dialog {
                 submitButton.addSelectionListener(new SelectionAdapter() {
                     @Override
                     public void widgetSelected(SelectionEvent event) {
-                        CheckSubmissionDialog.this.createSubmissionJob();
-                        CheckSubmissionDialog.this.close();
+                        createSubmissionJob();
+                        close();
                     }
                     
                 });
@@ -117,8 +118,8 @@ public class CheckSubmissionDialog extends Dialog {
             downloadButton.addSelectionListener(new SelectionAdapter() {
                 @Override
                 public void widgetSelected(SelectionEvent event) {
-                    CheckSubmissionDialog.this.createReplayerJob();
-                    CheckSubmissionDialog.this.close();
+                    createReplayerJob();
+                    close();
                 }
             });
         }
@@ -126,7 +127,7 @@ public class CheckSubmissionDialog extends Dialog {
     }
 
     /**
-     * Create a SubmissionJob.
+     * Starts a job that submits the project.
      */
     private void createSubmissionJob() {
         Shell shell = getParentShell();
@@ -142,7 +143,7 @@ public class CheckSubmissionDialog extends Dialog {
     }
 
     /**
-     * Creates an ReplayJob.
+     * Starts a job that downloads the latest assignment version.
      */
     private void createReplayerJob() {
         ReplayJob job = new ReplayJob(getParentShell(), this.manager, this.checkresult.getAssignment(),
@@ -152,7 +153,7 @@ public class CheckSubmissionDialog extends Dialog {
     }
     
     /**
-     * Creates an ListVerionJob.
+     * Starts a job that shows the version history of the assignment.
      */
     private void createListVersionList() {
         ListVersionsJob job;
@@ -164,7 +165,7 @@ public class CheckSubmissionDialog extends Dialog {
     @Override
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
-        newShell.setText("Check Submission result");
+        newShell.setText("Comparison Result");
     }
 
     @Override

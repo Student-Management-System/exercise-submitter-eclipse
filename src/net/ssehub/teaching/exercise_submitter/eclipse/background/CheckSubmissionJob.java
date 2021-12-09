@@ -23,7 +23,7 @@ import net.ssehub.teaching.exercise_submitter.lib.student_management_system.Netw
 import net.ssehub.teaching.exercise_submitter.lib.student_management_system.UserNotInCourseException;
 
 /**
- * A background job that checks if the given project content equal the latest submission to the given assignment.
+ * A background job that checks if the given project content equals the latest submission to the given assignment.
  * 
  * @author lukas
  * @author Adam

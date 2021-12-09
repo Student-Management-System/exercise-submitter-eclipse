@@ -22,23 +22,24 @@ import net.ssehub.teaching.exercise_submitter.eclipse.utils.TimeUtils;
 import net.ssehub.teaching.exercise_submitter.lib.replay.Replayer.Version;
 
 /**
- * This class creates a Version dialog. 
- * In which the User can selected out of a List from Version
+ * A dialog which shows a list of versions and allows the user to select one (or cancel).
+ * 
  * @author lukas
- *
  */
 public class VersionSelectionDialog extends Dialog {
     
     protected String assignmentName;
+    
     private List<Version> versionlist;
+    
     private Optional<Version> selectedVersion;
 
     /**
-     * Creates a Dialog which display a list of Versions.
+     * Creates a dialog which displays the given list of versions.
      * 
-     * @param parentShell , the parent shell
+     * @param parentShell The parent shell
      * @param assignmentName The name of the assignment that the versions are displayed for.
-     * @param versionlist , the list of the version which should be displayed
+     * @param versionlist The list of versions to display.
      */
     public VersionSelectionDialog(Shell parentShell, String assignmentName, List<Version> versionlist) {
         super(parentShell);
@@ -57,8 +58,9 @@ public class VersionSelectionDialog extends Dialog {
     }
     
     /**
-     * Returns an Optional of the selected Version.
-     * @return Optional Version , The Selected Version or null.
+     * The version selected by the user.
+     * 
+     * @return The version selected by the user, or {@link Optional#empty()} if the user cancelled.
      */
     public Optional<Version> getSelectedAssignment() {
         return this.selectedVersion;
@@ -67,7 +69,7 @@ public class VersionSelectionDialog extends Dialog {
     /**
      * Opens this dialog and returns the user-selected version.
      *
-     * @return The version that was selected by the user.
+     * @return The version selected by the user, or {@link Optional#empty()} if the user cancelled.
      */
     public Optional<Version> openAndGetSelectedVersion() {
         int result;

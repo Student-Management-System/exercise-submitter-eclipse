@@ -21,7 +21,7 @@ import net.ssehub.teaching.exercise_submitter.lib.student_management_system.User
  * Action for display the version history for the selected Project.
  *
  * @author lukas
- *
+ * @author Adam
  */
 public class ViewVersionHistoryAction extends AbstractSingleProjectActionUsingManager {
 

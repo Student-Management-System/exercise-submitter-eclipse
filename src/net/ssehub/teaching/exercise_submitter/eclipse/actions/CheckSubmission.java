@@ -17,8 +17,7 @@ import net.ssehub.teaching.exercise_submitter.lib.student_management_system.Netw
 import net.ssehub.teaching.exercise_submitter.lib.student_management_system.UserNotInCourseException;
 
 /**
- * Checks if the selected project matches the submitted version. Shows
- * differences of the two.
+ * Checks if the selected project matches the submitted version.
  *
  * @author Lukas
  * @author Adam

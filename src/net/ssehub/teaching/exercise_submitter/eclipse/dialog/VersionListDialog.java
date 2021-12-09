@@ -9,10 +9,9 @@ import org.eclipse.swt.widgets.Shell;
 import net.ssehub.teaching.exercise_submitter.lib.replay.Replayer.Version;
 
 /**
- * A dialog for showing versions. Does not allow selection.
+ * A dialog for showing a list of versions. Does not allow selection.
  * 
  * @author Adam
- *
  */
 public class VersionListDialog extends VersionSelectionDialog {
     

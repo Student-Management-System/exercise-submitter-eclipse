@@ -23,8 +23,7 @@ import net.ssehub.teaching.exercise_submitter.lib.submission.Problem;
 import net.ssehub.teaching.exercise_submitter.lib.submission.SubmissionResult;
 
 /**
- * Submits the selected project. Lets the user choose which assignment the
- * project should be submitted to.
+ * Submits the selected project. Lets the user choose which assignment the project should be submitted to.
  *
  * @author Adam
  * @author Lukas
@@ -74,7 +73,7 @@ public class SubmitAction extends AbstractSingleProjectActionUsingManager {
     }
 
     /**
-     * Creates submissionFinishedDialog.
+     * Creates a dialog that informs the user of the result of the submission.
      *
      * @param shell The parent shell to open the dialog for.
      * @param project The project that was submitted.
@@ -115,8 +114,7 @@ public class SubmitAction extends AbstractSingleProjectActionUsingManager {
                 break;
             }
             EclipseMarker.addMarker(problem.getFile().orElse(new File(".project")), problem.getMessage(),
-                    problem.getLine().orElse(-1), problem.getSeverity(), project); // TODO: noch nicht fertig
-                                                                                            // dialogbox
+                    problem.getLine().orElse(-1), problem.getSeverity(), project);
         }
 
         String problemsMessage = createProblemMessage(numErrors, numWarnings);

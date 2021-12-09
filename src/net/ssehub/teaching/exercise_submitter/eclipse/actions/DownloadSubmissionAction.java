@@ -18,8 +18,7 @@ import net.ssehub.teaching.exercise_submitter.lib.student_management_system.Netw
 import net.ssehub.teaching.exercise_submitter.lib.student_management_system.UserNotInCourseException;
 
 /**
- * Lets the user download a submission and creates a local project with the
- * content.
+ * Lets the user download a submission and creates a local project with the content.
  *
  * @author Lukas
  * @author Adam

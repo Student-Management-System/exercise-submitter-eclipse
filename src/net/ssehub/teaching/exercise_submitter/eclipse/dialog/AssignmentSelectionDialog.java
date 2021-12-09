@@ -33,9 +33,10 @@ import net.ssehub.teaching.exercise_submitter.lib.student_management_system.Netw
 import net.ssehub.teaching.exercise_submitter.lib.student_management_system.UserNotInCourseException;
 
 /**
- * A dialog that allows the user to select an item from a given list of {@link Assignment}s.
+ * A dialog that allows the user to select an item from a given list of {@link Assignment}s (or to cancel).
  * 
  * @author Lukas
+ * @author Adam
  */
 public class AssignmentSelectionDialog extends Dialog {
 
