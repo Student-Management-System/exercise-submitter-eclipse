@@ -8,7 +8,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 
 import net.ssehub.teaching.exercise_submitter.eclipse.background.ListVersionsJob;
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.ExceptionDialogs;
-import net.ssehub.teaching.exercise_submitter.eclipse.preferences.ProjectManager;
+import net.ssehub.teaching.exercise_submitter.eclipse.labels.ProjectAssignmentMapper;
 import net.ssehub.teaching.exercise_submitter.lib.ExerciseSubmitterManager;
 import net.ssehub.teaching.exercise_submitter.lib.data.Assignment;
 import net.ssehub.teaching.exercise_submitter.lib.student_management_system.ApiException;
@@ -31,7 +31,7 @@ public class ViewVersionHistoryAction extends AbstractSingleProjectActionUsingMa
         Optional<Assignment> assignment = Optional.empty();
         
         try {
-            assignment = ProjectManager.INSTANCE.getConnection(project, manager);
+            assignment = ProjectAssignmentMapper.INSTANCE.getAssociatedAssignment(project, manager);
             
             if (assignment.isPresent()) {
                 if (manager.isReplayable(assignment.get())) {
@@ -45,8 +45,8 @@ public class ViewVersionHistoryAction extends AbstractSingleProjectActionUsingMa
                 }
                 
             } else {
-                MessageDialog.openInformation(window.getShell(), "No Assignment Connected", "The project "
-                        + project.getName() + " has no connected assignment (it has not been submitted).\n\n"
+                MessageDialog.openInformation(window.getShell(), "No Assignment Associated", "The project "
+                        + project.getName() + " has no associated assignment (it has not been submitted).\n\n"
                         + "Use the \"Show Assignments\" item in the menu bar to view the version history of "
                         + "other assignments.");
                 

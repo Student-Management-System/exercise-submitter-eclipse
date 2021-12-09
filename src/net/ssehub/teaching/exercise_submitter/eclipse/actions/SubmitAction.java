@@ -11,7 +11,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import net.ssehub.teaching.exercise_submitter.eclipse.background.SubmissionJob;
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.AssignmentSelectionDialog;
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.ExceptionDialogs;
-import net.ssehub.teaching.exercise_submitter.eclipse.preferences.ProjectManager;
+import net.ssehub.teaching.exercise_submitter.eclipse.labels.ProjectAssignmentMapper;
 import net.ssehub.teaching.exercise_submitter.eclipse.problemmarkers.EclipseMarker;
 import net.ssehub.teaching.exercise_submitter.lib.ExerciseSubmitterManager;
 import net.ssehub.teaching.exercise_submitter.lib.data.Assignment;
@@ -48,7 +48,7 @@ public class SubmitAction extends AbstractSingleProjectActionUsingManager {
         Optional<Assignment> assignment = Optional.empty();
         
         try {
-            assignment = AssignmentSelectionDialog.selectAssignmentWithConnected(project, window, manager,
+            assignment = AssignmentSelectionDialog.selectAssignmentWithAssociated(project, window, manager,
                     manager::isSubmittable);
     
             if (assignment.isPresent()) {
@@ -85,7 +85,7 @@ public class SubmitAction extends AbstractSingleProjectActionUsingManager {
             SubmissionResult result) {
         
         if (result.isAccepted()) {
-            ProjectManager.INSTANCE.setConnection(project, assignment);
+            ProjectAssignmentMapper.INSTANCE.setAssociation(project, assignment);
         }
 
         String mainMessage;

@@ -22,6 +22,7 @@ import net.ssehub.teaching.exercise_submitter.lib.student_management_system.User
  * content.
  *
  * @author Lukas
+ * @author Adam
  */
 public class DownloadSubmissionAction extends AbstractActionUsingManager {
     
@@ -39,7 +40,7 @@ public class DownloadSubmissionAction extends AbstractActionUsingManager {
                 Shell shell = EventHelper.getShell(event);
                 ReplayJob job = new ReplayJob(shell, manager, selectedAssignment.get(),
                         project -> MessageDialog.openInformation(shell, "Submission Download",
-                                "Submission has been stored in project " + project.getName()));
+                                "Submission has been downloaded into project " + project.getName()));
                 job.schedule();
             }
             

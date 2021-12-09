@@ -147,7 +147,7 @@ public class CheckSubmissionDialog extends Dialog {
     private void createReplayerJob() {
         ReplayJob job = new ReplayJob(getParentShell(), this.manager, this.checkresult.getAssignment(),
                 project -> MessageDialog.openInformation(getParentShell(), "Submission Download",
-                        "Submission has been stored in project " + project.getName()));
+                        "Submission has been downloaded into project " + project.getName()));
         job.schedule();
     }
     

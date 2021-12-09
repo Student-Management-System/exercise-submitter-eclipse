@@ -27,8 +27,8 @@ import org.eclipse.swt.widgets.Shell;
 
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.ExceptionDialogs;
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.VersionSelectionDialog;
+import net.ssehub.teaching.exercise_submitter.eclipse.labels.ProjectAssignmentMapper;
 import net.ssehub.teaching.exercise_submitter.eclipse.log.EclipseLog;
-import net.ssehub.teaching.exercise_submitter.eclipse.preferences.ProjectManager;
 import net.ssehub.teaching.exercise_submitter.eclipse.utils.TimeUtils;
 import net.ssehub.teaching.exercise_submitter.lib.ExerciseSubmitterManager;
 import net.ssehub.teaching.exercise_submitter.lib.data.Assignment;
@@ -102,7 +102,7 @@ public class ReplayJob extends AbstractJob<IProject> {
                     project.refreshLocal(IResource.DEPTH_INFINITE, null);
                     markProjectContentReadOnly(project);
                     
-                    ProjectManager.INSTANCE.setConnection(project, this.assignment);
+                    ProjectAssignmentMapper.INSTANCE.setAssociation(project, this.assignment);
                     
                     result = Optional.of(project);
                 }

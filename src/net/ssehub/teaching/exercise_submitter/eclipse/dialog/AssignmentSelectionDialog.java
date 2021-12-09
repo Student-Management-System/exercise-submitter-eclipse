@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IWorkbenchWindow;
 
-import net.ssehub.teaching.exercise_submitter.eclipse.preferences.ProjectManager;
+import net.ssehub.teaching.exercise_submitter.eclipse.labels.ProjectAssignmentMapper;
 import net.ssehub.teaching.exercise_submitter.lib.ExerciseSubmitterManager;
 import net.ssehub.teaching.exercise_submitter.lib.data.Assignment;
 import net.ssehub.teaching.exercise_submitter.lib.student_management_system.ApiException;
@@ -187,15 +187,15 @@ public class AssignmentSelectionDialog extends Dialog {
     }
 
     /**
-     * Lets the user chose the assignment for the given project. If an assignment has been stored for this project,
-     * the user is first offered to use the stored assignment (if it fulfills the given predicate).
+     * Lets the user chose the assignment for the given project. If an assignment has been associated with this project,
+     * the user is first offered to use the associated assignment (if it fulfills the given predicate).
      * 
      * @param project The project to chose the assignment for.
      * @param window The current window.
      * @param manager The {@link ExerciseSubmitterManager} to get assignments from.
      * @param accessibleCheck A predicate to check if the assignment is accessible. This usually checks if the
-     *      assignment is submittable or replayable (depending on the need of the caller). If an assignment is connected
-     *      to this project, it is only used if this predicate returns <code>true</code>. If an
+     *      assignment is submittable or replayable (depending on the need of the caller). If an assignment is
+     *      associated to this project, it is only used if this predicate returns <code>true</code>. If an
      *      {@link AssignmentSelectionDialog} is opened, it only shows {@link Assignment}s for which this predicate is
      *      <code>true</code>.
      * 
@@ -203,11 +203,11 @@ public class AssignmentSelectionDialog extends Dialog {
      * 
      * @throws ApiException
      */
-    public static Optional<Assignment> selectAssignmentWithConnected(IProject project, IWorkbenchWindow window,
+    public static Optional<Assignment> selectAssignmentWithAssociated(IProject project, IWorkbenchWindow window,
             ExerciseSubmitterManager manager, Predicate<Assignment> accessibleCheck)
             throws NetworkException, AuthenticationException, UserNotInCourseException, ApiException {
         
-        Optional<Assignment> assignment = ProjectManager.INSTANCE.getConnection(project, manager);
+        Optional<Assignment> assignment = ProjectAssignmentMapper.INSTANCE.getAssociatedAssignment(project, manager);
         
         assignment = assignment.flatMap(saved -> {
             Optional<Assignment> result;

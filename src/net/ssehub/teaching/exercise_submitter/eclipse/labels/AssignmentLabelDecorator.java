@@ -13,13 +13,12 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IDecoratorManager;
 import org.eclipse.ui.PlatformUI;
 
-import net.ssehub.teaching.exercise_submitter.eclipse.preferences.ProjectManager;
 import net.ssehub.teaching.exercise_submitter.lib.data.Assignment;
 
 /**
  * Adds the associated {@link Assignment} names to project names.
  *
- * @see ProjectManager
+ * @see ProjectAssignmentMapper
  * 
  * @author Adam
  */
@@ -55,7 +54,7 @@ public class AssignmentLabelDecorator implements ILabelDecorator {
     public String decorateText(String text, Object element) {
         IProject project = ((IAdaptable) element).getAdapter(IProject.class);
         
-        String result = ProjectManager.INSTANCE.getStoredAssignmentName(project)
+        String result = ProjectAssignmentMapper.INSTANCE.getAssociatedAssignmentName(project)
                 .map(assignmentName ->  text + " {" + assignmentName + "}")
                 .orElse(null);
         

@@ -30,7 +30,7 @@ public class CheckSubmission extends AbstractSingleProjectActionUsingManager {
 
         Optional<Assignment> selectedAssignment = Optional.empty();
         try {
-            selectedAssignment = AssignmentSelectionDialog.selectAssignmentWithConnected(project, window, manager,
+            selectedAssignment = AssignmentSelectionDialog.selectAssignmentWithAssociated(project, window, manager,
                 manager::isReplayable);
             
             if (selectedAssignment.isPresent()) {

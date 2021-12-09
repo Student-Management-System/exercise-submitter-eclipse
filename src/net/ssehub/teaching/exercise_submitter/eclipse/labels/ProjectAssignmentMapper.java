@@ -1,4 +1,4 @@
-package net.ssehub.teaching.exercise_submitter.eclipse.preferences;
+package net.ssehub.teaching.exercise_submitter.eclipse.labels;
 
 import java.util.Optional;
 
@@ -9,7 +9,6 @@ import org.eclipse.swt.widgets.Display;
 
 import net.ssehub.teaching.exercise_submitter.eclipse.Activator;
 import net.ssehub.teaching.exercise_submitter.eclipse.dialog.ExceptionDialogs;
-import net.ssehub.teaching.exercise_submitter.eclipse.labels.AssignmentLabelDecorator;
 import net.ssehub.teaching.exercise_submitter.lib.ExerciseSubmitterManager;
 import net.ssehub.teaching.exercise_submitter.lib.data.Assignment;
 import net.ssehub.teaching.exercise_submitter.lib.student_management_system.ApiException;
@@ -18,36 +17,35 @@ import net.ssehub.teaching.exercise_submitter.lib.student_management_system.Netw
 import net.ssehub.teaching.exercise_submitter.lib.student_management_system.UserNotInCourseException;
 
 /**
- * This class handles the project connection with an assignment.
+ * This class handles the association of projects to assignments.
  *
  * @author Adam
  * @author lukas
- *
  */
-public class ProjectManager {
+public class ProjectAssignmentMapper {
 
     /**
      * Global singleton instance.
      */
-    public static final ProjectManager INSTANCE = new ProjectManager();
+    public static final ProjectAssignmentMapper INSTANCE = new ProjectAssignmentMapper();
     
-    private static final QualifiedName CONNECTED_ASSIGNMENT_NAME = new QualifiedName(Activator.PLUGIN_ID, "assignment");
+    private static final QualifiedName PROPERTY_NAME = new QualifiedName(Activator.PLUGIN_ID, "assignment");
     
     /**
      * No other instances but the singleton instance.
      */
-    private ProjectManager() {
+    private ProjectAssignmentMapper() {
     }
 
     /**
-     * This method sets a connection between a project and an assignment.
+     * Associates the given project with the given assignment.
      *
-     * @param project The project to add the assignment connection for.
+     * @param project The project to add the assignment association for.
      * @param assignment The assignment to associate with the given project.
      */
-    public void setConnection(IProject project, Assignment assignment) {
+    public void setAssociation(IProject project, Assignment assignment) {
         try {
-            project.setPersistentProperty(CONNECTED_ASSIGNMENT_NAME, assignment.getName());
+            project.setPersistentProperty(PROPERTY_NAME, assignment.getName());
             AssignmentLabelDecorator.update(project);
         } catch (CoreException e) {
             Display.getDefault().syncExec(() -> {
@@ -64,11 +62,11 @@ public class ProjectManager {
      *
      * @return The name of the {@link Assignment}, or empty.
      */
-    public Optional<String> getStoredAssignmentName(IProject project) {
+    public Optional<String> getAssociatedAssignmentName(IProject project) {
         Optional<String> assignmentName = Optional.empty();
         if (project.isOpen()) {
             try {
-                assignmentName = Optional.ofNullable(project.getPersistentProperty(CONNECTED_ASSIGNMENT_NAME));
+                assignmentName = Optional.ofNullable(project.getPersistentProperty(PROPERTY_NAME));
             } catch (CoreException e) {
                 Display.getDefault().syncExec(() -> {
                     ExceptionDialogs.showUnexpectedExceptionDialog(e, "Failed to load assignment name");
@@ -99,18 +97,18 @@ public class ProjectManager {
     }
 
     /**
-     * This method gets the connection from a project to an assignment if available.
+     * Retrieves the assignment associated with the given project.
      *
-     * @param project
-     * @param manager
-     * @return The connected assignment, or {@link Optional#empty()} if the given project has no connected assignment.
+     * @param project The project to get the associated assignment for.
+     * @param manager The manager to retrieve assignments with.
+     * @return The associated assignment, or {@link Optional#empty()} if the given project has no associated assignment.
      */
-    public Optional<Assignment> getConnection(IProject project, ExerciseSubmitterManager manager)
+    public Optional<Assignment> getAssociatedAssignment(IProject project, ExerciseSubmitterManager manager)
             throws NetworkException, AuthenticationException, UserNotInCourseException, ApiException {
         
         Optional<Assignment> assignment = Optional.empty();
         
-        Optional<String> name = getStoredAssignmentName(project);
+        Optional<String> name = getAssociatedAssignmentName(project);
         if (name.isPresent()) {
             assignment = getAssignmentByName(name.get(), manager);
         }

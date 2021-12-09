@@ -29,13 +29,13 @@
 - shows warning dialog if error or warning markers are in project
     - cancel cancels the submission
 
-- if no assignment is connected yet    
+- if no assignment is associated yet    
     - shows assignment selection dialog with only assignment in SUBMISSION
     - clicking cancel cancels the submission
-- if assignment is connected
-    - asks if connected assignment should be used again or if another should be selected (see if no assignment is connected yet)
-- if assignment is connected but not submittable anymore
-    - ask the user to choose a different assignment (see if no assignment is connected yet)
+- if assignment is associated
+    - asks if associated assignment should be used again or if another should be selected (see if no assignment is associated yet)
+- if assignment is associated but not submittable anymore
+    - ask the user to choose a different assignment (see if no assignment is associated yet)
     
 - submits the project
 - shows submission result
@@ -48,13 +48,13 @@
 
 - shows error dialog if not logged in
 
-- if no assignment is connected yet    
+- if no assignment is associated yet    
     - shows assignment selection dialog
     - clicking cancel cancels the operation
-- if assignment is connected
-    - asks if connected assignment should be used again or if another should be selected (see if no assignment is connected yet)
-- if assignment is connected but not replayable anymore
-    - ask the user to choose a different assignment (see if no assignment is connected yet)
+- if assignment is associated
+    - asks if associated assignment should be used again or if another should be selected (see if no assignment is associated yet)
+- if assignment is associated but not replayable anymore
+    - ask the user to choose a different assignment (see if no assignment is associated yet)
 
 - shows warning dialog if no submission has been made yet
 
@@ -75,7 +75,7 @@
 
 - shows error dialog if not logged in
 
-- if an assignment is connected to the project
+- if an assignment is associated to the project
     - shows a dialog with the version history
 - else
     - shows an info dialog that versions of other assignments can be viewed under "Show Assignmnets" in menu bar
