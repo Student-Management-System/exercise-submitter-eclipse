@@ -111,7 +111,7 @@ public class ExceptionDialogs  {
      */
     public static void showUserNotInGroupDialog(String assignment) {
         runInGuiThread(() -> MessageDialog.openError(Display.getDefault().getActiveShell(), "Not In Group",
-                "You are not a memeber of a group in assignment " + assignment
+                "You are not a member of a group in assignment " + assignment
                 + ".\n\nGroups for assignments are created when the assignment starts. Please contact a tutor if you"
                 + " want to be added to a group after an assignment has already started."));
     }
