@@ -76,8 +76,11 @@ public class SubmitAction extends AbstractSingleProjectActionUsingManager {
             dialogType = MessageDialog.INFORMATION;
 
         } else {
+            String sameSubmission = result.getProblems().get(0).getMessage()
+                    .equals("Submission is the same as the previous one") 
+                    ? " \n Submission is the same as the previous one" : "";
             mainMessage = "Your submission of project " + project.getName() + " to assignment "
-                    + assignment.getName() + " was NOT accepted.";
+                    + assignment.getName() + " was NOT accepted." + sameSubmission;
             dialogType = MessageDialog.ERROR;
         }
 
